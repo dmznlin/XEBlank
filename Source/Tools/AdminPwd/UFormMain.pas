@@ -1,3 +1,7 @@
+{*******************************************************************************
+  作者: dmzn@163.com 2020-10-26
+  描述: 基于Google Authenticator的动态口令生成器
+*******************************************************************************}
 unit UFormMain;
 
 interface
@@ -5,14 +9,14 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, Vcl.Forms, UStyleModule,
   cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters, dxSkinsCore,
-  dxSkinsDefaultPainters, cxClasses, dxLayoutContainer, dxLayoutControl,
-  Vcl.Controls, dxStatusBar, System.Classes, Vcl.ExtCtrls, cxContainer, cxEdit,
-  dxLayoutcxEditAdapters, cxLabel, dxBarCode, cxTextEdit, cxMemo, cxGroupBox,
-  cxButtonEdit, cxMaskEdit, cxDropDownEdit, dxLayoutControlAdapters, Vcl.Menus,
-  Vcl.StdCtrls, cxButtons;
+  dxSkinsDefaultPainters, cxContainer, cxEdit, dxLayoutcxEditAdapters,
+  dxLayoutControlAdapters, Vcl.Menus, dxLayoutContainer, Vcl.StdCtrls,
+  cxButtons, cxButtonEdit, cxMaskEdit, cxDropDownEdit, cxTextEdit, dxBarCode,
+  cxMemo, cxClasses, dxLayoutControl, Vcl.Controls, dxStatusBar, System.Classes,
+  Vcl.ExtCtrls;
 
 type
-  TForm1 = class(TForm)
+  TfFormMain = class(TForm)
     Timer1: TTimer;
     SBar1: TdxStatusBar;
     Layout1: TdxLayoutControl;
@@ -52,7 +56,7 @@ type
   end;
 
 var
-  Form1: TForm1;
+  fFormMain: TfFormMain;
 
 implementation
 
@@ -71,7 +75,7 @@ type
 var
   gSystemKeys: array of TSystemKey;
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TfFormMain.FormCreate(Sender: TObject);
 var nStr: string;
 begin
   SetLength(gSystemKeys, 0);
@@ -105,7 +109,7 @@ end;
 
 //Date: 2020-10-26
 //Desc: 载入配置数据
-function TForm1.LoadConfigData: Boolean;
+function TfFormMain.LoadConfigData: Boolean;
 var nStr: string;
     nIdx: Integer;
     nIni: TIniFile;
@@ -166,12 +170,12 @@ begin
   end;
 end;
 
-procedure TForm1.Timer1Timer(Sender: TObject);
+procedure TfFormMain.Timer1Timer(Sender: TObject);
 begin
   SBar1.Panels[0].Text := '※.时钟: ' + TDateTimeHelper.DateTime2Str(Now());
 end;
 
-procedure TForm1.EditKeyPropertiesButtonClick(Sender: TObject;
+procedure TfFormMain.EditKeyPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
 begin
   with TStringHelper,TGoogleOTP do
@@ -182,7 +186,7 @@ begin
   end;
 end;
 
-procedure TForm1.EditSysPropertiesChange(Sender: TObject);
+procedure TfFormMain.EditSysPropertiesChange(Sender: TObject);
 var nIdx: Integer;
 begin
   if EditSys.ItemIndex > -1 then
@@ -192,7 +196,7 @@ begin
   end;
 end;
 
-procedure TForm1.BtnOKClick(Sender: TObject);
+procedure TfFormMain.BtnOKClick(Sender: TObject);
 var nAccount,nSecret: string;
 begin
   EditKey.Text := Trim(EditKey.Text);

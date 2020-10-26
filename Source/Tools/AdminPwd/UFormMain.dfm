@@ -1,4 +1,4 @@
-object Form1: TForm1
+object fFormMain: TfFormMain
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
@@ -42,9 +42,6 @@ object Form1: TForm1
     Font.Height = -12
     Font.Name = #23435#20307
     Font.Style = []
-    ExplicitLeft = 208
-    ExplicitTop = 120
-    ExplicitWidth = 0
   end
   object Layout1: TdxLayoutControl
     Left = 0
@@ -56,9 +53,6 @@ object Form1: TForm1
     ShowHint = True
     TabOrder = 1
     LayoutLookAndFeel = FSM.dxLayoutWeb1
-    ExplicitTop = -6
-    ExplicitWidth = 692
-    ExplicitHeight = 549
     object EditReadMe: TcxMemo
       Left = 23
       Top = 36
@@ -77,7 +71,7 @@ object Form1: TForm1
       Width = 474
     end
     object BarCode1: TdxBarCode
-      Left = 143
+      Left = 217
       Top = 258
       Text = 'Hello Word'
       ParentFont = False
@@ -195,7 +189,7 @@ object Form1: TForm1
       CaptionOptions.AlignHorz = taCenter
       Control = BarCode1
       ControlOptions.OriginalHeight = 85
-      ControlOptions.OriginalWidth = 233
+      ControlOptions.OriginalWidth = 85
       ControlOptions.ShowBorder = False
       Index = 0
     end
@@ -299,6 +293,6 @@ object Form1: TForm1
   object Timer1: TTimer
     OnTimer = Timer1Timer
     Left = 25
-    Top = 24
+    Top = 328
   end
 end
