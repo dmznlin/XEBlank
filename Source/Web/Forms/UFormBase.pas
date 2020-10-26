@@ -22,8 +22,8 @@ type
     procedure BtnOKClick(Sender: TObject);
   protected
     { Protected declarations }
-    FDBType: TAdoConnectionType;
-    //数据连接
+    FConnID: string;
+    //数据标识
     FParam: TFormCommandParam;
     //命令参数
     procedure OnCreateForm(Sender: TObject); virtual;
@@ -48,7 +48,7 @@ implementation
 
 procedure TfFormBase.UniFormCreate(Sender: TObject);
 begin
-  FDBType := ctWork;
+  FConnID := gSystem.FDBMain;
   FillChar(FParam, SizeOf(FParam), #0);
   OnCreateForm(Sender);
 end;

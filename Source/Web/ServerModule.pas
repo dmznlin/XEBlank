@@ -49,31 +49,31 @@ begin
   //载入系统配置参数
 
   if not TApplicationHelper.IsValidConfigFile(gPath + sConfigFile,
-    gSysParam.FProgID) then
+    gSystem.FProgID) then
   begin
     raise Exception.Create(sInvalidConfig);
     //配置文件被改动
   end;
 
-  Title := gSysParam.FAppTitle;
+  Title := gSystem.FAppTitle;
   //程序标题
-  Port := gServerParam.FPort;
+  Port := gSystem.FPort;
   //服务端口
 
-  with gServerParam do
-  begin
-    FExtJS := ReplaceGlobalPath(FExtJS);
-    FUniJS := ReplaceGlobalPath(FUniJS);
-    Logger.AddLog('TUniServerModule', FExtJS);
-
-    if DirectoryExists(FExtJS) then
-      ExtRoot := FExtJS;
-    //xxxxx
-
-    if DirectoryExists(FUniJS) then
-      UniRoot := FUniJS;
-    //xxxxx
-  end;
+//  with gSystem do
+//  begin
+//    FExtJS := ReplaceGlobalPath(FExtJS);
+//    FUniJS := ReplaceGlobalPath(FUniJS);
+//    Logger.AddLog('TUniServerModule', FExtJS);
+//
+//    if DirectoryExists(FExtJS) then
+//      ExtRoot := FExtJS;
+//    //xxxxx
+//
+//    if DirectoryExists(FUniJS) then
+//      UniRoot := FUniJS;
+//    //xxxxx
+//  end;
 
   AutoCoInitialize := True;
   //自动初始化COM对象

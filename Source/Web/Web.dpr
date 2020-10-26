@@ -9,7 +9,8 @@ uses
   USysConst in 'Common\USysConst.pas',
   USysFun in 'Common\USysFun.pas',
   USysRemote in 'Common\USysRemote.pas',
-  UFormBase in 'Forms\UFormBase.pas' {fFormBase: TUniForm};
+  UFormBase in 'Forms\UFormBase.pas' {fFormBase: TUniForm},
+  UFormLogin in 'Forms\UFormLogin.pas' {fFormLogin: TUniLoginForm};
 
 {$R *.res}
 

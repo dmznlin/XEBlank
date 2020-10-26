@@ -9,6 +9,9 @@
         <Projects Include="Web\Web.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Tools\AdminPwd\AdminPwd.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="Web:Make">
         <MSBuild Projects="Web\Web.dproj" Targets="Make"/>
     </Target>
+    <Target Name="AdminPwd">
+        <MSBuild Projects="Tools\AdminPwd\AdminPwd.dproj"/>
+    </Target>
+    <Target Name="AdminPwd:Clean">
+        <MSBuild Projects="Tools\AdminPwd\AdminPwd.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="AdminPwd:Make">
+        <MSBuild Projects="Tools\AdminPwd\AdminPwd.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Client;Web"/>
+        <CallTarget Targets="Client;Web;AdminPwd"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Client:Clean;Web:Clean"/>
+        <CallTarget Targets="Client:Clean;Web:Clean;AdminPwd:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Client:Make;Web:Make"/>
+        <CallTarget Targets="Client:Make;Web:Make;AdminPwd:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -27,56 +27,37 @@ const
   cCmd_GetData          = $1007;                     //选择数据
 
 type
-  TAdoConnectionType = (ctMain, ctWork);
-  //连接类型
-
-  PAdoConnectionData = ^TAdoConnectionData;
-  TAdoConnectionData = record
-    FConnUser : string;                              //用户设置连接字符串
-    FConnStr  : string;                              //系统有效连接字符串
-  end;
-  //连接对象数据
-
-  TFactoryItem = record
-    FFactoryID  : string;                            //工厂编号
-    FFactoryName: string;                            //工厂名称
-    FMITServURL : string;                            //业务服务
-    FHardMonURL : string;                            //硬件守护
-    FWechatURL  : string;                            //微信服务
-    FDBWorkOn   : string;                            //工作数据库
-  end;
-
-  TFactoryItems = array of TFactoryItem;
-  //工厂列表
-
-  PSysParam = ^TSysParam;
-  TSysParam = record
+  PSystemParam = ^TSystemParam;
+  TSystemParam = record
+    FGroupID    : string;                            //所属集团
+    FFactory    : string;                            //所属工厂
     FProgID     : string;                            //程序标识
+
     FAppTitle   : string;                            //程序标题栏提示
     FMainTitle  : string;                            //主窗体标题
     FHintText   : string;                            //提示文本
     FCopyRight  : string;                            //主窗体提示内容
+    FFavicon    : string;                            //收藏夹显示图标
 
+    FLocalIP    : string;                            //本机IP
+    FLocalMAC   : string;                            //本机MAC
+    FLocalName  : string;                            //本机名称
+
+    FSystemInit : Boolean;                           //系统初始化
+    FPort       : Integer;                           //服务端口
+    FDBMain     : string;                            //主数据库连接
+  end;
+  //系统参数
+
+  TUserParam = record
     FUserID     : string;                            //用户标识
     FUserName   : string;                            //当前用户
     FUserPwd    : string;                            //用户口令
     FGroupID    : string;                            //所在组
     FIsAdmin    : Boolean;                           //是否管理员
 
-    FLocalIP    : string;                            //本机IP
-    FLocalMAC   : string;                            //本机MAC
-    FLocalName  : string;                            //本机名称
     FOSUser     : string;                            //操作系统
     FUserAgent  : string;                            //浏览器类型
-    FFactory    : Integer;                           //所属工厂索引
-  end;
-  //系统参数
-
-  TServerParam = record
-    FPort       : Integer;                           //服务端口
-    FExtJS      : string;                            //ext脚本目录
-    FUniJS      : string;                            //uni脚本目录
-    FDBMain     : string;                            //主数据库连接
   end;
 
   TModuleItemType = (mtFrame, mtForm);
@@ -109,11 +90,7 @@ type
 //------------------------------------------------------------------------------
 var
   gPath: string;                                     //程序所在路径
-  gSysParam:TSysParam;                               //程序环境参数
-  gServerParam: TServerParam;                        //服务器参数
-
-  gAllFactorys: TFactoryItems;                       //系统有效工厂列表
-  gAllUsers: TList;                                  //已登录用户列表
+  gSystem:TSystemParam;                              //程序环境参数
 
 ResourceString
   sProgID             = 'DMZN';                      //默认标识
@@ -133,7 +110,8 @@ ResourceString
   sLogExt             = '.log';                      //日志扩展名
   sLogField           = #9;                          //记录分隔符
 
-  sImageDir           = 'Images\';                   //图片目录
+  sThemeDir           = 'Themes\';                   //主题目录
+  sThemeDef           = 'Default';                   //默认主题
   sReportDir          = 'Report\';                   //报表目录
   sBackupDir          = 'Backup\';                   //备份目录
   sBackupFile         = 'Bacup.idx';                 //备份索引
