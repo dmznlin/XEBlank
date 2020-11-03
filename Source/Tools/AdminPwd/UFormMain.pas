@@ -81,7 +81,6 @@ begin
   SetLength(gSystemKeys, 0);
   EditSys.Properties.Items.Clear;
 
-  TGoogleOTP.InitOPT;
   Timer1Timer(nil);
   FSM.SwitchSkinRandom;
 
