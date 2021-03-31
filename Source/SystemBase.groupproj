@@ -12,6 +12,9 @@
         <Projects Include="Tools\AdminPwd\AdminPwd.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Tools\DBConfig\DBConfig.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -47,14 +50,23 @@
     <Target Name="AdminPwd:Make">
         <MSBuild Projects="Tools\AdminPwd\AdminPwd.dproj" Targets="Make"/>
     </Target>
+    <Target Name="DBConfig">
+        <MSBuild Projects="Tools\DBConfig\DBConfig.dproj"/>
+    </Target>
+    <Target Name="DBConfig:Clean">
+        <MSBuild Projects="Tools\DBConfig\DBConfig.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DBConfig:Make">
+        <MSBuild Projects="Tools\DBConfig\DBConfig.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Client;Web;AdminPwd"/>
+        <CallTarget Targets="Client;Web;AdminPwd;DBConfig"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Client:Clean;Web:Clean;AdminPwd:Clean"/>
+        <CallTarget Targets="Client:Clean;Web:Clean;AdminPwd:Clean;DBConfig:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Client:Make;Web:Make;AdminPwd:Make"/>
+        <CallTarget Targets="Client:Make;Web:Make;AdminPwd:Make;DBConfig:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

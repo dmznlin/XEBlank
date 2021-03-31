@@ -9,38 +9,29 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, Vcl.Forms, UStyleModule,
   cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters, dxSkinsCore,
-  dxSkinsDefaultPainters, cxContainer, cxEdit, dxLayoutcxEditAdapters,
-  dxLayoutControlAdapters, Vcl.Menus, dxLayoutContainer, Vcl.StdCtrls,
-  cxButtons, cxButtonEdit, cxMaskEdit, cxDropDownEdit, cxTextEdit, dxBarCode,
-  cxMemo, cxClasses, dxLayoutControl, Vcl.Controls, dxStatusBar, System.Classes,
-  Vcl.ExtCtrls;
+  dxSkinsDefaultPainters, cxContainer, cxEdit, Vcl.Menus, cxDropDownEdit,
+  cxMaskEdit, cxButtonEdit, cxTextEdit, Vcl.StdCtrls, cxButtons, cxLabel,
+  cxMemo, dxBarCode, cxGroupBox, Vcl.ExtCtrls, System.Classes, Vcl.Controls,
+  dxStatusBar;
 
 type
-  TfFormMain = class(TForm)
+  TfFormAdminPwd = class(TForm)
     Timer1: TTimer;
     SBar1: TdxStatusBar;
-    Layout1: TdxLayoutControl;
-    Layout1Group_Root: TdxLayoutGroup;
-    dxLayoutItem1: TdxLayoutItem;
-    EditReadMe: TcxMemo;
-    dxLayoutItem3: TdxLayoutItem;
+    Group1: TcxGroupBox;
+    Group2: TcxGroupBox;
+    Group3: TcxGroupBox;
     BarCode1: TdxBarCode;
-    dxLayoutGroup1: TdxLayoutGroup;
-    EditUser: TcxTextEdit;
-    dxLayoutItem2: TdxLayoutItem;
-    EditLen: TcxTextEdit;
-    dxLayoutItem4: TdxLayoutItem;
-    EditSys: TcxComboBox;
-    dxLayoutItem6: TdxLayoutItem;
-    EditKey: TcxButtonEdit;
-    dxLayoutItem7: TdxLayoutItem;
-    dxLayoutGroup2: TdxLayoutGroup;
+    EditReadMe: TcxMemo;
+    cxLabel1: TcxLabel;
+    cxLabel2: TcxLabel;
+    cxLabel3: TcxLabel;
+    cxLabel4: TcxLabel;
     BtnOK: TcxButton;
-    dxLayoutItem5: TdxLayoutItem;
-    dxLayoutGroup3: TdxLayoutGroup;
-    dxLayoutAutoCreatedGroup3: TdxLayoutAutoCreatedGroup;
-    dxLayoutAutoCreatedGroup4: TdxLayoutAutoCreatedGroup;
-    dxLayoutAutoCreatedGroup2: TdxLayoutAutoCreatedGroup;
+    EditUser: TcxTextEdit;
+    EditLen: TcxTextEdit;
+    EditKey: TcxButtonEdit;
+    EditSys: TcxComboBox;
     procedure Timer1Timer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure EditKeyPropertiesButtonClick(Sender: TObject;
@@ -56,7 +47,7 @@ type
   end;
 
 var
-  fFormMain: TfFormMain;
+  fFormAdminPwd: TfFormAdminPwd;
 
 implementation
 
@@ -75,7 +66,7 @@ type
 var
   gSystemKeys: array of TSystemKey;
 
-procedure TfFormMain.FormCreate(Sender: TObject);
+procedure TfFormAdminPwd.FormCreate(Sender: TObject);
 var nStr: string;
 begin
   SetLength(gSystemKeys, 0);
@@ -108,7 +99,7 @@ end;
 
 //Date: 2020-10-26
 //Desc: 载入配置数据
-function TfFormMain.LoadConfigData: Boolean;
+function TfFormAdminPwd.LoadConfigData: Boolean;
 var nStr: string;
     nIdx: Integer;
     nIni: TIniFile;
@@ -169,12 +160,12 @@ begin
   end;
 end;
 
-procedure TfFormMain.Timer1Timer(Sender: TObject);
+procedure TfFormAdminPwd.Timer1Timer(Sender: TObject);
 begin
   SBar1.Panels[0].Text := '※.时钟: ' + TDateTimeHelper.DateTime2Str(Now());
 end;
 
-procedure TfFormMain.EditKeyPropertiesButtonClick(Sender: TObject;
+procedure TfFormAdminPwd.EditKeyPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
 begin
   with TStringHelper,TGoogleOTP do
@@ -185,7 +176,7 @@ begin
   end;
 end;
 
-procedure TfFormMain.EditSysPropertiesChange(Sender: TObject);
+procedure TfFormAdminPwd.EditSysPropertiesChange(Sender: TObject);
 var nIdx: Integer;
 begin
   if EditSys.ItemIndex > -1 then
@@ -195,7 +186,7 @@ begin
   end;
 end;
 
-procedure TfFormMain.BtnOKClick(Sender: TObject);
+procedure TfFormAdminPwd.BtnOKClick(Sender: TObject);
 var nAccount,nSecret: string;
 begin
   EditKey.Text := Trim(EditKey.Text);

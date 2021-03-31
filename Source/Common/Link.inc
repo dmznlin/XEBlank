@@ -18,6 +18,11 @@
 
 {$DEFINE DBManager}
 //启用数据库管理器
+{$DEFINE WinADO}
+//启用ADO驱动
 
-{$DEFINE MenuManager}
+{$DEFINE EncryptLib}
+//启用加解密算法库
+
+{.$DEFINE MenuManager}
 //启用菜单管理器

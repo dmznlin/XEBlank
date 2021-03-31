@@ -39,6 +39,11 @@ type
     {*切换主题*}
     procedure ShowMsg(const nMsg: string; nTitle: string = '');
     {*消息框*}
+    procedure ShowDlg(const nMsg: string; nTitle: string = '';
+      nHwnd: integer = -1);
+    function QueryDlg(const nMsg: string; nTitle: string = '';
+      nHwnd: integer = -1): Boolean;
+    {*提示框*}
     function VerifyUIData(const nParent: TWinControl;
       const nVerify: TVerifyUIData; const nShowMsg: Boolean = True;
       const nVerifySub: Boolean = True): Boolean;
@@ -55,26 +60,20 @@ implementation
 {$R *.dfm}
 
 uses
-  System.IniFiles, Vcl.Forms, ULibFun, UManagerGroup;
+  Winapi.Windows, System.IniFiles, Vcl.Forms, ULibFun, UManagerGroup;
 
 procedure TFSM.DataModuleCreate(Sender: TObject);
 var nStr: string;
     nIni: TIniFile;
 begin
-  with TApplicationHelper do
-  begin
-    gPath := ExtractFilePath(Application.ExeName);
-    gFormConfig := gPath + 'Forms.ini';
-
-    nIni := TIniFile.Create(gFormConfig);
-    try
-      nStr := nIni.ReadString('Config', 'Theme', '');
-      if nStr <> '' then
-        SwitchSkin(nStr, True);
-      //xxxxx
-    finally
-      nIni.Free;
-    end;
+  nIni := TIniFile.Create(TApplicationHelper.gFormConfig);
+  try
+    nStr := nIni.ReadString('Config', 'Theme', '');
+    if nStr <> '' then
+      SwitchSkin(nStr, True);
+    //xxxxx
+  finally
+    nIni.Free;
   end;
 end;
 
@@ -179,9 +178,42 @@ end;
 //Desc: 弹出消息框
 procedure TFSM.ShowMsg(const nMsg: string; nTitle: string);
 begin
-  //if nTitle = '' then
-   // nTitle := '提示';
+  if nTitle = '' then
+    nTitle := '提示';
   AlertManager1.Show(nTitle, nMsg, 5);
+end;
+
+//Date: 2021-03-29
+//Parm: 消息;标题;窗口句柄
+//Desc: 提示对话框
+procedure TFSM.ShowDlg(const nMsg: string; nTitle: string; nHwnd: integer);
+begin
+  if nTitle = '' then
+    nTitle := '提示';
+  //xxxxx
+
+  if nHwnd < 0 then
+    nHwnd := GetActiveWindow;
+  //xxxxx
+
+  Messagebox(nHwnd, PChar(nMsg), PChar(nTitle), mb_Ok + Mb_IconInformation);
+end;
+
+//Date: 2021-03-29
+//Parm: 消息;标题;窗口句柄
+//Desc: 询问对话框
+function TFSM.QueryDlg(const nMsg: string; nTitle: string; nHwnd: integer): Boolean;
+begin
+  if nTitle = '' then
+    nTitle := '询问';
+  //xxxxx
+
+  if nHwnd < 0 then
+    nHwnd := GetActiveWindow;
+  //xxxxx
+
+  Result := Messagebox(nHwnd, PChar(nMsg),
+            PChar(nTitle), Mb_YesNo + MB_ICONQUESTION) = IDYes;
 end;
 
 end.

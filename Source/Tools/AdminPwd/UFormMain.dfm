@@ -1,11 +1,11 @@
-object fFormMain: TfFormMain
+object fFormAdminPwd: TfFormAdminPwd
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Admin Tookit'
-  ClientHeight = 410
-  ClientWidth = 520
+  ClientHeight = 515
+  ClientWidth = 515
   Color = clBtnFace
   Font.Charset = GB2312_CHARSET
   Font.Color = clWindowText
@@ -15,12 +15,15 @@ object fFormMain: TfFormMain
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
+  DesignSize = (
+    515
+    515)
   PixelsPerInch = 96
   TextHeight = 12
   object SBar1: TdxStatusBar
     Left = 0
-    Top = 390
-    Width = 520
+    Top = 495
+    Width = 515
     Height = 20
     Panels = <
       item
@@ -42,20 +45,24 @@ object fFormMain: TfFormMain
     Font.Height = -12
     Font.Name = #23435#20307
     Font.Style = []
+    ExplicitTop = 415
+    ExplicitWidth = 530
   end
-  object Layout1: TdxLayoutControl
-    Left = 0
-    Top = 0
-    Width = 520
-    Height = 390
-    Align = alClient
-    ParentShowHint = False
-    ShowHint = True
+  object Group1: TcxGroupBox
+    Left = 8
+    Top = 8
+    Anchors = [akLeft, akTop, akRight]
+    Caption = #20351#29992#35828#26126
+    ParentFont = False
+    Style.Edges = [bLeft, bTop, bRight, bBottom]
     TabOrder = 1
-    LayoutLookAndFeel = FSM.dxLayoutWeb1
+    ExplicitWidth = 515
+    Height = 125
+    Width = 500
     object EditReadMe: TcxMemo
-      Left = 23
-      Top = 36
+      Left = 2
+      Top = 18
+      Align = alClient
       ParentFont = False
       Style.BorderColor = clSkyBlue
       Style.BorderStyle = ebsSingle
@@ -67,73 +74,88 @@ object fFormMain: TfFormMain
       StyleFocused.LookAndFeel.SkinName = ''
       StyleHot.LookAndFeel.SkinName = ''
       TabOrder = 0
-      Height = 75
-      Width = 474
+      ExplicitWidth = 511
+      Height = 105
+      Width = 496
     end
-    object BarCode1: TdxBarCode
-      Left = 217
-      Top = 258
-      Text = 'Hello Word'
+  end
+  object Group2: TcxGroupBox
+    Left = 8
+    Top = 142
+    Anchors = [akLeft, akTop, akRight]
+    Caption = #23494#30721#21442#25968
+    ParentFont = False
+    Style.Edges = [bLeft, bTop, bRight, bBottom]
+    TabOrder = 2
+    ExplicitWidth = 515
+    Height = 85
+    Width = 500
+    object cxLabel1: TcxLabel
+      Left = 12
+      Top = 23
+      Caption = #29992#25143#26631#35782':'
       ParentFont = False
-      Properties.BarCodeSymbologyClassName = 'TdxBarCodeQRCodeSymbology'
-      Properties.ModuleWidth = 3
-      Properties.ShowText = False
-      Style.BorderColor = clSkyBlue
-      Style.BorderStyle = ebsSingle
-      Style.Edges = []
-      Style.HotTrack = False
-      Style.LookAndFeel.SkinName = ''
-      Style.Shadow = False
-      StyleDisabled.LookAndFeel.SkinName = ''
-      StyleHot.LookAndFeel.SkinName = ''
+      Transparent = True
+    end
+    object cxLabel2: TcxLabel
+      Left = 12
+      Top = 49
+      Caption = #23494#38053#38271#24230':'
+      ParentFont = False
+      Transparent = True
+    end
+    object cxLabel3: TcxLabel
+      Left = 192
+      Top = 23
+      Caption = #31995#32479#26631#35782':'
+      ParentFont = False
+      Transparent = True
+    end
+    object cxLabel4: TcxLabel
+      Left = 192
+      Top = 49
+      Caption = #21152#23494#23494#38053':'
+      ParentFont = False
+      Transparent = True
+    end
+    object BtnOK: TcxButton
+      Left = 432
+      Top = 22
+      Width = 60
+      Height = 45
+      Caption = #29983#25104
+      TabOrder = 4
+      OnClick = BtnOKClick
     end
     object EditUser: TcxTextEdit
-      Left = 81
-      Top = 148
+      Left = 73
+      Top = 22
       AutoSize = False
       ParentFont = False
       Style.BorderColor = clSkyBlue
       Style.BorderStyle = ebsSingle
       Style.HotTrack = False
-      TabOrder = 1
+      TabOrder = 5
       Text = 'admin'
       Height = 20
       Width = 105
     end
     object EditLen: TcxTextEdit
-      Left = 81
-      Top = 173
+      Left = 73
+      Top = 47
       AutoSize = False
       ParentFont = False
       Style.BorderColor = clSkyBlue
       Style.BorderStyle = ebsSingle
       Style.HotTrack = False
-      TabOrder = 2
+      TabOrder = 6
       Text = '6'
       Height = 20
       Width = 105
     end
-    object EditSys: TcxComboBox
-      Left = 249
-      Top = 148
-      ParentFont = False
-      Properties.ItemHeight = 20
-      Properties.OnChange = EditSysPropertiesChange
-      Style.BorderColor = clSkyBlue
-      Style.BorderStyle = ebsSingle
-      Style.HotTrack = False
-      Style.LookAndFeel.SkinName = 'UserSkin'
-      Style.ButtonStyle = btsHotFlat
-      Style.PopupBorderStyle = epbsSingle
-      StyleDisabled.LookAndFeel.SkinName = 'UserSkin'
-      StyleFocused.LookAndFeel.SkinName = 'UserSkin'
-      StyleHot.LookAndFeel.SkinName = 'UserSkin'
-      TabOrder = 3
-      Width = 175
-    end
     object EditKey: TcxButtonEdit
-      Left = 249
-      Top = 171
+      Left = 252
+      Top = 47
       AutoSize = False
       ParentFont = False
       Properties.Buttons = <
@@ -151,148 +173,61 @@ object fFormMain: TfFormMain
       StyleDisabled.LookAndFeel.SkinName = 'UserSkin'
       StyleFocused.LookAndFeel.SkinName = 'UserSkin'
       StyleHot.LookAndFeel.SkinName = 'UserSkin'
-      TabOrder = 4
+      TabOrder = 7
       Height = 20
       Width = 175
     end
-    object BtnOK: TcxButton
-      Left = 429
-      Top = 148
-      Width = 60
-      Height = 45
-      Caption = #29983#25104
-      LookAndFeel.SkinName = 'UserSkin'
-      TabOrder = 5
-      OnClick = BtnOKClick
+    object EditSys: TcxComboBox
+      Left = 252
+      Top = 22
+      ParentFont = False
+      Properties.ItemHeight = 20
+      Properties.OnChange = EditSysPropertiesChange
+      Style.BorderColor = clSkyBlue
+      Style.BorderStyle = ebsSingle
+      Style.HotTrack = False
+      Style.ButtonStyle = btsHotFlat
+      Style.PopupBorderStyle = epbsDefault
+      TabOrder = 8
+      Width = 175
     end
-    object Layout1Group_Root: TdxLayoutGroup
-      AlignHorz = ahClient
-      AlignVert = avClient
-      ButtonOptions.Buttons = <>
-      Hidden = True
-      ItemIndex = 1
-      ShowBorder = False
-      Index = -1
-    end
-    object dxLayoutItem1: TdxLayoutItem
-      Parent = dxLayoutGroup3
-      Control = EditReadMe
-      ControlOptions.OriginalHeight = 75
-      ControlOptions.OriginalWidth = 393
-      ControlOptions.ShowBorder = False
-      Index = 0
-    end
-    object dxLayoutItem3: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      AlignHorz = ahCenter
-      AlignVert = avCenter
-      CaptionOptions.AlignHorz = taCenter
-      Control = BarCode1
-      ControlOptions.OriginalHeight = 85
-      ControlOptions.OriginalWidth = 85
-      ControlOptions.ShowBorder = False
-      Index = 0
-    end
-    object dxLayoutGroup1: TdxLayoutGroup
-      Parent = Layout1Group_Root
-      CaptionOptions.Text = #23494#30721#21442#25968
-      ButtonOptions.Buttons = <>
-      LayoutDirection = ldHorizontal
-      Index = 1
-    end
-    object dxLayoutItem2: TdxLayoutItem
-      Parent = dxLayoutAutoCreatedGroup4
-      AlignHorz = ahLeft
-      AlignVert = avTop
-      CaptionOptions.AlignHorz = taCenter
-      CaptionOptions.Text = #29992#25143#26631#35782':'
-      Control = EditUser
-      ControlOptions.OriginalHeight = 20
-      ControlOptions.OriginalWidth = 105
-      ControlOptions.ShowBorder = False
-      Index = 0
-    end
-    object dxLayoutItem4: TdxLayoutItem
-      Parent = dxLayoutAutoCreatedGroup4
-      AlignHorz = ahLeft
-      AlignVert = avTop
-      CaptionOptions.AlignHorz = taCenter
-      CaptionOptions.Text = #23494#38053#38271#24230':'
-      Control = EditLen
-      ControlOptions.OriginalHeight = 20
-      ControlOptions.OriginalWidth = 105
-      ControlOptions.ShowBorder = False
-      Index = 1
-    end
-    object dxLayoutItem6: TdxLayoutItem
-      Parent = dxLayoutAutoCreatedGroup2
-      AlignHorz = ahLeft
-      AlignVert = avTop
-      CaptionOptions.AlignHorz = taCenter
-      CaptionOptions.Text = #31995#32479#26631#35782':'
-      Control = EditSys
-      ControlOptions.OriginalHeight = 18
-      ControlOptions.OriginalWidth = 175
-      ControlOptions.ShowBorder = False
-      Index = 0
-    end
-    object dxLayoutItem7: TdxLayoutItem
-      Parent = dxLayoutAutoCreatedGroup2
-      AlignHorz = ahLeft
-      AlignVert = avTop
-      CaptionOptions.AlignHorz = taCenter
-      CaptionOptions.Text = #21152#23494#23494#38053':'
-      Control = EditKey
-      ControlOptions.OriginalHeight = 20
-      ControlOptions.OriginalWidth = 175
-      ControlOptions.ShowBorder = False
-      Index = 1
-    end
-    object dxLayoutGroup2: TdxLayoutGroup
-      Parent = Layout1Group_Root
-      AlignVert = avClient
-      CaptionOptions.Text = #20108#32500#30721
-      ButtonOptions.Buttons = <>
-      Index = 2
-    end
-    object dxLayoutItem5: TdxLayoutItem
-      Parent = dxLayoutGroup1
-      AlignVert = avClient
-      CaptionOptions.AlignHorz = taCenter
-      CaptionOptions.Text = 'cxButton1'
-      CaptionOptions.Visible = False
-      Control = BtnOK
-      ControlOptions.OriginalHeight = 20
-      ControlOptions.OriginalWidth = 60
-      ControlOptions.ShowBorder = False
-      Index = 1
-    end
-    object dxLayoutGroup3: TdxLayoutGroup
-      Parent = Layout1Group_Root
-      CaptionOptions.Text = #20351#29992#35828#26126
-      ButtonOptions.Buttons = <>
-      Index = 0
-    end
-    object dxLayoutAutoCreatedGroup3: TdxLayoutAutoCreatedGroup
-      Parent = dxLayoutGroup1
-      AlignHorz = ahLeft
-      AlignVert = avTop
-      LayoutDirection = ldHorizontal
-      Index = 0
-    end
-    object dxLayoutAutoCreatedGroup4: TdxLayoutAutoCreatedGroup
-      Parent = dxLayoutAutoCreatedGroup3
-      AlignHorz = ahLeft
-      Index = 0
-    end
-    object dxLayoutAutoCreatedGroup2: TdxLayoutAutoCreatedGroup
-      Parent = dxLayoutAutoCreatedGroup3
-      Index = 1
+  end
+  object Group3: TcxGroupBox
+    Left = 8
+    Top = 235
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    Caption = #20108#32500#30721
+    ParentFont = False
+    Style.Edges = [bLeft, bTop, bRight, bBottom]
+    TabOrder = 3
+    ExplicitWidth = 515
+    ExplicitHeight = 172
+    Height = 252
+    Width = 500
+    object BarCode1: TdxBarCode
+      Left = 2
+      Top = 18
+      Align = alClient
+      Text = 'Hello Word'
+      ParentFont = False
+      Properties.BarCodeSymbologyClassName = 'TdxBarCodeQRCodeSymbology'
+      Properties.ModuleWidth = 3
+      Properties.ShowText = False
+      Style.BorderColor = clSkyBlue
+      Style.BorderStyle = ebsSingle
+      Style.Edges = []
+      Style.HotTrack = False
+      Style.LookAndFeel.SkinName = ''
+      Style.Shadow = False
+      StyleDisabled.LookAndFeel.SkinName = ''
+      StyleHot.LookAndFeel.SkinName = ''
+      ExplicitWidth = 511
+      ExplicitHeight = 152
     end
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer
-    Left = 25
-    Top = 328
+    Left = 33
+    Top = 40
   end
 end
