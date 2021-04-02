@@ -240,11 +240,14 @@ end;
 procedure TfFormDBConfig.FormCreate(Sender: TObject);
 begin
   Timer1Timer(nil);
-  FSM.SwitchSkinRandom;
   ShowFileInBar('');
 
   TApplicationHelper.LoadFormConfig(Self);
   InitFormData(False);
+
+  if FileExists(TApplicationHelper.gDBConfig) then
+    OpenConfigFile(TApplicationHelper.gDBConfig);
+  //load default
 end;
 
 procedure TfFormDBConfig.FormClose(Sender: TObject; var Action: TCloseAction);

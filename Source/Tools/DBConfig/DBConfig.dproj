@@ -131,6 +131,7 @@
         <VerInfo_Build>6</VerInfo_Build>
         <VerInfo_Keys>CompanyName=RunSoft(润)工作室;FileDescription=数据库配置;FileVersion=1.0.0.6;InternalName=DBConfig;LegalCopyright=GPL公共许可;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=数据库连接配置工具,支持多数据和多种驱动.</VerInfo_Keys>
         <BT_BuildType>Debug</BT_BuildType>
+        <Icon_MainIcon>..\..\..\Resource\database.ico</Icon_MainIcon>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">

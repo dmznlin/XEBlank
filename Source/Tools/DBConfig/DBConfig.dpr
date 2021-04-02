@@ -11,6 +11,9 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFSM, FSM);
-  Application.CreateForm(TfFormDBConfig, fFormDBConfig);
+
+  FSM.SwitchSkinRandom();
+  if FSM.VerifyAdministrator then //verify
+    Application.CreateForm(TfFormDBConfig, fFormDBConfig);
   Application.Run;
 end.

@@ -2,28 +2,30 @@ object fFormAdminPwd: TfFormAdminPwd
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
-  BorderStyle = bsSingle
   Caption = 'Admin Tookit'
-  ClientHeight = 515
-  ClientWidth = 515
+  ClientHeight = 393
+  ClientWidth = 517
   Color = clBtnFace
+  Constraints.MinHeight = 400
+  Constraints.MinWidth = 525
   Font.Charset = GB2312_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
   Font.Name = #23435#20307
   Font.Style = []
   OldCreateOrder = False
-  Position = poScreenCenter
+  Position = poDesktopCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   DesignSize = (
-    515
-    515)
+    517
+    393)
   PixelsPerInch = 96
   TextHeight = 12
   object SBar1: TdxStatusBar
     Left = 0
-    Top = 495
-    Width = 515
+    Top = 373
+    Width = 517
     Height = 20
     Panels = <
       item
@@ -45,8 +47,7 @@ object fFormAdminPwd: TfFormAdminPwd
     Font.Height = -12
     Font.Name = #23435#20307
     Font.Style = []
-    ExplicitTop = 415
-    ExplicitWidth = 530
+    ExplicitTop = 560
   end
   object Group1: TcxGroupBox
     Left = 8
@@ -56,12 +57,11 @@ object fFormAdminPwd: TfFormAdminPwd
     ParentFont = False
     Style.Edges = [bLeft, bTop, bRight, bBottom]
     TabOrder = 1
-    ExplicitWidth = 515
     Height = 125
-    Width = 500
+    Width = 502
     object EditReadMe: TcxMemo
       Left = 2
-      Top = 18
+      Top = 17
       Align = alClient
       ParentFont = False
       Style.BorderColor = clSkyBlue
@@ -74,9 +74,8 @@ object fFormAdminPwd: TfFormAdminPwd
       StyleFocused.LookAndFeel.SkinName = ''
       StyleHot.LookAndFeel.SkinName = ''
       TabOrder = 0
-      ExplicitWidth = 511
-      Height = 105
-      Width = 496
+      Height = 106
+      Width = 498
     end
   end
   object Group2: TcxGroupBox
@@ -87,9 +86,8 @@ object fFormAdminPwd: TfFormAdminPwd
     ParentFont = False
     Style.Edges = [bLeft, bTop, bRight, bBottom]
     TabOrder = 2
-    ExplicitWidth = 515
     Height = 85
-    Width = 500
+    Width = 502
     object cxLabel1: TcxLabel
       Left = 12
       Top = 23
@@ -200,13 +198,12 @@ object fFormAdminPwd: TfFormAdminPwd
     ParentFont = False
     Style.Edges = [bLeft, bTop, bRight, bBottom]
     TabOrder = 3
-    ExplicitWidth = 515
-    ExplicitHeight = 172
-    Height = 252
-    Width = 500
+    ExplicitHeight = 317
+    Height = 130
+    Width = 502
     object BarCode1: TdxBarCode
       Left = 2
-      Top = 18
+      Top = 17
       Align = alClient
       Text = 'Hello Word'
       ParentFont = False
@@ -221,8 +218,7 @@ object fFormAdminPwd: TfFormAdminPwd
       Style.Shadow = False
       StyleDisabled.LookAndFeel.SkinName = ''
       StyleHot.LookAndFeel.SkinName = ''
-      ExplicitWidth = 511
-      ExplicitHeight = 152
+      ExplicitHeight = 298
     end
   end
   object Timer1: TTimer

@@ -38,6 +38,7 @@ type
       AButtonIndex: Integer);
     procedure BtnOKClick(Sender: TObject);
     procedure EditSysPropertiesChange(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     function LoadConfigData(): Boolean;
@@ -56,6 +57,10 @@ implementation
 uses
   IniFiles, ULibFun, UManagerGroup, UGoogleOTP;
 
+const
+  gConfigFile = 'AdminPwd.ini';
+  //主配置文件
+
 type
   TSystemKey = record
     FID   : string;   //标识
@@ -65,6 +70,7 @@ type
 
 var
   gSystemKeys: array of TSystemKey;
+  //密钥列表
 
 procedure TfFormAdminPwd.FormCreate(Sender: TObject);
 var nStr: string;
@@ -74,12 +80,10 @@ begin
 
   Timer1Timer(nil);
   FSM.SwitchSkinRandom;
+  TApplicationHelper.LoadFormConfig(Self);
 
   with TApplicationHelper do
   begin
-    gPath := ExtractFilePath(Application.ExeName);
-    gFormConfig := 'AdminPwd.ini';
-
     if not LoadConfigData() then
     begin
       BtnOK.Enabled := False;
@@ -97,6 +101,11 @@ begin
   end;
 end;
 
+procedure TfFormAdminPwd.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  TApplicationHelper.SaveFormConfig(Self);
+end;
+
 //Date: 2020-10-26
 //Desc: 载入配置数据
 function TfFormAdminPwd.LoadConfigData: Boolean;
@@ -108,14 +117,14 @@ begin
   Result := False;
   with TApplicationHelper do
   begin
-    if not FileExists(gPath + gFormConfig) then
+    if not FileExists(gPath + gConfigFile) then
     begin
-      EditReadMe.Text := Format('配置 %s 不存在', [gFormConfig]);
+      EditReadMe.Text := Format('配置 %s 不存在', [gConfigFile]);
       Exit;
     end;
 
     nList := nil;
-    nIni := TIniFile.Create(gPath + gFormConfig);
+    nIni := TIniFile.Create(gPath + gConfigFile);
     try
       nStr := nIni.ReadString('Config', 'RunOn', '');
       if nStr = '' then
@@ -123,9 +132,9 @@ begin
       //init work pc id
 
       nStr := nIni.ReadString('Config', 'ProgID', TGoogleOTP.MakeSecret());
-      if not IsValidConfigFile(gPath + gFormConfig, nStr) then
+      if not IsValidConfigFile(gPath + gConfigFile, nStr) then
       begin
-        EditReadMe.Text := Format('配置 %s 已损坏', [gFormConfig]);
+        EditReadMe.Text := Format('配置 %s 已损坏', [gConfigFile]);
         Exit;
       end;
 
