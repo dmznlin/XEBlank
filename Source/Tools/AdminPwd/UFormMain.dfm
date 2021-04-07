@@ -4,10 +4,10 @@ object fFormAdminPwd: TfFormAdminPwd
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Admin Tookit'
   ClientHeight = 393
-  ClientWidth = 517
+  ClientWidth = 492
   Color = clBtnFace
   Constraints.MinHeight = 400
-  Constraints.MinWidth = 525
+  Constraints.MinWidth = 495
   Font.Charset = GB2312_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
@@ -18,14 +18,14 @@ object fFormAdminPwd: TfFormAdminPwd
   OnClose = FormClose
   OnCreate = FormCreate
   DesignSize = (
-    517
+    492
     393)
   PixelsPerInch = 96
   TextHeight = 12
   object SBar1: TdxStatusBar
     Left = 0
     Top = 373
-    Width = 517
+    Width = 492
     Height = 20
     Panels = <
       item
@@ -47,7 +47,6 @@ object fFormAdminPwd: TfFormAdminPwd
     Font.Height = -12
     Font.Name = #23435#20307
     Font.Style = []
-    ExplicitTop = 560
   end
   object Group1: TcxGroupBox
     Left = 8
@@ -58,7 +57,7 @@ object fFormAdminPwd: TfFormAdminPwd
     Style.Edges = [bLeft, bTop, bRight, bBottom]
     TabOrder = 1
     Height = 125
-    Width = 502
+    Width = 477
     object EditReadMe: TcxMemo
       Left = 2
       Top = 17
@@ -75,7 +74,7 @@ object fFormAdminPwd: TfFormAdminPwd
       StyleHot.LookAndFeel.SkinName = ''
       TabOrder = 0
       Height = 106
-      Width = 498
+      Width = 473
     end
   end
   object Group2: TcxGroupBox
@@ -86,8 +85,11 @@ object fFormAdminPwd: TfFormAdminPwd
     ParentFont = False
     Style.Edges = [bLeft, bTop, bRight, bBottom]
     TabOrder = 2
+    DesignSize = (
+      477
+      85)
     Height = 85
-    Width = 502
+    Width = 477
     object cxLabel1: TcxLabel
       Left = 12
       Top = 23
@@ -117,11 +119,14 @@ object fFormAdminPwd: TfFormAdminPwd
       Transparent = True
     end
     object BtnOK: TcxButton
-      Left = 432
+      Left = 395
       Top = 22
-      Width = 60
+      Width = 72
       Height = 45
+      Anchors = [akTop, akRight]
       Caption = #29983#25104
+      DropDownMenu = PMenu1
+      Kind = cxbkDropDownButton
       TabOrder = 4
       OnClick = BtnOKClick
     end
@@ -136,7 +141,7 @@ object fFormAdminPwd: TfFormAdminPwd
       TabOrder = 5
       Text = 'admin'
       Height = 20
-      Width = 105
+      Width = 112
     end
     object EditLen: TcxTextEdit
       Left = 73
@@ -149,20 +154,29 @@ object fFormAdminPwd: TfFormAdminPwd
       TabOrder = 6
       Text = '6'
       Height = 20
-      Width = 105
+      Width = 112
     end
     object EditKey: TcxButtonEdit
       Left = 252
-      Top = 47
+      Top = 46
+      Anchors = [akLeft, akTop, akRight]
       AutoSize = False
       ParentFont = False
+      ParentShowHint = False
       Properties.Buttons = <
         item
-          Caption = #38543#26426
-          Default = True
-          Kind = bkText
+          ImageIndex = 35
+          Hint = #29983#25104#38543#26426#23494#38053
+          Kind = bkGlyph
+        end
+        item
+          ImageIndex = 46
+          Kind = bkGlyph
         end>
+      Properties.Images = FSM.Image16
+      Properties.PasswordChar = '*'
       Properties.OnButtonClick = EditKeyPropertiesButtonClick
+      ShowHint = True
       Style.BorderColor = clSkyBlue
       Style.BorderStyle = ebsSingle
       Style.HotTrack = False
@@ -173,12 +187,14 @@ object fFormAdminPwd: TfFormAdminPwd
       StyleHot.LookAndFeel.SkinName = 'UserSkin'
       TabOrder = 7
       Height = 20
-      Width = 175
+      Width = 135
     end
     object EditSys: TcxComboBox
       Left = 252
       Top = 22
+      Anchors = [akLeft, akTop, akRight]
       ParentFont = False
+      Properties.ImmediateDropDownWhenKeyPressed = False
       Properties.ItemHeight = 20
       Properties.OnChange = EditSysPropertiesChange
       Style.BorderColor = clSkyBlue
@@ -187,7 +203,7 @@ object fFormAdminPwd: TfFormAdminPwd
       Style.ButtonStyle = btsHotFlat
       Style.PopupBorderStyle = epbsDefault
       TabOrder = 8
-      Width = 175
+      Width = 135
     end
   end
   object Group3: TcxGroupBox
@@ -198,9 +214,8 @@ object fFormAdminPwd: TfFormAdminPwd
     ParentFont = False
     Style.Edges = [bLeft, bTop, bRight, bBottom]
     TabOrder = 3
-    ExplicitHeight = 317
     Height = 130
-    Width = 502
+    Width = 477
     object BarCode1: TdxBarCode
       Left = 2
       Top = 17
@@ -218,12 +233,27 @@ object fFormAdminPwd: TfFormAdminPwd
       Style.Shadow = False
       StyleDisabled.LookAndFeel.SkinName = ''
       StyleHot.LookAndFeel.SkinName = ''
-      ExplicitHeight = 298
     end
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer
     Left = 33
     Top = 40
+  end
+  object PMenu1: TPopupMenu
+    AutoHotkeys = maManual
+    Left = 72
+    Top = 40
+    object N1: TMenuItem
+      Caption = #20445#23384#23494#38053
+      OnClick = N1Click
+    end
+    object N2: TMenuItem
+      Caption = '-'
+    end
+    object N3: TMenuItem
+      Caption = #21024#38500#23494#38053
+      OnClick = N3Click
+    end
   end
 end

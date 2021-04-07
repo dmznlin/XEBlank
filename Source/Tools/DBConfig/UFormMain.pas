@@ -439,7 +439,7 @@ begin
   with gMG.FDBManager do
   try
     AddDB(nConn);
-    ShowWaitForm(Self, '正在连接数据库');
+    ShowWaitForm(Self, '正在连接');
 
     nObj := DBQuery('Select 1+1', nil, nConn.FID);
     FSM.ShowMsg('测试成功');
