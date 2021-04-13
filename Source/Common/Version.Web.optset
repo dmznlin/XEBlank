@@ -2,12 +2,12 @@
     <PropertyGroup>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=RunSoft(润)工作室;FileDescription=数据库配置;FileVersion=1.0.0.0;InternalName=DBConfig;LegalCopyright=GPL公共许可;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=数据库连接配置工具,支持多数据和多种驱动.</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=RunSoft(润)工作室;FileDescription=Web服务;FileVersion=1.0.0.0;InternalName=Web;LegalCopyright=GPL公共许可;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=基于WEB(B/S)的用户操作界面</VerInfo_Keys>
         <VerInfo_Locale>2052</VerInfo_Locale>
-        <DCC_DcuOutput>..\..\..\Dcu\Tools\DBConfig</DCC_DcuOutput>
-        <DCC_ExeOutput>..\..\..\Bin\Tools</DCC_ExeOutput>
-        <DCC_UnitSearchPath>..\..\Common;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <Icon_MainIcon>..\..\..\Resource\database.ico</Icon_MainIcon>
+        <DCC_ExeOutput>..\..\Bin\Web</DCC_ExeOutput>
+        <DCC_DcuOutput>..\..\Dcu\Web</DCC_DcuOutput>
+        <DCC_UnitSearchPath>..\Common;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <Icon_MainIcon>..\..\Resource\Web.ico</Icon_MainIcon>
     </PropertyGroup>
     <ProjectExtensions>
         <Borland.Personality>Delphi.Personality.12</Borland.Personality>

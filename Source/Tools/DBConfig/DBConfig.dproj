@@ -46,8 +46,8 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_DcuOutput>..\..\..\Dcu\Tools\DBConfig</DCC_DcuOutput>
-        <DCC_ExeOutput>..\..\..\Bin\Tools</DCC_ExeOutput>
+        <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
         <DCC_N>false</DCC_N>
         <DCC_S>false</DCC_S>
@@ -59,57 +59,30 @@
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
         <SanitizedProjectName>DBConfig</SanitizedProjectName>
-        <DCC_UnitSearchPath>..\..\Common;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Locale>2052</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=RunSoft(润)工作室;FileDescription=数据库配置;FileVersion=1.0.0.0;InternalName=DBConfig;LegalCopyright=GPL公共许可;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=数据库连接配置工具,支持多数据和多种驱动.</VerInfo_Keys>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
-    <Import Project="Default.optset" Condition="'$(Base_Win32)'!='' And Exists('Default.optset')"/>
+    <Import Project="..\..\Common\Version.DBConfig.optset" Condition="'$(Base_Win32)'!='' And Exists('..\..\Common\Version.DBConfig.optset')"/>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_DcuOutput>..\..\..\Dcu\Tools\DBConfig</DCC_DcuOutput>
-        <DCC_ExeOutput>..\..\..\Bin\Tools</DCC_ExeOutput>
-        <DCC_E>false</DCC_E>
-        <DCC_N>false</DCC_N>
-        <DCC_S>false</DCC_S>
-        <DCC_F>false</DCC_F>
-        <DCC_K>false</DCC_K>
-        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
-        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
-        <SanitizedProjectName>DBConfig</SanitizedProjectName>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <Manifest_File>(None)</Manifest_File>
-        <CfgDependentOn>Default.optset</CfgDependentOn>
+        <CfgDependentOn>..\..\Common\Version.DBConfig.optset</CfgDependentOn>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;dxSpreadSheetCoreDialogsRS25;dxRibbonCustomizationFormRS25;DBXDb2Driver;dxPSPrVwRibbonRS25;vclactnband;vclFireDAC;cxExportRS25;dxSpreadSheetInplaceRichEditRS25;dxHttpIndyRequestRS25;tethering;uniGUI25Chart;dxPScxCommonRS25;FireDACADSDriver;cxPivotGridOLAPRS25;FireDACMSSQLDriver;cxSchedulerGridRS25;vcltouch;vcldb;Intraweb;dxGaugeControlRS25;cxLibraryRS25;vclib;dxFlowChartAdvancedCustomizeFormRS25;FireDACDBXDriver;vclx;dxSpreadSheetConditionalFormattingDialogsRS25;dxTileControlRS25;dxMapControlRS25;dxPDFViewerRS25;dxDockingRS25;VCLRESTComponents;dxPSLnksRS25;dxWizardControlRS25;dxRichEditControlRS25;vclie;bindengine;dxFireDACServerModeRS25;FireDACMySQLDriver;tdsprovider250;DataSnapClient;dxPSdxPDFViewerLnkRS25;bindcompdbx;dxPSdxLCLnkRS25;DBXSybaseASEDriver;IndyIPServer;dac250;IndySystem;dsnapcon;dxPSRichEditControlLnkRS25;FireDACMSAccDriver;FireDACInfxDriver;fmxFireDAC;vclimg;dOPC250;dxdbtrRS25;dxPScxTLLnkRS25;emshosting;dxSpreadSheetRS25;pgprovider250;DBXOdbcDriver;FireDACTDataDriver;FMXTee;cxGridRS25;dxSpreadSheetCoreConditionalFormattingDialogsRS25;DbxCommonDriver;dxPScxSchedulerLnkRS25;dxorgcRS25;dxCloudServiceLibraryRS25;xmlrtl;DataSnapNativeClient;fmxobj;dxPScxGridLnkRS25;unidacfmx250;rtl;DbxClientDriver;dacvcl250;DBXSybaseASADriver;dxPSCoreRS25;dxmdsRS25;appanalytics;IndyIPClient;bindcompvcl;dxADOEMFRS25;TeeUI;VclSmp;FireDACODBCDriver;DataSnapIndy10ServerTransport;DataSnapProviderClient;FireDACMongoDBDriver;cxVerticalGridRS25;dxtrmdRS25;EhLib250;dxADOServerModeRS25;DataSnapServerMidas;dxCoreRS25;cxSchedulerTreeBrowserRS25;dxRichEditControlCoreRS25;DBXInterBaseDriver;dxPSTeeChartRS25;myprovider250;DBXMSSQLDriver;dxPSdxFCLnkRS25;dxRichEditCoreRS25;DatasnapConnectorsFreePascal;bindcompfmx;DBXOracleDriver;unidac250;inetdb;oraprovider250;FmxTeeUI;emsedge;fmx;fmxdae;dxPScxPivotGridLnkRS25;dxTabbedMDIRS25;dxBarDBNavRS25;dbexpress;IndyCore;dxFlowChartRS25;dxRichEditDocumentModelRS25;dsnap;DataSnapCommon;dxBarRS25;dxPSDBTeeChartRS25;dxdborRS25;DataSnapConnectors;uniGUI25m;dxPScxExtCommonRS25;cxPivotGridRS25;dxPSdxSpreadSheetLnkRS25;dxSpreadSheetReportDesignerRS25;dxNavBarRS25;cxSchedulerRibbonStyleEventEditorRS25;FireDACOracleDriver;DBXMySQLDriver;DBXFirebirdDriver;FireDACCommonODBC;cxTreeListRS25;ibprovider250;IndyIPCommon;vcl;dxPScxVGridLnkRS25;dxBarExtItemsRS25;dxSkinsCoreRS25;dxComnRS25;FireDACDb2Driver;dxPSdxDBTVLnkRS25;uniGUI25;EhLibADODataDrivers250;TeeDB;dxSpreadSheetCoreRS25;dxServerModeRS25;dxPScxPCProdRS25;dxFlowChartLayoutsRS25;FireDACPgDriver;ibmonitor;FireDACASADriver;dxEMFRS25;liteprovider250;ibxpress;Tee;DataSnapServer;ibxbindings;dxPsPrVwAdvRS25;FireDACDSDriver;vclwinx;dxRichEditInplaceRS25;cxTreeListdxBarPopupMenuRS25;CustomIPTransport;vcldsnap;cxSchedulerWebServiceStorageRS25;dxPSdxOCLnkRS25;odbcprovider250;bindcomp;DBXInformixDriver;crcontrols250;cxPivotGridChartRS25;cxSchedulerRS25;dxBarExtDBItemsRS25;dxDBXServerModeRS25;dxFireDACEMFRS25;dxGDIPlusRS25;dxPSdxGaugeControlLnkRS25;dbxcds;unidacvcl250;adortl;dacfmx250;uniGUI25VCL;dxPSdxDBOCLnkRS25;dxRibbonRS25;dsnapxml;dxSpellCheckerRS25;dbrtl;IndyProtocols;inetdbxpress;dxFlowChartDesignerRS25;uSynEdit_R2021;dxPSdxMapControlLnkRS25;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
-        <DCC_DcuOutput>..\..\..\Dcu\Tools\DBConfig</DCC_DcuOutput>
-        <DCC_ExeOutput>..\..\..\Bin\Tools</DCC_ExeOutput>
-        <DCC_E>false</DCC_E>
-        <DCC_N>false</DCC_N>
-        <DCC_S>false</DCC_S>
-        <DCC_F>false</DCC_F>
-        <DCC_K>false</DCC_K>
-        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
-        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
-        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
-        <SanitizedProjectName>DBConfig</SanitizedProjectName>
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+        <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <DCC_DcuOutput>..\..\..\Dcu\Tools\DBConfig</DCC_DcuOutput>
-        <DCC_ExeOutput>..\..\..\Bin\Tools</DCC_ExeOutput>
-        <DCC_E>false</DCC_E>
-        <DCC_N>false</DCC_N>
-        <DCC_S>false</DCC_S>
-        <DCC_F>false</DCC_F>
-        <DCC_K>false</DCC_K>
-        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
-        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
-        <SanitizedProjectName>DBConfig</SanitizedProjectName>
-        <VerInfo_Build>30</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=RunSoft(润)工作室;FileDescription=数据库配置;FileVersion=1.0.0.30;InternalName=DBConfig;LegalCopyright=GPL公共许可;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=数据库连接配置工具,支持多数据和多种驱动.</VerInfo_Keys>
-        <BT_BuildType>Debug</BT_BuildType>
+        <DCC_RemoteDebug>false</DCC_RemoteDebug>
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <AppEnableHighDPI>true</AppEnableHighDPI>        
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -118,27 +91,19 @@
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <DCC_DcuOutput>..\..\..\Dcu\Tools\DBConfig</DCC_DcuOutput>
-        <DCC_ExeOutput>..\..\..\Bin\Tools</DCC_ExeOutput>
-        <DCC_E>false</DCC_E>
-        <DCC_N>false</DCC_N>
-        <DCC_S>false</DCC_S>
-        <DCC_F>false</DCC_F>
-        <DCC_K>false</DCC_K>
-        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
-        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
-        <SanitizedProjectName>DBConfig</SanitizedProjectName>
-        <VerInfo_Build>6</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=RunSoft(润)工作室;FileDescription=数据库配置;FileVersion=1.0.0.6;InternalName=DBConfig;LegalCopyright=GPL公共许可;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=数据库连接配置工具,支持多数据和多种驱动.</VerInfo_Keys>
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <AppEnableHighDPI>true</AppEnableHighDPI>       
+        
         <BT_BuildType>Debug</BT_BuildType>
-        <Icon_MainIcon>..\..\..\Resource\database.ico</Icon_MainIcon>
     </PropertyGroup>
+    <Import Project="..\..\Common\Version.DBConfig.optset" Condition="'$(Base_Win32)'!='' And Exists('..\..\Common\Version.AdminPwd.optset')"/>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="UFormMain.pas">
             <Form>fFormDBConfig</Form>
+            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\..\Common\UStyleModule.pas">
             <Form>FSM</Form>
@@ -172,7 +137,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\..\..\Bin\Tools\DBConfig.exe" Configuration="Release" Class="ProjectOutput">
+                <DeployFile LocalName="Win32\Release\DBConfig.exe" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>DBConfig.exe</RemoteName>
                         <Overwrite>true</Overwrite>
