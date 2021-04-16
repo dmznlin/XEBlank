@@ -11,6 +11,7 @@ uses
 
 type
   TUniMainModule = class(TUniGUIMainModule)
+    procedure UniGUIMainModuleCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -24,11 +25,17 @@ implementation
 {$R *.dfm}
 
 uses
-  UniGUIVars, ServerModule, uniGUIApplication;
+  UniGUIVars, ServerModule, uniGUIApplication, USysConst;
 
 function UniMainModule: TUniMainModule;
 begin
   Result := TUniMainModule(UniApplication.UniMainModule)
+end;
+
+procedure TUniMainModule.UniGUIMainModuleCreate(Sender: TObject);
+begin
+  Background.Url := gSystem.FImages.FBgMain;
+  LoginBackground.Url := gSystem.FImages.FBgLogin;
 end;
 
 initialization

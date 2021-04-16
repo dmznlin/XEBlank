@@ -7,7 +7,7 @@ unit USysConst;
 interface
 
 uses
-  SysUtils, Classes, Data.DB, uniPageControl;
+  SysUtils, Classes, Data.DB, uniPageControl, ULibFun;
 
 const
   cSBar_Date            = 0;                         //日期面板索引
@@ -27,25 +27,17 @@ const
   cCmd_GetData          = $1007;                     //选择数据
 
 type
+  TSystemImage = record
+    FBgLogin    : string;                            //背景:登录窗口
+    FBgMain     : string;                            //背景:主窗口
+    FImgLogo    : string;                            //图片:登录窗口Logo
+    FImgKey     : string;                            //图片:登录窗口密码装饰
+  end;
+
   PSystemParam = ^TSystemParam;
   TSystemParam = record
-    FGroupID    : string;                            //所属集团
-    FFactory    : string;                            //所属工厂
-    FProgID     : string;                            //程序标识
-
-    FAppTitle   : string;                            //程序标题栏提示
-    FMainTitle  : string;                            //主窗体标题
-    FHintText   : string;                            //提示文本
-    FCopyRight  : string;                            //主窗体提示内容
-    FFavicon    : string;                            //收藏夹显示图标
-
-    FLocalIP    : string;                            //本机IP
-    FLocalMAC   : string;                            //本机MAC
-    FLocalName  : string;                            //本机名称
-
-    FSystemInit : Boolean;                           //系统初始化
-    FPort       : Integer;                           //服务端口
-    FDBMain     : string;                            //主数据库连接
+    FMain       : TApplicationHelper.TAppParam;      //主配置参数
+    FImages     : TSystemImage;                      //图片资源配置
   end;
   //系统参数
 
@@ -90,7 +82,7 @@ type
 //------------------------------------------------------------------------------
 var
   gPath: string;                                     //程序所在路径
-  gSystem:TSystemParam;                              //程序环境参数
+  gSystem: TSystemParam;                             //程序环境参数
 
 ResourceString
   sProgID             = 'DMZN';                      //默认标识
@@ -110,11 +102,9 @@ ResourceString
   sLogExt             = '.log';                      //日志扩展名
   sLogField           = #9;                          //记录分隔符
 
-  sThemeDir           = 'Themes\';                   //主题目录
-  sThemeDef           = 'Default';                   //默认主题
+  sImageDir           = 'Images\';                   //图片目录
   sReportDir          = 'Report\';                   //报表目录
   sBackupDir          = 'Backup\';                   //备份目录
-  sBackupFile         = 'Bacup.idx';                 //备份索引
   sCameraDir          = 'Camera\';                   //抓拍目录
 
   sConfigFile         = 'Config.Ini';                //主配置文件

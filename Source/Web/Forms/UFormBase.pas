@@ -48,7 +48,7 @@ implementation
 
 procedure TfFormBase.UniFormCreate(Sender: TObject);
 begin
-  FConnID := gSystem.FDBMain;
+  FConnID := '';
   FillChar(FParam, SizeOf(FParam), #0);
   OnCreateForm(Sender);
 end;

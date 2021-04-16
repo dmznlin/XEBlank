@@ -16,8 +16,7 @@ uses
   uniGUISessionManager, uniGUIApplication, uniTreeView, uniGUIForm,
   uniDBGrid, uniStringGrid, uniComboBox,
   //----------------------------------------------------------------------------
-  UBaseObject, UManagerGroup, ULibFun, USysDB, USysConst, USysFun, USysRemote,
-  DBGrid2Excel;
+  UBaseObject, UManagerGroup, ULibFun, USysDB, USysConst, USysFun, USysRemote;
 
 implementation
 

@@ -7,13 +7,15 @@ unit USysFun;
 interface
 
 uses
-  Vcl.Forms, System.SysUtils, System.IniFiles, Global.USysFun, ULibFun,
-  UBaseObject, USysConst;
+  Vcl.Forms, System.SysUtils, System.IniFiles, ULibFun, UBaseObject, USysConst;
 
 procedure InitSystemEnvironment;
 //初始化系统运行环境的变量
-procedure LoadSysParameter(const nIni: TIniFile = nil);
+procedure LoadSysParameter(nIni: TIniFile = nil);
 //载入系统配置参数
+function SwtichPathDelim(const nPath: string; const nFrom: string = '\';
+  const nTo: string = '/'): string;
+//切换路径分隔符
 
 implementation
 
@@ -23,8 +25,7 @@ implementation
 procedure InitSystemEnvironment;
 begin
   Randomize;
-  gPath := ExtractFilePath(Application.ExeName);
-  TApplicationHelper.gPath := gPath;
+  gPath := TApplicationHelper.gPath;
 
   with FormatSettings do
   begin
@@ -41,39 +42,48 @@ end;
 
 //Date: 2020-06-23
 //Desc: 载入系统配置参数
-procedure LoadSysParameter(const nIni: TIniFile = nil);
-var nTmp: TIniFile;
+procedure LoadSysParameter(nIni: TIniFile = nil);
+const sMain = 'Config';
+var nStr: string;
+    nBool: Boolean;
 begin
-  if Assigned(nIni) then
-       nTmp := nIni
-  else nTmp := TIniFile.Create(gPath + sConfigFile);
+  nBool := Assigned(nIni);
+  if not nBool then
+    nIni := TIniFile.Create(TApplicationHelper.gSysConfig);
+  //xxxxx
 
+  with gSystem, nIni do
   try
-    with gSystem, nTmp do
-    begin
-      FillChar(gSystem, SizeOf(TSystemParam), #0);
-      //初始化全局参数
-
-      FGroupID := ReadString(sConfigSec, 'GroupID', sProgID);
-      //集团代码
-      FFactory := ReadString(sConfigSec, 'FactoryID', sProgID);
-      //工厂代码
-      FProgID := ReadString(sConfigSec, 'ProgID', sProgID);
-      //系统代码
-
-      FAppTitle   := ReadString(FProgID, 'AppTitle', sAppTitle);
-      FMainTitle  := ReadString(FProgID, 'MainTitle', sMainCaption);
-      FHintText   := ReadString(FProgID, 'HintText', '');
-      FCopyRight  := ReadString(FProgID, 'CopyRight', '');
-
-      FSystemInit := ReadString('Server', 'SystemInit', 'N') = 'Y';
-      FPort       := ReadInteger('Server', 'Port', 8077);
-      FFavicon    := ReplaceGlobalPath(ReadString('Server', 'Favicon', ''));
-      FDBMain     := ReadString('Database', 'Main', '');
-    end;
+    FillChar(gSystem, SizeOf(TSystemParam), #0);
+    TApplicationHelper.LoadParameters(gSystem.FMain, nIni);
+    //load main config
   finally
-    if not Assigned(nIni) then nTmp.Free;
+    if not nBool then nIni.Free;
   end;
+
+  nStr := gPath + sImageDir + 'images.ini';
+  if FileExists(nStr) then
+  begin
+    nIni := TIniFile.Create(nStr);
+    with gSystem.FImages, nIni do
+    try
+      nStr       := SwtichPathDelim(sImageDir);
+      FBgLogin   := nStr + ExtractFileName(ReadString(sMain, 'BgLogin', ''));
+      FBgMain    := nStr + ExtractFileName(ReadString(sMain, 'BgMain', ''));
+      FImgLogo   := nStr + ExtractFileName(ReadString(sMain, 'ImgLogo', ''));
+      FImgKey    := nStr + ExtractFileName(ReadString(sMain, 'ImgKey', ''));
+    finally
+      nIni.Free;
+    end;
+  end;
+end;
+
+//Date: 2021-04-16
+//Parm: 文件路径;原、目标
+//Desc: 将nPatn中的路径分隔符转为特定风格
+function SwtichPathDelim(const nPath,nFrom,nTo: string): string;
+begin
+  Result := StringReplace(nPath, nFrom, nTo, [rfReplaceAll]);
 end;
 
 end.

@@ -48,17 +48,17 @@ begin
   LoadSysParameter();
   //载入系统配置参数
 
-  if not TApplicationHelper.IsValidConfigFile(gPath + sConfigFile,
-    gSystem.FProgID) then
+  with gSystem.FMain do
   begin
-    raise Exception.Create(sInvalidConfig);
-    //配置文件被改动
-  end;
+    Title := FPrograms[FActive].FTitleApp;
+    //程序标题
+    Port := FPrograms[FActive].FPort;
+    //服务端口
 
-  Title := gSystem.FAppTitle;
-  //程序标题
-  Port := gSystem.FPort;
-  //服务端口
+    if FileExists(FPrograms[FActive].FFavicon) then
+      Favicon.LoadFromFile(FPrograms[FActive].FFavicon);
+    //收藏夹图标
+  end;
 
 //  with gSystem do
 //  begin
@@ -81,8 +81,7 @@ end;
 
 procedure TUniServerModule.UniGUIServerModuleBeforeShutdown(Sender: TObject);
 begin
-  gMG.FObjectPool.RegistMe(False);
-  //关闭对象池
+//
 end;
 
 initialization

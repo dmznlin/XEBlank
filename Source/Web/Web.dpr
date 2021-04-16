@@ -1,6 +1,7 @@
 program Web;
 
 uses
+  FastMM4,
   Forms,
   ServerModule in 'ServerModule.pas' {UniServerModule: TUniGUIServerModule},
   MainModule in 'MainModule.pas' {UniMainModule: TUniGUIMainModule},
@@ -15,7 +16,6 @@ uses
 {$R *.res}
 
 begin
-  ReportMemoryLeaksOnShutdown := True;
   Application.Initialize;
   TUniServerModule.Create(Application);
   Application.Run;

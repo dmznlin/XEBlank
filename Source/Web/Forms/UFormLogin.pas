@@ -37,8 +37,7 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, MainModule, ULibFun, Data.Win.ADODB, USysBusiness, USysDB,
-  USysConst;
+  uniGUIVars, MainModule, ULibFun, Data.DB, USysDB, USysConst;
 
 function fFormLogin: TfFormLogin;
 begin
@@ -47,14 +46,14 @@ end;
 
 procedure TfFormLogin.UniLoginFormCreate(Sender: TObject);
 begin
-  //ImageLogo.Url := sImageDir + 'logo.bmp';
-  //ImageKey.Url := sImageDir + 'key.png';
+  ImageKey.Url := gSystem.FImages.FImgKey;
+  ImageLogo.Url := gSystem.FImages.FImgLogo;
 end;
 
 //Desc: 登录
 procedure TfFormLogin.BtnOKClick(Sender: TObject);
 var nStr: string;
-    nQuery: TADOQuery;
+    nQuery: TDataSet;
 begin
   EditUser.Text := Trim(EditUser.Text);
   if EditUser.Text = '' then
@@ -62,6 +61,8 @@ begin
     ShowMessage('请输入用户名');
     Exit;
   end;
+
+  ModalResult := mrOk;
 {
   nQuery := nil;
   with ULibFun.TStringHelper do
