@@ -1,8 +1,8 @@
 object fFormLogin: TfFormLogin
   Left = 0
   Top = 0
-  ClientHeight = 260
-  ClientWidth = 358
+  ClientHeight = 265
+  ClientWidth = 354
   Caption = #30331#24405
   OldCreateOrder = False
   BorderIcons = [biSystemMenu]
@@ -13,23 +13,23 @@ object fFormLogin: TfFormLogin
   object ImageLogo: TUniImage
     Left = 0
     Top = 0
-    Width = 358
+    Width = 354
     Height = 132
     Hint = ''
     Align = alTop
   end
   object UniSimplePanel1: TUniSimplePanel
-    Left = 8
-    Top = 138
-    Width = 342
-    Height = 85
+    Left = 12
+    Top = 142
+    Width = 330
+    Height = 80
     Hint = ''
     ParentColor = False
     Border = True
     TabOrder = 1
     object UniLabel1: TUniLabel
       Left = 12
-      Top = 20
+      Top = 17
       Width = 54
       Height = 12
       Hint = ''
@@ -42,8 +42,8 @@ object fFormLogin: TfFormLogin
     end
     object EditUser: TUniEdit
       Left = 72
-      Top = 15
-      Width = 192
+      Top = 12
+      Width = 175
       Hint = ''
       Text = ''
       ParentFont = False
@@ -54,7 +54,7 @@ object fFormLogin: TfFormLogin
     end
     object UniLabel2: TUniLabel
       Left = 12
-      Top = 53
+      Top = 50
       Width = 54
       Height = 12
       Hint = ''
@@ -67,8 +67,8 @@ object fFormLogin: TfFormLogin
     end
     object EditPwd: TUniEdit
       Left = 72
-      Top = 48
-      Width = 192
+      Top = 45
+      Width = 175
       Hint = ''
       PasswordChar = '*'
       Text = ''
@@ -79,44 +79,110 @@ object fFormLogin: TfFormLogin
       TabOrder = 4
     end
     object ImageKey: TUniImage
-      Left = 272
-      Top = 15
+      Left = 260
+      Top = 12
       Width = 55
       Height = 55
       Hint = ''
     end
   end
-  object BtnOK: TUniButton
-    Left = 194
-    Top = 229
-    Width = 75
+  object BtnOK: TUniFSMenuButton
+    Left = 175
+    Top = 230
+    Width = 85
     Height = 25
     Hint = ''
+    DropdownMenu = PMenu1
     Caption = #30331#24405
-    ParentFont = False
-    Font.Charset = GB2312_CHARSET
-    Font.Height = -12
-    Font.Name = #23435#20307
     TabOrder = 2
-    Default = True
-    ScreenMask.Enabled = True
-    ScreenMask.Message = #27491#22312#30331#24405
-    ScreenMask.Target = Owner
     OnClick = BtnOKClick
+    StyleMenuButton = Default
+    BadgeText.Text = '0'
+    BadgeText.TextColor = '#FFFFFF'
+    BadgeText.TextSize = 10
+    BadgeText.TextStyle = 'bold'
+    BadgeText.BackgroundColor = '#D50000'
   end
-  object BtnExit: TUniButton
-    Left = 275
-    Top = 229
+  object BtnExit: TUniFSButton
+    Left = 266
+    Top = 228
     Width = 75
     Height = 25
     Hint = ''
+    StyleButton = Default
+    BadgeText.Text = '0'
+    BadgeText.TextColor = '#FFFFFF'
+    BadgeText.TextSize = 10
+    BadgeText.TextStyle = 'bold'
+    BadgeText.BackgroundColor = '#D50000'
     Caption = #36864#20986
-    Cancel = True
-    ModalResult = 2
-    ParentFont = False
-    Font.Charset = GB2312_CHARSET
-    Font.Height = -12
-    Font.Name = #23435#20307
     TabOrder = 3
+  end
+  object PMenu1: TUniPopupMenu
+    Left = 16
+    Top = 16
+    object N1: TUniMenuItem
+      Caption = #31649#29702#25805#20316
+      object N2: TUniMenuItem
+        Caption = #21021#22987#21270#25968#25454#24211
+      end
+      object N3: TUniMenuItem
+        Caption = #21021#22987#21270#29992#25143#23494#30721
+      end
+    end
+  end
+  object FSConfirm1: TUniFSConfirm
+    Theme = bootstrap
+    TypeColor = blue
+    TypeAnimated = False
+    Draggable = False
+    EscapeKey = False
+    CloseIcon = False
+    Icon = 'fa fa-smile-o'
+    RTL = False
+    boxWidth = '380px'
+    ButtonTextConfirm = 'Confirma'
+    ButtonTextCancel = 'Cancela'
+    ScreenMask.Enabled = False
+    ScreenMask.Text = 'Processing'
+    PromptType.TypePrompt = text
+    PromptType.RequiredField = False
+    PromptType.TextRequiredField = 'Field riquired'
+    Left = 72
+    Top = 16
+  end
+  object FSToast1: TUniFSToast
+    TitleSize = 13
+    TitleLineHeight = 0
+    MsgSize = 12
+    MsgLineHeight = 0
+    Theme = Dark
+    ImageWidth = 0
+    MaxWidth = 0
+    zIndex = 99999
+    Layout = SmallInt
+    Balloon = False
+    Close = True
+    CloseOnEscape = False
+    RTL = False
+    Position = bottomRight
+    TimeOut = 5000
+    Drag = True
+    Overlay = False
+    ToastOnce = False
+    PauseOnHover = True
+    ResetOnHover = False
+    ProgressBar = True
+    ProgressBarColor = 'rgb(0, 255, 184)'
+    ScreenMask.Enabled = False
+    Animateinside = True
+    TransitionIn = fadeInUp
+    TransitionOut = fadeOut
+    TransitionInMobile = fadeInUp
+    TransitionOutMobile = fadeOutDown
+    ButtonTextYes = 'Confirma'
+    ButtonTextNo = 'Cancela'
+    Left = 128
+    Top = 16
   end
 end

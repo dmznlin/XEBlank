@@ -7,9 +7,10 @@ unit UFormLogin;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, uniGUITypes, uniGUIForm, uniButton, uniGUIClasses, uniEdit,
-  uniLabel, uniPanel, uniGUIBaseClasses, uniImage;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  uniGUITypes, uniGUIForm, UniFSToast, uniGUIBaseClasses, uniGUIClasses,
+  UniFSConfirm, Vcl.Menus, uniMainMenu, UniFSButton, uniButton, uniBitBtn,
+  uniMenuButton, UniFSMenuButton, uniEdit, uniLabel, uniPanel, uniImage;
 
 type
   TfFormLogin = class(TUniLoginForm)
@@ -19,9 +20,15 @@ type
     EditUser: TUniEdit;
     UniLabel2: TUniLabel;
     EditPwd: TUniEdit;
-    BtnOK: TUniButton;
-    BtnExit: TUniButton;
     ImageKey: TUniImage;
+    BtnOK: TUniFSMenuButton;
+    PMenu1: TUniPopupMenu;
+    BtnExit: TUniFSButton;
+    N1: TUniMenuItem;
+    N2: TUniMenuItem;
+    N3: TUniMenuItem;
+    FSConfirm1: TUniFSConfirm;
+    FSToast1: TUniFSToast;
     procedure UniLoginFormCreate(Sender: TObject);
     procedure BtnOKClick(Sender: TObject);
   private
@@ -48,6 +55,9 @@ procedure TfFormLogin.UniLoginFormCreate(Sender: TObject);
 begin
   ImageKey.Url := gSystem.FImages.FImgKey;
   ImageLogo.Url := gSystem.FImages.FImgLogo;
+
+  UniMainModule.FSToast1 := FSToast1;
+  UniMainModule.FSConfirm1 := FSConfirm1;
 end;
 
 //Desc: 登录
@@ -61,6 +71,7 @@ begin
     ShowMessage('请输入用户名');
     Exit;
   end;
+
 
   ModalResult := mrOk;
 {

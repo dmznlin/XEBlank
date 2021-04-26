@@ -207,7 +207,7 @@ begin
 end;
 
 //Date: 2021-03-29
-//Parm: 消息;标题;窗口句柄
+//Parm: 消息;标题
 //Desc: 提示对话框
 procedure TFSM.ShowDlg(const nMsg: string; nTitle: string);
 begin
@@ -217,7 +217,7 @@ begin
 end;
 
 //Date: 2021-03-29
-//Parm: 消息;标题;窗口句柄
+//Parm: 消息;标题
 //Desc: 询问对话框
 function TFSM.QueryDlg(const nMsg: string; nTitle: string): Boolean;
 begin

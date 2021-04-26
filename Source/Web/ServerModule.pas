@@ -77,6 +77,9 @@ begin
 
   AutoCoInitialize := True;
   //自动初始化COM对象
+
+  gMG.FLogManager.StartService();
+  //启动日志服务
 end;
 
 procedure TUniServerModule.UniGUIServerModuleBeforeShutdown(Sender: TObject);
