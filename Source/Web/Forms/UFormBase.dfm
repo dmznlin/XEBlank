@@ -15,39 +15,15 @@ object fFormBase: TfFormBase
     170)
   PixelsPerInch = 96
   TextHeight = 13
-  object BtnOK: TUniButton
-    Left = 136
-    Top = 136
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = #30830#23450
-    Anchors = [akRight, akBottom]
-    TabOrder = 0
-    Default = True
-    OnClick = BtnOKClick
-  end
-  object BtnExit: TUniButton
-    Left = 219
-    Top = 136
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = #21462#28040
-    Cancel = True
-    ModalResult = 2
-    Anchors = [akRight, akBottom]
-    TabOrder = 1
-  end
   object PanelWork: TUniSimplePanel
     Left = 8
     Top = 8
     Width = 286
-    Height = 120
+    Height = 150
     Hint = ''
     ParentColor = False
     Border = True
     Anchors = [akLeft, akTop, akRight, akBottom]
-    TabOrder = 2
+    TabOrder = 0
   end
 end

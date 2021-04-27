@@ -94,7 +94,7 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppEnableHighDPI>true</AppEnableHighDPI>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>        
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <BT_BuildType>Debug</BT_BuildType>
     </PropertyGroup>
     <ItemGroup>
@@ -129,6 +129,11 @@
             <Form>fFormLogin</Form>
             <FormType>dfm</FormType>
             <DesignClass>TUniLoginForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\UFormNormal.pas">
+            <Form>fFormNormal</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

@@ -53,6 +53,10 @@ type
     ListCfg: TdxImageListBox;
     EditFilter: TcxButtonEdit;
     cxLabel8: TcxLabel;
+    EditPwd: TcxTextEdit;
+    EditUser: TcxTextEdit;
+    cxLabel9: TcxLabel;
+    cxLabel10: TcxLabel;
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure BtnNewClick(Sender: TObject);
@@ -320,7 +324,9 @@ begin
   begin
     EditID.Text := nConn.FID;
     EditName.Text := nConn.FName;
-    EditConn.Text := nConn.FConn;
+    EditUser.Text := nConn.FUser;
+    EditPwd.Text := nConn.FPassword;
+    EditConn.Text := nConn.FConnCfg;
 
     nStr := TStringHelper.Enum2Str(nConn.FFitDB);
     EditFit.ItemIndex := EditFit.Properties.Items.IndexOf(nStr);
@@ -380,10 +386,12 @@ begin
     FValid := True;
     FChanged := True;
 
-    FID    := EditID.Text;
-    FName  := Trim(EditName.Text);
-    FConn  := Trim(EditConn.Text);
-    FFitDB := TStringHelper.Str2Enum<TDBType>(EditFit.Text);
+    FID      := EditID.Text;
+    FName    := Trim(EditName.Text);
+    FUser    := Trim(EditUser.Text);
+    FPassword:= Trim(EditPwd.Text);
+    FConnCfg := Trim(EditConn.Text);
+    FFitDB   := TStringHelper.Str2Enum<TDBType>(EditFit.Text);
   end;
 
   with gMG.FDBManager do
@@ -429,10 +437,12 @@ begin
     FValid := False;
     FChanged := False;
 
-    FID    := TDateTimeHelper.DateTimeSerial();
-    FName  := Trim(EditName.Text);
-    FConn  := Trim(EditConn.Text);
-    FFitDB := TStringHelper.Str2Enum<TDBType>(EditFit.Text);
+    FID      := TDateTimeHelper.DateTimeSerial();
+    FName    := Trim(EditName.Text);
+    FUser    := Trim(EditUser.Text);
+    FPassword:= Trim(EditPwd.Text);
+    FConnCfg := Trim(EditConn.Text);
+    FFitDB   := TStringHelper.Str2Enum<TDBType>(EditFit.Text);
   end;
 
   nObj := nil;

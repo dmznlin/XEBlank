@@ -11,7 +11,8 @@ uses
   USysFun in 'Common\USysFun.pas',
   USysRemote in 'Common\USysRemote.pas',
   UFormBase in 'Forms\UFormBase.pas' {fFormBase: TUniForm},
-  UFormLogin in 'Forms\UFormLogin.pas' {fFormLogin: TUniLoginForm};
+  UFormLogin in 'Forms\UFormLogin.pas' {fFormLogin: TUniLoginForm},
+  UFormNormal in 'Forms\UFormNormal.pas' {fFormNormal: TUniForm};
 
 {$R *.res}
 

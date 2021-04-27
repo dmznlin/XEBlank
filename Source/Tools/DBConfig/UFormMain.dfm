@@ -3,8 +3,8 @@ object fFormDBConfig: TfFormDBConfig
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Database Configuration'
-  ClientHeight = 430
-  ClientWidth = 580
+  ClientHeight = 403
+  ClientWidth = 572
   Color = clBtnFace
   Constraints.MinHeight = 430
   Constraints.MinWidth = 580
@@ -18,14 +18,14 @@ object fFormDBConfig: TfFormDBConfig
   OnClose = FormClose
   OnCreate = FormCreate
   DesignSize = (
-    580
-    430)
+    572
+    403)
   PixelsPerInch = 96
   TextHeight = 12
   object SBar1: TdxStatusBar
     Left = 0
-    Top = 410
-    Width = 580
+    Top = 383
+    Width = 572
     Height = 20
     Panels = <
       item
@@ -47,6 +47,8 @@ object fFormDBConfig: TfFormDBConfig
     Font.Height = -12
     Font.Name = #23435#20307
     Font.Style = []
+    ExplicitTop = 410
+    ExplicitWidth = 580
   end
   object Group1: TcxGroupBox
     Left = 8
@@ -55,9 +57,10 @@ object fFormDBConfig: TfFormDBConfig
     Caption = #22522#30784#37197#32622
     ParentFont = False
     Style.Edges = [bLeft, bTop, bRight, bBottom]
-    TabOrder = 3
+    TabOrder = 1
+    ExplicitWidth = 563
     Height = 92
-    Width = 563
+    Width = 555
     object EditDefDB: TcxComboBox
       Left = 82
       Top = 26
@@ -88,7 +91,7 @@ object fFormDBConfig: TfFormDBConfig
       Style.HotTrack = False
       Style.ButtonStyle = btsHotFlat
       Style.PopupBorderStyle = epbsSingle
-      TabOrder = 4
+      TabOrder = 2
       Height = 21
       Width = 175
     end
@@ -160,50 +163,54 @@ object fFormDBConfig: TfFormDBConfig
     ParentFont = False
     Style.Edges = [bLeft, bTop, bRight, bBottom]
     TabOrder = 4
-    Height = 267
-    Width = 563
+    ExplicitWidth = 563
+    ExplicitHeight = 267
+    Height = 240
+    Width = 555
     object Panel1: TPanel
       Left = 155
       Top = 17
-      Width = 406
-      Height = 248
+      Width = 398
+      Height = 221
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitWidth = 406
+      ExplicitHeight = 248
       DesignSize = (
-        406
-        248)
+        398
+        221)
       object cxLabel4: TcxLabel
         Left = 12
-        Top = 14
+        Top = 39
         Caption = #25968#25454#24211#26631#35782':'
         ParentFont = False
         Transparent = True
       end
       object cxLabel5: TcxLabel
         Left = 12
-        Top = 42
+        Top = 66
         Caption = #25968#25454#24211#21517#31216':'
         ParentFont = False
         Transparent = True
       end
       object cxLabel6: TcxLabel
         Left = 12
-        Top = 69
+        Top = 12
         Caption = #25968#25454#24211#31867#22411':'
         ParentFont = False
         Transparent = True
       end
       object cxLabel7: TcxLabel
         Left = 12
-        Top = 96
+        Top = 90
         Caption = #36830#25509#23383#31526#20018':'
         ParentFont = False
         Transparent = True
       end
       object EditFit: TcxComboBox
         Left = 85
-        Top = 67
+        Top = 10
         AutoSize = False
         ParentFont = False
         Properties.DropDownListStyle = lsEditFixedList
@@ -216,56 +223,90 @@ object fFormDBConfig: TfFormDBConfig
         Style.PopupBorderStyle = epbsSingle
         TabOrder = 4
         Height = 21
-        Width = 175
+        Width = 125
       end
       object EditID: TcxTextEdit
         Left = 85
-        Top = 12
+        Top = 37
         ParentFont = False
         TabOrder = 0
-        Width = 175
+        Width = 125
       end
       object EditName: TcxTextEdit
         Left = 85
-        Top = 40
+        Top = 64
         ParentFont = False
         TabOrder = 2
-        Width = 175
+        Width = 125
       end
       object EditConn: TcxMemo
         Left = 85
-        Top = 96
+        Top = 90
         Anchors = [akLeft, akTop, akRight, akBottom]
         ParentFont = False
         Properties.ScrollBars = ssVertical
         TabOrder = 7
-        Height = 150
-        Width = 306
+        ExplicitHeight = 153
+        Height = 126
+        Width = 310
+      end
+      object EditPwd: TcxTextEdit
+        Left = 270
+        Top = 64
+        ParentFont = False
+        Properties.EchoMode = eemPassword
+        Properties.PasswordChar = '*'
+        TabOrder = 8
+        Width = 125
+      end
+      object EditUser: TcxTextEdit
+        Left = 270
+        Top = 37
+        ParentFont = False
+        TabOrder = 9
+        Width = 125
+      end
+      object cxLabel9: TcxLabel
+        Left = 235
+        Top = 39
+        Caption = #29992#25143':'
+        ParentFont = False
+        Transparent = True
+      end
+      object cxLabel10: TcxLabel
+        Left = 235
+        Top = 66
+        Caption = #23494#30721':'
+        ParentFont = False
+        Transparent = True
       end
     end
     object cxSplitter1: TcxSplitter
       Left = 147
       Top = 17
       Width = 8
-      Height = 248
+      Height = 221
       HotZoneClassName = 'TcxXPTaskBarStyle'
+      ExplicitHeight = 248
     end
     object Panel2: TPanel
       Left = 2
       Top = 17
       Width = 145
-      Height = 248
+      Height = 221
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitHeight = 248
       object Panel3: TPanel
         Left = 0
-        Top = 220
+        Top = 193
         Width = 145
         Height = 28
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
+        ExplicitTop = 220
         DesignSize = (
           145
           28)
@@ -299,7 +340,7 @@ object fFormDBConfig: TfFormDBConfig
         Left = 0
         Top = 0
         Width = 145
-        Height = 220
+        Height = 193
         Alignment = taLeftJustify
         ImageAlign = dxliLeft
         ItemHeight = 0
@@ -310,6 +351,7 @@ object fFormDBConfig: TfFormDBConfig
         BorderStyle = bsNone
         TabOrder = 0
         OnClick = ListCfgClick
+        ExplicitHeight = 220
         SaveStrings = ()
       end
     end

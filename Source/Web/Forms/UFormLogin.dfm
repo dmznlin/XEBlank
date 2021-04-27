@@ -105,7 +105,7 @@ object fFormLogin: TfFormLogin
   end
   object BtnExit: TUniFSButton
     Left = 266
-    Top = 228
+    Top = 230
     Width = 75
     Height = 25
     Hint = ''
@@ -123,10 +123,19 @@ object fFormLogin: TfFormLogin
     Top = 16
     object N1: TUniMenuItem
       Caption = #31649#29702#25805#20316
+      object MenuDES: TUniMenuItem
+        Caption = #32534#30721' - 3des'
+      end
+      object MenuBase64: TUniMenuItem
+        Caption = #32534#30721' - base64'
+      end
       object N2: TUniMenuItem
+        Caption = '-'
+      end
+      object MenuInitDB: TUniMenuItem
         Caption = #21021#22987#21270#25968#25454#24211
       end
-      object N3: TUniMenuItem
+      object MenuInitUserPwd: TUniMenuItem
         Caption = #21021#22987#21270#29992#25143#23494#30721
       end
     end

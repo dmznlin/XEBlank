@@ -25,10 +25,13 @@ type
     PMenu1: TUniPopupMenu;
     BtnExit: TUniFSButton;
     N1: TUniMenuItem;
-    N2: TUniMenuItem;
-    N3: TUniMenuItem;
+    MenuInitDB: TUniMenuItem;
+    MenuInitUserPwd: TUniMenuItem;
     FSConfirm1: TUniFSConfirm;
     FSToast1: TUniFSToast;
+    MenuBase64: TUniMenuItem;
+    MenuDES: TUniMenuItem;
+    N2: TUniMenuItem;
     procedure UniLoginFormCreate(Sender: TObject);
     procedure BtnOKClick(Sender: TObject);
   private
