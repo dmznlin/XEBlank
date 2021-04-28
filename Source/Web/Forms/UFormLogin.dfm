@@ -122,43 +122,22 @@ object fFormLogin: TfFormLogin
     Left = 16
     Top = 16
     object N1: TUniMenuItem
-      Caption = #31649#29702#25805#20316
+      Caption = #31649#29702#21592#24037#20855
       object MenuDES: TUniMenuItem
-        Caption = #32534#30721' - 3des'
-      end
-      object MenuBase64: TUniMenuItem
-        Caption = #32534#30721' - base64'
+        Caption = #25968#25454#32534#30721' && '#35299#30721
+        OnClick = MenuDESClick
       end
       object N2: TUniMenuItem
         Caption = '-'
       end
       object MenuInitDB: TUniMenuItem
         Caption = #21021#22987#21270#25968#25454#24211
+        OnClick = MenuInitDBClick
       end
       object MenuInitUserPwd: TUniMenuItem
         Caption = #21021#22987#21270#29992#25143#23494#30721
       end
     end
-  end
-  object FSConfirm1: TUniFSConfirm
-    Theme = bootstrap
-    TypeColor = blue
-    TypeAnimated = False
-    Draggable = False
-    EscapeKey = False
-    CloseIcon = False
-    Icon = 'fa fa-smile-o'
-    RTL = False
-    boxWidth = '380px'
-    ButtonTextConfirm = 'Confirma'
-    ButtonTextCancel = 'Cancela'
-    ScreenMask.Enabled = False
-    ScreenMask.Text = 'Processing'
-    PromptType.TypePrompt = text
-    PromptType.RequiredField = False
-    PromptType.TextRequiredField = 'Field riquired'
-    Left = 72
-    Top = 16
   end
   object FSToast1: TUniFSToast
     TitleSize = 13
@@ -192,6 +171,26 @@ object fFormLogin: TfFormLogin
     ButtonTextYes = 'Confirma'
     ButtonTextNo = 'Cancela'
     Left = 128
+    Top = 16
+  end
+  object FSConfirm1: TUniFSConfirm
+    Theme = modern
+    TypeColor = blue
+    TypeAnimated = False
+    Draggable = False
+    EscapeKey = False
+    CloseIcon = False
+    Icon = 'fa fa-smile-o'
+    RTL = False
+    boxWidth = '380px'
+    ButtonTextConfirm = 'Confirma'
+    ButtonTextCancel = 'Cancela'
+    ScreenMask.Enabled = False
+    ScreenMask.Text = 'Processing'
+    PromptType.TypePrompt = text
+    PromptType.RequiredField = False
+    PromptType.TextRequiredField = 'Field riquired'
+    Left = 72
     Top = 16
   end
 end

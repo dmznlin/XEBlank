@@ -6,7 +6,7 @@
         <VerInfo_Locale>2052</VerInfo_Locale>
         <DCC_ExeOutput>..\..\Bin\Web</DCC_ExeOutput>
         <DCC_DcuOutput>..\..\Dcu\Web</DCC_DcuOutput>
-        <DCC_UnitSearchPath>..\Common;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>Common;Forms;..\Common;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Icon_MainIcon>..\..\Resource\Web.ico</Icon_MainIcon>
     </PropertyGroup>
     <ProjectExtensions>

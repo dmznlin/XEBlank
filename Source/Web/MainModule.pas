@@ -20,11 +20,15 @@ type
     procedure UniGUIMainModuleCreate(Sender: TObject);
   private
     { Private declarations }
+    FAdminLastLogin: Cardinal;
+    {*管理员最后登录*}
   public
     FSToast1: TUniFSToast;
     FSConfirm1: TUniFSConfirm;
     FSTheme1: UniFSConfirm.TTheme;
     {*消息框对象*}
+    procedure VerifyAdministrator(const nEvent: TButtonClickInputEvent);
+    {*验证身份*}
     procedure ShowMsg(const nHint: string; const nError: Boolean = False;
       nTitle: string = '');
     {*消息提示条*}
@@ -33,7 +37,7 @@ type
     procedure QueryDlg(const nMsg: string; const nEvent: TButtonClickEvent = nil;
       const nMask: string = ''; nTitle: string = '');
     procedure InputDlg(const nMsg,nTitle: string;
-      const nEvent: TButtonClickInputEvent; const nDefault: string = '';
+      const nEvent: TButtonClickInputEvent; const nBlank: string = '';
       const nSize: Integer = 0; const nPwd: Boolean = False);
     {*消息提示框*}
   end;
@@ -45,7 +49,8 @@ implementation
 {$R *.dfm}
 
 uses
-  UniGUIVars, ServerModule, uniGUIApplication, ULibFun, USysConst;
+  UniGUIVars, ServerModule, uniGUIApplication, ULibFun, UGoogleOTP,
+  USysDB, USysConst;
 
 function UniMainModule: TUniMainModule;
 begin
@@ -54,9 +59,37 @@ end;
 
 procedure TUniMainModule.UniGUIMainModuleCreate(Sender: TObject);
 begin
+  FAdminLastLogin := 0;
   FSTheme1 := TTheme.bootstrap;
   Background.Url := gSystem.FImages.FBgMain;
   LoginBackground.Url := gSystem.FImages.FBgLogin;
+end;
+
+//Date: 2021-04-28
+//Desc: 验证当前是否管理员
+procedure TUniMainModule.VerifyAdministrator(const nEvent: TButtonClickInputEvent);
+begin
+  if TDateTimeHelper.GetTickCountDiff(FAdminLastLogin) < 10 * 60 * 1000 then
+  begin
+    nEvent(ctYes, '');
+    Exit;
+  end; //10 min valid
+
+  InputDlg('请输入管理员动态口令', '验证',
+    procedure(const nType: TButtonClickType; const nText: string)
+    begin
+      if (nType = ctYes) and TStringHelper.IsNumber(nText, False) then
+       with TGoogleOTP do
+        if Validate(EncodeBase32(sDefaultAdminKey), StrToInt(nText)) then
+        begin
+          FAdminLastLogin := TDateTimeHelper.GetTickCount();
+          nEvent(ctYes, nText);
+          Exit;
+        end;
+
+      nEvent(ctNo, nText);
+      //verify failure
+    end);
 end;
 
 //Date: 2021-04-20
@@ -171,18 +204,18 @@ begin
 end;
 
 //Date: 2021-04-20
-//Parm: 消息;标题;事件;默认值;大小;是否密码
+//Parm: 消息;标题;事件;允许不填写;大小;是否密码
 //Desc: 显示输入框
 procedure TUniMainModule.InputDlg(const nMsg,nTitle: string;
-  const nEvent: TButtonClickInputEvent; const nDefault: string;
+  const nEvent: TButtonClickInputEvent; const nBlank: string;
   const nSize: Integer; const nPwd: Boolean);
 begin
   with FSConfirm1 do
   begin
     ButtonTextConfirm  := '确定';
     ButtonTextCancel   := '取消';
-    PromptType.RequiredField := True;
-    PromptType.TextRequiredField := nDefault;
+    PromptType.RequiredField := nBlank <> '';
+    PromptType.TextRequiredField := nBlank;
 
     if nPwd then
          PromptType.TypePrompt := password

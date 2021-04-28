@@ -8,13 +8,16 @@ object fFormBase: TfFormBase
   OldCreateOrder = False
   BorderIcons = [biSystemMenu]
   MonitoredKeys.Keys = <>
+  Font.Charset = GB2312_CHARSET
+  Font.Height = -12
+  Font.Name = #23435#20307
   OnCreate = UniFormCreate
   OnDestroy = UniFormDestroy
   DesignSize = (
     302
     170)
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 12
   object PanelWork: TUniSimplePanel
     Left = 8
     Top = 8
@@ -22,7 +25,6 @@ object fFormBase: TfFormBase
     Height = 150
     Hint = ''
     ParentColor = False
-    Border = True
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
   end

@@ -64,7 +64,6 @@
     </PropertyGroup>
     <Import Project="..\Common\Version.Web.optset" Condition="'$(Base_Win32)'!='' And Exists('..\Common\Version.Web.optset')"/>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <Manifest_File>(None)</Manifest_File>
         <CfgDependentOn>..\Common\Version.Web.optset</CfgDependentOn>
     </PropertyGroup>
@@ -116,25 +115,23 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Common\USysBusiness.pas"/>
-        <DCCReference Include="Common\USysConst.pas"/>
-        <DCCReference Include="Common\USysFun.pas"/>
-        <DCCReference Include="Common\USysRemote.pas"/>
+        <DCCReference Include="Forms\UFormLogin.pas">
+            <Form>fFormLogin</Form>
+            <DesignClass>TUniLoginForm</DesignClass>
+        </DCCReference>
         <DCCReference Include="Forms\UFormBase.pas">
             <Form>fFormBase</Form>
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
-        </DCCReference>
-        <DCCReference Include="Forms\UFormLogin.pas">
-            <Form>fFormLogin</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TUniLoginForm</DesignClass>
         </DCCReference>
         <DCCReference Include="Forms\UFormNormal.pas">
             <Form>fFormNormal</Form>
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="Common\USysModule.pas"/>
+        <DCCReference Include="Common\USysBusiness.pas"/>
+        <DCCReference Include="Common\USysConst.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -167,7 +164,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\Web.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\Bin\Web\Web.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>Web.exe</RemoteName>
                         <Overwrite>true</Overwrite>

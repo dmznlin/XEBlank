@@ -29,7 +29,7 @@ implementation
 {$R *.dfm}
 
 uses
-  UniGUIVars, USysFun, USysConst, USysBusiness;
+  UniGUIVars, USysConst, USysBusiness;
 
 function UniServerModule: TUniServerModule;
 begin
@@ -43,9 +43,9 @@ end;
 
 procedure TUniServerModule.UniGUIServerModuleBeforeInit(Sender: TObject);
 begin
-  InitSystemEnvironment;
+  TSysFun.InitSystemEnvironment;
   //初始化系统环境
-  LoadSysParameter();
+  TSysFun.LoadSysParameter();
   //载入系统配置参数
 
   with gSystem.FMain do

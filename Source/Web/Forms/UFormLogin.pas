@@ -27,13 +27,14 @@ type
     N1: TUniMenuItem;
     MenuInitDB: TUniMenuItem;
     MenuInitUserPwd: TUniMenuItem;
-    FSConfirm1: TUniFSConfirm;
     FSToast1: TUniFSToast;
-    MenuBase64: TUniMenuItem;
     MenuDES: TUniMenuItem;
     N2: TUniMenuItem;
+    FSConfirm1: TUniFSConfirm;
     procedure UniLoginFormCreate(Sender: TObject);
     procedure BtnOKClick(Sender: TObject);
+    procedure MenuDESClick(Sender: TObject);
+    procedure MenuInitDBClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -47,7 +48,7 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, MainModule, ULibFun, Data.DB, USysDB, USysConst;
+  uniGUIVars, MainModule, ULibFun, Data.DB, USysDB, USysBusiness, USysConst;
 
 function fFormLogin: TfFormLogin;
 begin
@@ -61,6 +62,24 @@ begin
 
   UniMainModule.FSToast1 := FSToast1;
   UniMainModule.FSConfirm1 := FSConfirm1;
+end;
+
+//Desc: 数据编码
+procedure TfFormLogin.MenuDESClick(Sender: TObject);
+begin
+  Visible := False;
+  UniMainModule.VerifyAdministrator(
+    procedure(const nType: TButtonClickType; const nText: string)
+    begin
+      if nType = ctYes then //验证通过
+        TSysFun.ShowModalForm('TfFormEncrypt');
+      Self.Visible := True;
+    end);
+end;
+
+procedure TfFormLogin.MenuInitDBClick(Sender: TObject);
+begin
+
 end;
 
 //Desc: 登录
@@ -136,5 +155,4 @@ end;
 
 initialization
   RegisterAppFormClass(TfFormLogin);
-
 end.
