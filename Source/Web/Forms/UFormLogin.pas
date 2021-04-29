@@ -67,19 +67,25 @@ end;
 //Desc: 数据编码
 procedure TfFormLogin.MenuDESClick(Sender: TObject);
 begin
-  Visible := False;
   UniMainModule.VerifyAdministrator(
     procedure(const nType: TButtonClickType; const nText: string)
     begin
-      if nType = ctYes then //验证通过
+      if nType = ctYes then
         TSysFun.ShowModalForm('TfFormEncrypt');
-      Self.Visible := True;
-    end);
+      //xxxxx
+    end, Self);
 end;
 
+//Desc: 初始化数据库
 procedure TfFormLogin.MenuInitDBClick(Sender: TObject);
 begin
-
+  UniMainModule.VerifyAdministrator(
+    procedure(const nType: TButtonClickType; const nText: string)
+    begin
+      if nType = ctYes then
+        TSysFun.ShowModalForm('TfFormInitDB');
+      //xxxxx
+    end, Self);
 end;
 
 //Desc: 登录

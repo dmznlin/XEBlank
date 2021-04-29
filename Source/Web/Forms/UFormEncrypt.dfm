@@ -33,6 +33,7 @@ inherited fFormEncrypt: TfFormEncrypt
           Width = 470
           Height = 95
           Hint = ''
+          BorderStyle = ubsNone
           ScrollBars = ssBoth
           Align = alBottom
           TabOrder = 0
@@ -65,6 +66,7 @@ inherited fFormEncrypt: TfFormEncrypt
           Width = 470
           Height = 95
           Hint = ''
+          BorderStyle = ubsNone
           ScrollBars = ssBoth
           Align = alTop
           TabOrder = 3
@@ -145,6 +147,7 @@ inherited fFormEncrypt: TfFormEncrypt
           Width = 470
           Height = 95
           Hint = ''
+          BorderStyle = ubsNone
           ScrollBars = ssBoth
           Align = alTop
           TabOrder = 1
@@ -157,6 +160,7 @@ inherited fFormEncrypt: TfFormEncrypt
           Width = 470
           Height = 95
           Hint = ''
+          BorderStyle = ubsNone
           ScrollBars = ssBoth
           Align = alBottom
           TabOrder = 2
