@@ -28,8 +28,11 @@ type
     FSConfirm1: TUniFSConfirm;
     FSTheme1: UniFSConfirm.TTheme;
     {*消息框对象*}
+    procedure VerifyAdministrator(const nPwd: string;
+      const nCall: TButtonClickInputEvent;
+      const nButton: TButtonClickType = ctYes); overload;
     procedure VerifyAdministrator(const nEvent: TButtonClickInputEvent;
-      const nCaller: TUniBaseForm = nil);
+      const nCaller: TUniBaseForm = nil); overload;
     {*验证身份*}
     procedure ShowMsg(const nHint: string; const nError: Boolean = False;
       nTitle: string = '');
@@ -51,7 +54,7 @@ implementation
 {$R *.dfm}
 
 uses
-  UniGUIVars, ServerModule, uniGUIApplication, ULibFun, UGoogleOTP, USysDB,
+  UniGUIVars, ServerModule, uniGUIApplication, ULibFun, UGoogleOTP,
   USysConst;
 
 function UniMainModule: TUniMainModule;
@@ -67,55 +70,51 @@ begin
   LoginBackground.Url := gSystem.FImages.FBgLogin;
 end;
 
+//Date: 2021-04-30
+//Parm: 动态密码;验证通过后事件;按钮类型
+//Desc: 验证nPwd是否为有效的管理员动态口令
+procedure TUniMainModule.VerifyAdministrator(const nPwd: string;
+  const nCall: TButtonClickInputEvent; const nButton: TButtonClickType);
+begin
+  if (nButton = ctYes) and TStringHelper.IsNumber(nPwd, False) then
+   with TGoogleOTP, TApplicationHelper do
+    if Validate(EncodeBase32(sDefaultAdminKey), StrToInt(nPwd)) then
+    begin
+      FAdminLastLogin := TDateTimeHelper.GetTickCount();
+      nCall(ctYes, nPwd);
+      Exit;
+    end;
+
+  nCall(ctNo, nPwd);
+  //verify failure
+end;
+
 //Date: 2021-04-28
 //Parm: 回调;调用窗体
 //Desc: 验证当前是否管理员
 procedure TUniMainModule.VerifyAdministrator(const nEvent: TButtonClickInputEvent;
   const nCaller: TUniBaseForm);
-var nDoEvent: TButtonClickInputEvent;
 begin
-  if TDateTimeHelper.GetTickCountDiff(FAdminLastLogin) < 10 * 60 * 1000 then
+  if (FAdminLastLogin > 0) and
+     (TDateTimeHelper.GetTickCountDiff(FAdminLastLogin) < 10 * 60 * 1000) then
   begin
     nEvent(ctYes, '');
     Exit;
   end; //10 min valid
 
-  nDoEvent := procedure(const nType: TButtonClickType; const nText: string)
-  begin
-    if (nType = ctYes) and TStringHelper.IsNumber(nText, False) then
-     with TGoogleOTP do
-      if Validate(EncodeBase32(sDefaultAdminKey), StrToInt(nText)) then
-      begin
-        FAdminLastLogin := TDateTimeHelper.GetTickCount();
-        nEvent(ctYes, nText);
-        Exit;
-      end;
-
-    nEvent(ctNo, nText);
-    //verify failure
-  end;
-
   if Assigned(nCaller) then
     nCaller.Prompt('请输入管理员动态口令:', '', mtInformation, mbOKCancel,
-      procedure (Sender: TComponent; AResult:Integer; AText: string)
+      procedure (Sender: TComponent; nResult:Integer; nText: string)
       begin
-        try
-          if AResult = mrOK then
-               nDoEvent(ctYes, AText)
-          else nDoEvent(ctNo, AText);
-        finally
-          nDoEvent := nil; //free
-        end;
+        if nResult = mrOK then
+             VerifyAdministrator(nText, nEvent, ctYes)
+        else VerifyAdministrator(nText, nEvent, ctNo);
       end)
   else
     InputDlg('请输入管理员动态口令:', '验证',
       procedure(const nType: TButtonClickType; const nText: string)
       begin
-        try
-          nDoEvent(nType, nText);
-        finally
-          nDoEvent := nil; //free
-        end;
+        VerifyAdministrator(nText, nEvent, nType);
       end);
 end;
 

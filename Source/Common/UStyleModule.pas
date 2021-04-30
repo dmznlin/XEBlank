@@ -64,7 +64,7 @@ implementation
 {$R *.dfm}
 
 uses
-  System.IniFiles, Vcl.Forms, ULibFun, UManagerGroup, UGoogleOTP, USysDB,
+  System.IniFiles, Vcl.Forms, ULibFun, UManagerGroup, UGoogleOTP,
   UFormInputbox, UFormMessagebox;
 
 procedure TFSM.DataModuleCreate(Sender: TObject);
@@ -191,7 +191,7 @@ begin
   //xxxxx
 
   if Result then
-   with TGoogleOTP do
+   with TGoogleOTP, TApplicationHelper do
     Result := Validate(EncodeBase32(sDefaultAdminKey), StrToInt(nStr));
   //xxxxx
 end;
