@@ -43,9 +43,9 @@ end;
 
 procedure TUniServerModule.UniGUIServerModuleBeforeInit(Sender: TObject);
 begin
-  TSysFun.InitSystemEnvironment;
+  TWebSystem.InitSystemEnvironment;
   //初始化系统环境
-  TSysFun.LoadSysParameter();
+  TWebSystem.LoadSysParameter();
   //载入系统配置参数
 
   with gSystem.FMain do

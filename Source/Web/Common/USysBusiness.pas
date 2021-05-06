@@ -19,13 +19,17 @@ uses
 
 type
   ///<summary>System Function: 系统级别的通用函数</summary>
-  TSysFun = class
+  TWebSystem = class
   private
     class var
       FSyncLock: TCriticalSection;
       {*全局同步锁*}
   public
-    class procedure Init; static;
+    class var
+      Forms: array of TfFormClass;
+      {*窗体列表*}
+  public
+    class procedure Init(const nForce: Boolean = False); static;
     {*初始化*}
     class procedure Release; static;
     {*释放资源*}
@@ -39,6 +43,8 @@ type
     class function SwtichPathDelim(const nPath: string;
       const nFrom: string = '\'; const nTo: string = '/'): string; static;
     {*切换路径分隔符*}
+    class procedure AddForm(const nForm: TfFormClass); static;
+    {*注册窗体类*}
     class function GetForm(const nClass: string;
       const nException: Boolean = False): TUniForm; static;
     {*获取窗体*}
@@ -50,26 +56,28 @@ type
 
 implementation
 
-class procedure TSysFun.Init;
+class procedure TWebSystem.Init(const nForce: Boolean);
 begin
-  FSyncLock := TCriticalSection.Create;
+  if nForce or (not Assigned(FSyncLock)) then
+    FSyncLock := TCriticalSection.Create;
+  //xxxxx
 end;
 
-class procedure TSysFun.Release;
+class procedure TWebSystem.Release;
 begin
   FreeAndNil(FSyncLock);
 end;
 
 //Date: 2020-06-23
 //Desc: 全局同步锁定
-class procedure TSysFun.SyncLock;
+class procedure TWebSystem.SyncLock;
 begin
   FSyncLock.Enter;
 end;
 
 //Date: 2020-06-23
 //Desc: 全局同步锁定解除
-class procedure TSysFun.SyncUnlock;
+class procedure TWebSystem.SyncUnlock;
 begin
   FSyncLock.Leave;
 end;
@@ -77,7 +85,7 @@ end;
 //---------------------------------- 配置运行环境 ------------------------------
 //Date: 2020-06-23
 //Desc: 初始化运行环境
-class procedure TSysFun.InitSystemEnvironment;
+class procedure TWebSystem.InitSystemEnvironment;
 begin
   Randomize;
   gPath := TApplicationHelper.gPath;
@@ -97,7 +105,7 @@ end;
 
 //Date: 2020-06-23
 //Desc: 载入系统配置参数
-class procedure TSysFun.LoadSysParameter(nIni: TIniFile = nil);
+class procedure TWebSystem.LoadSysParameter(nIni: TIniFile = nil);
 const sMain = 'Config';
 var nStr: string;
     nBool: Boolean;
@@ -136,16 +144,39 @@ end;
 //Date: 2021-04-16
 //Parm: 文件路径;原、目标
 //Desc: 将nPatn中的路径分隔符转为特定风格
-class function TSysFun.SwtichPathDelim(const nPath,nFrom,nTo: string): string;
+class function TWebSystem.SwtichPathDelim(const nPath,nFrom,nTo: string): string;
 begin
   Result := StringReplace(nPath, nFrom, nTo, [rfReplaceAll]);
 end;
 
 //---------------------------------- 窗体调用 ----------------------------------
+//Date: 2021-05-06
+//Parm: 窗体类
+//Desc: 注册窗体类
+class procedure TWebSystem.AddForm(const nForm: TfFormClass);
+var nStr: string;
+    nIdx: Integer;
+begin
+  for nIdx := Low(Forms) to High(Forms) do
+  if Forms[nIdx] = nForm then
+  begin
+    nStr := Format('TSysFun.AddForm: %s Has Exists.', [nForm.ClassName]);
+    gMG.WriteLog(TWebSystem, 'Web系统对象', nStr);
+    raise Exception.Create(nStr);
+  end;
+
+  nIdx := Length(Forms);
+  SetLength(Forms, nIdx + 1);
+  Forms[nIdx] := nForm;
+
+  RegisterClass(nForm);
+  //new class
+end;
+
 //Date: 2021-04-26
 //Parm: 窗体类名
 //Desc: 获取nClass类的对象
-class function TSysFun.GetForm(const nClass: string;
+class function TWebSystem.GetForm(const nClass: string;
   const nException: Boolean): TUniForm;
 var nCls: TClass;
 begin
@@ -162,11 +193,11 @@ end;
 //Date: 2021-04-27
 //Parm: 窗体类;输入参数;输出参数
 //Desc: 显示类名为nClass的模式窗体
-class procedure TSysFun.ShowModalForm(const nClass: string;
+class procedure TWebSystem.ShowModalForm(const nClass: string;
   const nParams: PFormCommandParam; const nResult: TFormModalResult);
 var nForm: TUniForm;
 begin
-  nForm := TSysFun.GetForm(nClass);
+  nForm := TWebSystem.GetForm(nClass);
   if (not Assigned(nForm)) or (not (nForm is TfFormBase)) then Exit;
   //invalid class
 
@@ -188,9 +219,9 @@ begin
 end;
 
 initialization
-  TSysFun.Init;
+  TWebSystem.Init(True);
 finalization
-  TSysFun.Release;
+  TWebSystem.Release;
 end.
 
 

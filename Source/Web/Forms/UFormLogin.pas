@@ -71,7 +71,7 @@ begin
     procedure(const nType: TButtonClickType; const nText: string)
     begin
       if nType = ctYes then
-        TSysFun.ShowModalForm('TfFormEncrypt');
+        TWebSystem.ShowModalForm('TfFormEncrypt');
       //xxxxx
     end, Self);
 end;
@@ -83,7 +83,7 @@ begin
     procedure(const nType: TButtonClickType; const nText: string)
     begin
       if nType = ctYes then
-        TSysFun.ShowModalForm('TfFormInitDB');
+        TWebSystem.ShowModalForm('TfFormInitDB');
       //xxxxx
     end, Self);
 end;

@@ -23,6 +23,7 @@ type
     { Private declarations }
   public
     { Public declarations }
+    class function DescMe: TfFormDesc; override;
   end;
 
 implementation
@@ -30,10 +31,16 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, MainModule, ULibFun, UDBManager;
+  uniGUIVars, MainModule, ULibFun, UDBManager, USysBusiness;
 
 const
   sTag = ' ::: ';
+
+class function TfFormInitDB.DescMe: TfFormDesc;
+begin
+  Result := inherited DescMe();
+  Result.FDesc := '初始化数据库';
+end;
 
 procedure TfFormInitDB.UniFormCreate(Sender: TObject);
 var nDB: TDBConnConfig;
@@ -67,5 +74,5 @@ begin
 end;
 
 initialization
-  RegisterClass(TfFormInitDB);
+  TWebSystem.AddForm(TfFormInitDB);
 end.

@@ -30,13 +30,22 @@ type
     DesDecode: TUniButton;
     UniLabel1: TUniLabel;
     EditKey: TUniEdit;
+    Sheet3: TUniTabSheet;
+    AKEncrypt: TUniMemo;
+    AKEncode: TUniButton;
+    AKDecode: TUniButton;
+    AKText: TUniMemo;
+    UniPanel4: TUniPanel;
+    UniLabel2: TUniLabel;
     procedure UniFormCreate(Sender: TObject);
     procedure BaseEncodeClick(Sender: TObject);
     procedure DesEncodeClick(Sender: TObject);
+    procedure AKEncodeClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    class function DescMe: TfFormDesc; override;
   end;
 
 implementation
@@ -44,7 +53,13 @@ implementation
 {$R *.dfm}
 
 uses
- uniGUIVars, MainModule, ULibFun, UDBManager;
+ uniGUIVars, MainModule, ULibFun, UDBManager, USysBusiness;
+
+class function TfFormEncrypt.DescMe: TfFormDesc;
+begin
+  Result := inherited DescMe();
+  Result.FDesc := 'Êý¾Ý±àÂë';
+end;
 
 procedure TfFormEncrypt.UniFormCreate(Sender: TObject);
 begin
@@ -93,6 +108,21 @@ begin
   end;
 end;
 
+//Desc: adminkey
+procedure TfFormEncrypt.AKEncodeClick(Sender: TObject);
+begin
+  with TEncodeHelper,TApplicationHelper do
+  begin
+    if Sender = AKEncode then
+      AKEncrypt.Text := Encode_3DES(Trim(AKText.Text), sDefaultAdminKey);
+    //xxxxxx
+
+    if Sender = AKDecode then
+      AKText.Text := Decode_3DES(Trim(AKEncrypt.Text), sDefaultAdminKey);
+    //xxxxx
+  end
+end;
+
 initialization
-  RegisterClass(TfFormEncrypt);
+  TWebSystem.AddForm(TfFormEncrypt);
 end.

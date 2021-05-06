@@ -38,11 +38,15 @@ type
       nTitle: string = '');
     {*消息提示条*}
     procedure ShowDlg(const nMsg: string; const nError: Boolean = False;
+      const nCaller: TUniBaseForm = nil;
       const nEvent: TButtonClickEvent = nil; nTitle: string = '');
-    procedure QueryDlg(const nMsg: string; const nEvent: TButtonClickEvent = nil;
+    procedure QueryDlg(const nMsg: string;
+      const nEvent: TButtonClickEvent = nil;
+      const nCaller: TUniBaseForm = nil;
       const nMask: string = ''; nTitle: string = '');
     procedure InputDlg(const nMsg,nTitle: string;
-      const nEvent: TButtonClickInputEvent; const nBlank: string = '';
+      const nEvent: TButtonClickInputEvent;
+      const nCaller: TUniBaseForm = nil; const nBlank: string = '';
       const nSize: Integer = 0; const nPwd: Boolean = False);
     {*消息提示框*}
   end;
@@ -78,7 +82,7 @@ procedure TUniMainModule.VerifyAdministrator(const nPwd: string;
 begin
   if (nButton = ctYes) and TStringHelper.IsNumber(nPwd, False) then
    with TGoogleOTP, TApplicationHelper do
-    if Validate(EncodeBase32(sDefaultAdminKey), StrToInt(nPwd)) then
+    if Validate(EncodeBase32(gSystem.FMain.FAdminKey), StrToInt(nPwd)) then
     begin
       FAdminLastLogin := TDateTimeHelper.GetTickCount();
       nCall(ctYes, nPwd);
@@ -102,20 +106,11 @@ begin
     Exit;
   end; //10 min valid
 
-  if Assigned(nCaller) then
-    nCaller.Prompt('请输入管理员动态口令:', '', mtInformation, mbOKCancel,
-      procedure (Sender: TComponent; nResult:Integer; nText: string)
-      begin
-        if nResult = mrOK then
-             VerifyAdministrator(nText, nEvent, ctYes)
-        else VerifyAdministrator(nText, nEvent, ctNo);
-      end)
-  else
-    InputDlg('请输入管理员动态口令:', '验证',
-      procedure(const nType: TButtonClickType; const nText: string)
-      begin
-        VerifyAdministrator(nText, nEvent, nType);
-      end);
+  InputDlg('请输入管理员动态口令:', '',
+    procedure(const nType: TButtonClickType; const nText: string)
+    begin
+      VerifyAdministrator(nText, nEvent, nType);
+    end, nCaller);
 end;
 
 //Date: 2021-04-20
@@ -144,11 +139,32 @@ begin
 end;
 
 //Date: 2021-04-20
-//Parm: 消息;标题
+//Parm: 消息;调用窗体
 //Desc: 提示对话框
 procedure TUniMainModule.ShowDlg(const nMsg: string; const nError: Boolean;
-  const nEvent: TButtonClickEvent; nTitle: string);
+  const nCaller: TUniBaseForm; const nEvent: TButtonClickEvent; nTitle: string);
+var nDType: TMsgDlgType;
 begin
+  if Assigned(nCaller) then
+  begin
+    if nError then
+         nDType := mtError
+    else nDType := mtInformation;
+
+    nCaller.MessageDlg(nMsg, nDType, [mbOK],
+      procedure(Sender: TComponent; nButton: Integer)
+      begin
+        if Assigned(nEvent) then
+        begin
+          if nButton = mrOk then
+               nEvent(ctYes)
+          else nEvent(ctNo);
+        end;
+      end);
+
+    Exit;
+  end;
+
   with FSConfirm1 do
   begin
     ButtonTextConfirm  := '确定';
@@ -191,11 +207,29 @@ begin
 end;
 
 //Date: 2021-04-20
-//Parm: 消息;标题
+//Parm: 消息;标题;调用窗体
 //Desc: 询问对话框
 procedure TUniMainModule.QueryDlg(const nMsg: string;
-  const nEvent: TButtonClickEvent; const nMask: string; nTitle: string);
+  const nEvent: TButtonClickEvent; const nCaller: TUniBaseForm;
+  const nMask: string; nTitle: string);
 begin
+  if Assigned(nCaller) then
+  begin
+    nCaller.MessageDlg(nMsg, mtConfirmation, mbYesNo,
+      procedure(Sender: TComponent; nButton: Integer)
+      begin
+        if Assigned(nEvent) then
+        begin
+          case nButton of
+           mrYes: nEvent(ctYes);
+           mrNo:  nEvent(ctNo);
+          end;
+        end;
+      end);
+
+    Exit;
+  end;
+
   with FSConfirm1 do
   begin
     TypeColor := blue;
@@ -230,12 +264,33 @@ begin
 end;
 
 //Date: 2021-04-20
-//Parm: 消息;标题;事件;允许不填写;大小;是否密码
+//Parm: 消息;标题;事件;调用窗体;允许不填写;大小;是否密码
 //Desc: 显示输入框
 procedure TUniMainModule.InputDlg(const nMsg,nTitle: string;
-  const nEvent: TButtonClickInputEvent; const nBlank: string;
-  const nSize: Integer; const nPwd: Boolean);
+  const nEvent: TButtonClickInputEvent; const nCaller: TUniBaseForm;
+  const nBlank: string; const nSize: Integer; const nPwd: Boolean);
 begin
+  if Assigned(nCaller) then
+  begin
+    nCaller.Prompt(TStringHelper.MS(['@*', ''], nPwd) + nMsg,
+      nTitle, mtConfirmation, mbOKCancel,
+      procedure (Sender: TComponent; nButton:Integer; nText: string)
+      begin
+        if Assigned(nEvent) then
+        begin
+          if (nSize > 0) and (Length(nText) > nSize) then
+              nText := Copy(nText, 1, nSize);
+            //xxxxx
+
+          if nButton = mrOK then
+               nEvent(ctYes, nText)
+          else nEvent(ctNo, nText);
+        end;
+      end);
+
+    Exit;
+  end;
+
   with FSConfirm1 do
   begin
     ButtonTextConfirm  := '确定';
@@ -248,17 +303,17 @@ begin
     else PromptType.TypePrompt := text;
 
     Prompt(nTitle, nMsg, 'fa fa-keyboard-o', green, FSTheme1,
-      procedure(nButton: TConfirmButton; nResult: string)
+      procedure(nButton: TConfirmButton; nText: string)
       begin
         if Assigned(nEvent) then
         begin
-          if (nSize > 0) and (Length(nResult) > nSize) then
-            nResult := Copy(nResult, 1, nSize);
+          if (nSize > 0) and (Length(nText) > nSize) then
+            nText := Copy(nText, 1, nSize);
           //xxxxx
 
           case nButton of
-           Yes: nEvent(ctYes, nResult);
-           No:  nEvent(ctNo, nResult);
+           Yes: nEvent(ctYes, nText);
+           No:  nEvent(ctNo, nText);
           end;
         end;
       end

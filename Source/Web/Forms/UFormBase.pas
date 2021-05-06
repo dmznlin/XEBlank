@@ -11,6 +11,14 @@ uses
   USysConst, uniGUIBaseClasses, uniGUIClasses, uniPanel;
 
 type
+  TfFormBase = class;
+  TfFormClass = class of TfFormBase;
+
+  TfFormDesc = record
+    FName  : string;                   //类名
+    FDesc  : string;                   //描述
+  end;
+
   TfFormBase = class(TUniForm)
     PanelWork: TUniSimplePanel;
     procedure UniFormCreate(Sender: TObject);
@@ -24,6 +32,8 @@ type
     {*基类函数*}
   public
     { Public declarations }
+    class function DescMe: TfFormDesc; virtual;
+    {*窗体描述*}
     function SetData(const nData: PFormCommandParam): Boolean; virtual;
     function GetData(var nData: TFormCommandParam): Boolean; virtual;
     {*读写参数*}
@@ -52,6 +62,14 @@ end;
 procedure TfFormBase.OnDestroyForm(Sender: TObject);
 begin
   //null
+end;
+
+//Date: 2021-05-06
+//Desc: 描述窗体信息
+class function TfFormBase.DescMe: TfFormDesc;
+begin
+  FillChar(Result, SizeOf(TfFormDesc), #0);
+  Result.FName := ClassName;
 end;
 
 //Date: 2021-04-27
