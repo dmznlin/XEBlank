@@ -71,7 +71,6 @@ uses
 
 const
   sSysPrefix  = '_';                  //系统标识前缀
-  sConfigKey  = 'libpwdky';           //数据加密密钥
   sConfigFile = 'AdminPwd.ini';       //主配置文件
 
 type
@@ -174,7 +173,7 @@ begin
 
         FName := nIni.ReadString('SystemName', FID, 'noname');
         FKey := nIni.ReadString('SystemKey', FID, '');
-        FKey := TEncodeHelper.Decode_3DES(FKey, sConfigKey);
+        FKey := TEncodeHelper.Decode_3DES(FKey, TApplicationHelper.sDefaultAdminKey);
       end;
 
       LoadSystemIDList();
@@ -302,7 +301,7 @@ begin
   nIni := TIniFile.Create(TApplicationHelper.gPath + sConfigFile);
   try
     nIni.WriteString('SystemName', nStr, EditSys.Text);
-    nPwd := TEncodeHelper.Encode_3DES(EditKey.Text, sConfigKey);
+    nPwd := TEncodeHelper.Encode_3DES(EditKey.Text, TApplicationHelper.sDefaultAdminKey);
     nIni.WriteString('SystemKey', nStr, nPwd);
 
     if EditSys.ItemIndex < 0 then
@@ -398,6 +397,9 @@ begin
     nIdx := Integer(EditSys.Properties.Items.Objects[EditSys.ItemIndex]);
     EditKey.Text := gSystemKeys[nIdx].FKey;
     SetDisplayKey(EditKey.Properties.EchoMode = eemNormal);
+  end else
+  begin
+    EditKey.Text := '';
   end;
 end;
 
