@@ -173,7 +173,7 @@ begin
 
         FName := nIni.ReadString('SystemName', FID, 'noname');
         FKey := nIni.ReadString('SystemKey', FID, '');
-        FKey := TEncodeHelper.Decode_3DES(FKey, TApplicationHelper.sDefaultAdminKey);
+        FKey := TEncodeHelper.Decode_3DES(FKey, TApplicationHelper.sDefaultKey);
       end;
 
       LoadSystemIDList();
@@ -301,7 +301,7 @@ begin
   nIni := TIniFile.Create(TApplicationHelper.gPath + sConfigFile);
   try
     nIni.WriteString('SystemName', nStr, EditSys.Text);
-    nPwd := TEncodeHelper.Encode_3DES(EditKey.Text, TApplicationHelper.sDefaultAdminKey);
+    nPwd := TEncodeHelper.Encode_3DES(EditKey.Text, TApplicationHelper.sDefaultKey);
     nIni.WriteString('SystemKey', nStr, nPwd);
 
     if EditSys.ItemIndex < 0 then

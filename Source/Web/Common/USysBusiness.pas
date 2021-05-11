@@ -118,7 +118,7 @@ begin
   with gSystem, nIni do
   try
     FillChar(gSystem, SizeOf(TSystemParam), #0);
-    TApplicationHelper.LoadParameters(gSystem.FMain, nIni);
+    TApplicationHelper.LoadParameters(gSystem.FMain, nIni, True);
     //load main config
   finally
     if not nBool then nIni.Free;

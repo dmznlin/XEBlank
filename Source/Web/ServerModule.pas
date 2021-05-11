@@ -50,13 +50,13 @@ begin
 
   with gSystem.FMain do
   begin
-    Title := FPrograms[FActive].FTitleApp;
+    Title := FActive.FTitleApp;
     //程序标题
-    Port := FPrograms[FActive].FPort;
+    Port := FActive.FPort;
     //服务端口
 
-    if FileExists(FPrograms[FActive].FFavicon) then
-      Favicon.LoadFromFile(FPrograms[FActive].FFavicon);
+    if FileExists(FActive.FFavicon) then
+      Favicon.LoadFromFile(FActive.FFavicon);
     //收藏夹图标
   end;
 

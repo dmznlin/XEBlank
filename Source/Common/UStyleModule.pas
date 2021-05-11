@@ -32,6 +32,8 @@ type
     { Private declarations }
     FDefaultSkin: string;
     {*默认主题*}
+    FAdminKey: string;
+    {*管理员密钥*}
   public
     { Public declarations }
     procedure LoadSkinNames(const nList: TStrings);
@@ -52,6 +54,8 @@ type
       const nVerify: TVerifyUIData; const nShowMsg: Boolean = True;
       const nVerifySub: Boolean = True): Boolean;
     {*验证数据*}
+    property AdminKey: string read FAdminKey write FAdminKey;
+    {*属性相关*}
   end;
 
 var
@@ -70,6 +74,9 @@ uses
 procedure TFSM.DataModuleCreate(Sender: TObject);
 var nIni: TIniFile;
 begin
+  FAdminKey := '';
+  //key for admin
+
   nIni := TIniFile.Create(TApplicationHelper.gFormConfig);
   try
     FDefaultSkin := nIni.ReadString('Config', 'Theme', '');
@@ -185,14 +192,31 @@ end;
 //Desc: 使用动态口令验证是否为管理员
 function TFSM.VerifyAdministrator: Boolean;
 var nStr: string;
+    nPrm: TApplicationHelper.TAppParam;
 begin
   Result := InputDlg('请输入管理员动态口令:', '验证', nStr, 0, False) and
             TStringHelper.IsNumber(nStr, False);
-  //xxxxx
+  if not Result then Exit;
 
-  if Result then
-   with TGoogleOTP, TApplicationHelper do
-    Result := Validate(EncodeBase32(sDefaultAdminKey), StrToInt(nStr));
+  if FAdminKey = '' then
+  begin
+    if FileExists(TApplicationHelper.gSysConfig) then
+    begin
+      nPrm.FAdminKey := '';
+      TApplicationHelper.LoadParameters(nPrm, nil, False);
+
+      if nPrm.FAdminKey <> '' then
+        FAdminKey := nPrm.FAdminKey;
+      //new key
+    end;
+
+    if FAdminKey = '' then
+      FAdminKey := TApplicationHelper.sDefaultKey;
+    //default key
+  end;
+
+  with TGoogleOTP do
+    Result := Validate(EncodeBase32(FAdminKey), StrToInt(nStr));
   //xxxxx
 end;
 

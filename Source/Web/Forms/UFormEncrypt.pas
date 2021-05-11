@@ -114,11 +114,11 @@ begin
   with TEncodeHelper,TApplicationHelper do
   begin
     if Sender = AKEncode then
-      AKEncrypt.Text := Encode_3DES(Trim(AKText.Text), sDefaultAdminKey);
+      AKEncrypt.Text := Encode_3DES(Trim(AKText.Text), sDefaultKey);
     //xxxxxx
 
     if Sender = AKDecode then
-      AKText.Text := Decode_3DES(Trim(AKEncrypt.Text), sDefaultAdminKey);
+      AKText.Text := Decode_3DES(Trim(AKEncrypt.Text), sDefaultKey);
     //xxxxx
   end
 end;
