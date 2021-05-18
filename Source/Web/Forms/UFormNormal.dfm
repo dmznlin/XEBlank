@@ -16,6 +16,7 @@ inherited fFormNormal: TfFormNormal
     BadgeText.BackgroundColor = '#D50000'
     Caption = #21462#28040
     Cancel = True
+    Anchors = [akRight, akBottom]
     TabOrder = 0
   end
   object BtnOK: TUniFSButton [1]
@@ -31,6 +32,7 @@ inherited fFormNormal: TfFormNormal
     BadgeText.TextStyle = 'bold'
     BadgeText.BackgroundColor = '#D50000'
     Caption = #30830#23450
+    Anchors = [akRight, akBottom]
     TabOrder = 1
     OnClick = BtnOKClick
   end

@@ -134,8 +134,9 @@ object fFormLogin: TfFormLogin
         Caption = #21021#22987#21270#25968#25454#24211
         OnClick = MenuInitDBClick
       end
-      object MenuInitUserPwd: TUniMenuItem
-        Caption = #21021#22987#21270#29992#25143#23494#30721
+      object MenuInitMenu: TUniMenuItem
+        Caption = #21021#22987#21270#31995#32479#33756#21333
+        OnClick = MenuInitMenuClick
       end
     end
   end

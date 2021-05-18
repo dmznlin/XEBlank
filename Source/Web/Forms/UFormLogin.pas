@@ -26,7 +26,7 @@ type
     BtnExit: TUniFSButton;
     N1: TUniMenuItem;
     MenuInitDB: TUniMenuItem;
-    MenuInitUserPwd: TUniMenuItem;
+    MenuInitMenu: TUniMenuItem;
     FSToast1: TUniFSToast;
     MenuDES: TUniMenuItem;
     N2: TUniMenuItem;
@@ -35,6 +35,7 @@ type
     procedure BtnOKClick(Sender: TObject);
     procedure MenuDESClick(Sender: TObject);
     procedure MenuInitDBClick(Sender: TObject);
+    procedure MenuInitMenuClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -84,6 +85,18 @@ begin
     begin
       if nType = ctYes then
         TWebSystem.ShowModalForm('TfFormInitDB');
+      //xxxxx
+    end, Self);
+end;
+
+//Desc: 初始化系统菜单
+procedure TfFormLogin.MenuInitMenuClick(Sender: TObject);
+begin
+  UniMainModule.VerifyAdministrator(
+    procedure(const nType: TButtonClickType; const nText: string)
+    begin
+      if nType = ctYes then
+        TWebSystem.ShowModalForm('TfFormInitMenus');
       //xxxxx
     end, Self);
 end;
