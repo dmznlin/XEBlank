@@ -60,26 +60,17 @@ begin
     //收藏夹图标
   end;
 
-//  with gSystem do
-//  begin
-//    FExtJS := ReplaceGlobalPath(FExtJS);
-//    FUniJS := ReplaceGlobalPath(FUniJS);
-//    Logger.AddLog('TUniServerModule', FExtJS);
-//
-//    if DirectoryExists(FExtJS) then
-//      ExtRoot := FExtJS;
-//    //xxxxx
-//
-//    if DirectoryExists(FUniJS) then
-//      UniRoot := FUniJS;
-//    //xxxxx
-//  end;
-
   AutoCoInitialize := True;
   //自动初始化COM对象
 
+  MainFormDisplayMode := mfPage;
+  //全屏页面显示
+
   gMG.FLogManager.StartService();
   //启动日志服务
+
+  gMG.FMenuManager.LoadLanguage();
+  //载入多语言列表
 end;
 
 procedure TUniServerModule.UniGUIServerModuleBeforeShutdown(Sender: TObject);

@@ -9,6 +9,246 @@ object fFormMain: TfFormMain
   Font.Charset = GB2312_CHARSET
   Font.Height = -12
   Font.Name = #23435#20307
+  OnCreate = UniFormCreate
   PixelsPerInch = 96
   TextHeight = 12
+  object PanelTop: TUniSimplePanel
+    Left = 0
+    Top = 0
+    Width = 773
+    Height = 80
+    Hint = ''
+    ParentColor = False
+    Align = alTop
+    TabOrder = 0
+    object ImageRight: TUniImage
+      Left = 552
+      Top = 0
+      Width = 221
+      Height = 80
+      Hint = ''
+      AutoSize = True
+      Align = alRight
+    end
+    object ImageLeft: TUniImage
+      Left = 0
+      Top = 0
+      Width = 552
+      Height = 80
+      Hint = ''
+      Align = alClient
+    end
+    object LabelHint: TUniLabel
+      Left = 15
+      Top = 40
+      Width = 90
+      Height = 20
+      Hint = ''
+      Caption = 'HintLabel'
+      ParentFont = False
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clWhite
+      Font.Height = -20
+      Font.Name = #26999#20307
+      TabOrder = 3
+    end
+  end
+  object StatusBar1: TUniStatusBar
+    Left = 0
+    Top = 525
+    Width = 773
+    Height = 19
+    Hint = ''
+    Panels = <>
+    SizeGrip = False
+    Align = alBottom
+    ParentColor = False
+    Color = clWindow
+  end
+  object PanelClient: TUniSimplePanel
+    Left = 0
+    Top = 80
+    Width = 773
+    Height = 445
+    Hint = ''
+    ParentColor = False
+    Align = alClient
+    TabOrder = 2
+    ExplicitLeft = 272
+    ExplicitTop = 336
+    ExplicitWidth = 256
+    ExplicitHeight = 128
+    object PanelLeft: TUniContainerPanel
+      Left = 0
+      Top = 0
+      Width = 256
+      Height = 445
+      Hint = ''
+      ParentColor = False
+      Align = alLeft
+      AlignmentControl = uniAlignmentClient
+      ParentAlignmentControl = False
+      TabOrder = 1
+      ExplicitLeft = 328
+      ExplicitTop = 128
+      ExplicitHeight = 128
+      object PanelLeftTop: TUniPanel
+        Left = 0
+        Top = 0
+        Width = 256
+        Height = 50
+        Hint = ''
+        Align = alTop
+        TabOrder = 1
+        BorderStyle = ubsNone
+        TitleVisible = True
+        Title = #21151#33021#23548#33322
+        Caption = ''
+        Layout = 'hbox'
+        ExplicitWidth = 201
+        object BtnGetMsg: TUniFSButton
+          Left = 0
+          Top = 0
+          Width = 36
+          Height = 50
+          Hint = #36890#30693#28040#24687
+          ShowHint = True
+          ParentShowHint = False
+          StyleButton = Transparent
+          BadgeText.Text = '0'
+          BadgeText.TextColor = '#FFFFFF'
+          BadgeText.TextSize = 10
+          BadgeText.TextStyle = 'bold'
+          BadgeText.BackgroundColor = '#D50000'
+          BadgeText.Visible = True
+          Caption = ''
+          Align = alLeft
+          TabOrder = 2
+          Images = UniMainModule.SmallImages
+          ImageIndex = 19
+          ExplicitLeft = 8
+        end
+        object BtnExpand: TUniFSButton
+          Left = 36
+          Top = 0
+          Width = 23
+          Height = 50
+          Hint = #23637#24320#33756#21333
+          ShowHint = True
+          ParentShowHint = False
+          StyleButton = Transparent
+          BadgeText.Text = '0'
+          BadgeText.TextColor = '#FFFFFF'
+          BadgeText.TextSize = 10
+          BadgeText.TextStyle = 'bold'
+          BadgeText.BackgroundColor = '#D50000'
+          Caption = ''
+          Align = alLeft
+          TabOrder = 3
+          Images = UniMainModule.SmallImages
+          ImageIndex = 14
+        end
+        object BtnCollasp: TUniFSButton
+          Left = 59
+          Top = 0
+          Width = 23
+          Height = 50
+          Hint = #25910#36215#33756#21333
+          ShowHint = True
+          ParentShowHint = False
+          StyleButton = Transparent
+          BadgeText.Text = '0'
+          BadgeText.TextColor = '#FFFFFF'
+          BadgeText.TextSize = 10
+          BadgeText.TextStyle = 'bold'
+          BadgeText.BackgroundColor = '#D50000'
+          Caption = ''
+          Align = alLeft
+          TabOrder = 4
+          Images = UniMainModule.SmallImages
+          ImageIndex = 15
+          ExplicitLeft = 36
+        end
+        object EditSearch: TUniComboBox
+          Left = 82
+          Top = 0
+          Width = 174
+          Height = 50
+          Hint = ''
+          ShowHint = True
+          ParentShowHint = False
+          Text = ''
+          Align = alClient
+          TabOrder = 1
+          MinQueryLength = 3
+          CheckChangeDelay = 250
+          ClearButton = True
+          FieldLabelWidth = 250
+          Triggers = <
+            item
+              ButtonId = 0
+              IconCls = 'x-form-search-trigger'
+              HandleClicks = True
+            end>
+          IconItems = <>
+          ExplicitTop = -6
+        end
+      end
+      object PanelMenus: TUniContainerPanel
+        Left = 0
+        Top = 50
+        Width = 256
+        Height = 395
+        Hint = ''
+        ParentColor = False
+        Align = alClient
+        TabOrder = 2
+        Layout = 'accordion'
+        ExplicitTop = 44
+      end
+    end
+    object PageWork: TUniPageControl
+      Left = 262
+      Top = 0
+      Width = 511
+      Height = 445
+      Hint = ''
+      ActivePage = SheetWelcome
+      Align = alClient
+      TabOrder = 2
+      ExplicitLeft = 408
+      ExplicitWidth = 365
+      object SheetWelcome: TUniTabSheet
+        Hint = ''
+        Caption = #27426#36814#39029#38754
+        ExplicitWidth = 357
+        object PanelWelcome: TUniPanel
+          Left = 0
+          Top = 0
+          Width = 503
+          Height = 417
+          Hint = ''
+          Align = alClient
+          ParentFont = False
+          Font.Charset = GB2312_CHARSET
+          Font.Height = -20
+          Font.Name = #26999#20307
+          TabOrder = 0
+          BorderStyle = ubsNone
+          Caption = #27426#36814#20351#29992
+          ExplicitWidth = 509
+        end
+      end
+    end
+    object SplitterLeft: TUniSplitter
+      Left = 256
+      Top = 0
+      Width = 6
+      Height = 445
+      Hint = ''
+      Align = alLeft
+      ParentColor = False
+      Color = clBtnFace
+    end
+  end
 end

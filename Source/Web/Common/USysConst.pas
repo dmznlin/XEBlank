@@ -32,6 +32,8 @@ type
     FBgMain     : string;                            //±³¾°:Ö÷´°¿Ú
     FImgLogo    : string;                            //Í¼Æ¬:µÇÂ¼´°¿ÚLogo
     FImgKey     : string;                            //Í¼Æ¬:µÇÂ¼´°¿ÚÃÜÂë×°ÊÎ
+    FImgMainTL  : string;                            //Í¼Æ¬:Ö÷´°¿ÚTop-Left
+    FImgMainTR  : string;                            //Í¼Æ¬:Ö÷´°¿ÚTop-Right
   end;
 
   PSystemParam = ^TSystemParam;

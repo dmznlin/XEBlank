@@ -135,6 +135,8 @@ begin
       FBgMain    := nStr + ExtractFileName(ReadString(sMain, 'BgMain', ''));
       FImgLogo   := nStr + ExtractFileName(ReadString(sMain, 'ImgLogo', ''));
       FImgKey    := nStr + ExtractFileName(ReadString(sMain, 'ImgKey', ''));
+      FImgMainTL := nStr + ExtractFileName(ReadString(sMain, 'ImgMainTL', ''));
+      FImgMainTR := nStr + ExtractFileName(ReadString(sMain, 'ImgMainTR', ''));
     finally
       nIni.Free;
     end;

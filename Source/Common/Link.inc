@@ -24,5 +24,5 @@
 {$DEFINE EncryptLib}
 //启用加解密算法库
 
-{.$DEFINE MenuManager}
+{$DEFINE MenuManager}
 //启用菜单管理器

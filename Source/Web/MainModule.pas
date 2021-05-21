@@ -8,7 +8,8 @@ interface
 
 uses
   SysUtils, Classes, Controls, uniGUITypes, uniGUIDialogs, uniGUIForm,
-  uniGUIMainModule, UniFSToast, UniFSConfirm;
+  uniGUIMainModule, UniFSToast, UniFSConfirm, uniImageList, System.ImageList,
+  Vcl.ImgList, uniGUIBaseClasses, uniGUIClasses;
 
 type
   TButtonClickType = (ctYes, ctNo, ctCancel);
@@ -18,6 +19,10 @@ type
   //xxxxx
 
   TUniMainModule = class(TUniGUIMainModule)
+    SmallImages: TUniNativeImageList;
+    MidImage: TUniNativeImageList;
+    BigImages: TUniNativeImageList;
+    ImagesAdapter1: TUniImageListAdapter;
     procedure UniGUIMainModuleCreate(Sender: TObject);
   private
     { Private declarations }

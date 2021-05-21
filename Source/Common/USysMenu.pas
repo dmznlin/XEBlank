@@ -14,6 +14,7 @@ const
   sProg_Main   = 'RunSoft';           //主程序标识
   sProg_Admin  = 'RunAdmin';          //管理程序标识
   sEntity_Main = 'MAIN';              //主菜单标识
+  sEntity_User = 'USER';              //用户菜单标识
 
 implementation
 
@@ -21,7 +22,7 @@ implementation
 procedure SystemMenus(const nList: TList);
 begin
   gMenuManager.AddEntity(sProg_Main, '主程序', sEntity_Main, '主菜单', nList).
-    SetParent('').SetType(mtParent).                 //1 level
+    SetParent('').SetType(mtItem).                 //1 level
       AddM('A00', '系统').
       AddM('B00', '网络').
       AddM('C00', '参数').
