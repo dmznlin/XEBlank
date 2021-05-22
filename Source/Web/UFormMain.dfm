@@ -74,10 +74,6 @@ object fFormMain: TfFormMain
     ParentColor = False
     Align = alClient
     TabOrder = 2
-    ExplicitLeft = 272
-    ExplicitTop = 336
-    ExplicitWidth = 256
-    ExplicitHeight = 128
     object PanelLeft: TUniContainerPanel
       Left = 0
       Top = 0
@@ -89,9 +85,6 @@ object fFormMain: TfFormMain
       AlignmentControl = uniAlignmentClient
       ParentAlignmentControl = False
       TabOrder = 1
-      ExplicitLeft = 328
-      ExplicitTop = 128
-      ExplicitHeight = 128
       object PanelLeftTop: TUniPanel
         Left = 0
         Top = 0
@@ -105,7 +98,6 @@ object fFormMain: TfFormMain
         Title = #21151#33021#23548#33322
         Caption = ''
         Layout = 'hbox'
-        ExplicitWidth = 201
         object BtnGetMsg: TUniFSButton
           Left = 0
           Top = 0
@@ -126,7 +118,6 @@ object fFormMain: TfFormMain
           TabOrder = 2
           Images = UniMainModule.SmallImages
           ImageIndex = 19
-          ExplicitLeft = 8
         end
         object BtnExpand: TUniFSButton
           Left = 36
@@ -167,7 +158,6 @@ object fFormMain: TfFormMain
           TabOrder = 4
           Images = UniMainModule.SmallImages
           ImageIndex = 15
-          ExplicitLeft = 36
         end
         object EditSearch: TUniComboBox
           Left = 82
@@ -191,7 +181,6 @@ object fFormMain: TfFormMain
               HandleClicks = True
             end>
           IconItems = <>
-          ExplicitTop = -6
         end
       end
       object PanelMenus: TUniContainerPanel
@@ -204,7 +193,6 @@ object fFormMain: TfFormMain
         Align = alClient
         TabOrder = 2
         Layout = 'accordion'
-        ExplicitTop = 44
       end
     end
     object PageWork: TUniPageControl
@@ -216,27 +204,40 @@ object fFormMain: TfFormMain
       ActivePage = SheetWelcome
       Align = alClient
       TabOrder = 2
-      ExplicitLeft = 408
-      ExplicitWidth = 365
       object SheetWelcome: TUniTabSheet
         Hint = ''
+        AlignmentControl = uniAlignmentClient
+        ParentAlignmentControl = False
         Caption = #27426#36814#39029#38754
-        ExplicitWidth = 357
-        object PanelWelcome: TUniPanel
+        Layout = 'hbox'
+        LayoutAttribs.Align = 'bottom'
+        LayoutAttribs.Pack = 'end'
+        object LabelCopyRight: TUniLabel
           Left = 0
-          Top = 0
+          Top = 395
           Width = 503
-          Height = 417
+          Height = 22
           Hint = ''
-          Align = alClient
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'CopyRight'
+          Align = alBottom
           ParentFont = False
           Font.Charset = GB2312_CHARSET
-          Font.Height = -20
-          Font.Name = #26999#20307
-          TabOrder = 0
-          BorderStyle = ubsNone
-          Caption = #27426#36814#20351#29992
-          ExplicitWidth = 509
+          Font.Color = clGray
+          Font.Height = -12
+          Font.Name = #23435#20307
+          TabOrder = 1
+          LayoutConfig.Padding = '0 20 0 0'
+        end
+        object ImageWelcome: TUniImage
+          Left = 176
+          Top = 128
+          Width = 128
+          Height = 128
+          Hint = ''
+          Stretch = True
+          LayoutConfig.Padding = '0 20 0 0'
         end
       end
     end

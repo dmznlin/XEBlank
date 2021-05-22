@@ -30,8 +30,9 @@ type
     BtnCollasp: TUniFSButton;
     PageWork: TUniPageControl;
     SheetWelcome: TUniTabSheet;
-    PanelWelcome: TUniPanel;
     SplitterLeft: TUniSplitter;
+    ImageWelcome: TUniImage;
+    LabelCopyRight: TUniLabel;
     procedure UniFormCreate(Sender: TObject);
   private
     { Private declarations }
@@ -56,10 +57,29 @@ end;
 
 procedure TfFormMain.UniFormCreate(Sender: TObject);
 begin
-  ImageLeft.Url := gSystem.FImages.FImgMainTL;
-  ImageRight.Url := gSystem.FImages.FImgMainTR;
+  ImageLeft.Url := gSystem.FImages.FImgMainTL.FFile;
+  ImageRight.Url := gSystem.FImages.FImgMainTR.FFile;
   LabelHint.Caption := gSystem.FMain.FActive.FDeployName;
-  PanelWelcome.Caption := gSystem.FMain.FActive.FCopyRight;
+  LabelCopyRight.Caption := gSystem.FMain.FActive.FCopyRight;
+
+  with ImageWelcome do
+  begin
+    Url := gSystem.FImages.FImgWelcome.FFile;
+    Width := gSystem.FImages.FImgWelcome.FWidth;
+    Height := gSystem.FImages.FImgWelcome.FHeight;
+
+    case gSystem.FImages.FImgWelcome.FPosition of
+     ipTL, ipTM, ipTR: SheetWelcome.LayoutAttribs.Align := 'top';
+     ipML, ipMM, ipMR: SheetWelcome.LayoutAttribs.Align := 'middle';
+     ipBL, ipBM, ipBR: SheetWelcome.LayoutAttribs.Align := 'bottom';
+    end;
+
+    case gSystem.FImages.FImgWelcome.FPosition of
+     ipTL, ipML, ipBL: SheetWelcome.LayoutAttribs.Pack := 'start';
+     ipTM, ipMM, ipBM: SheetWelcome.LayoutAttribs.Pack := 'center';
+     ipTR, ipMR, ipBR: SheetWelcome.LayoutAttribs.Pack := 'end';
+    end;
+  end;
 end;
 
 initialization

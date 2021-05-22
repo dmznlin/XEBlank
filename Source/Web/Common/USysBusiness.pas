@@ -107,8 +107,35 @@ end;
 //Desc: 载入系统配置参数
 class procedure TWebSystem.LoadSysParameter(nIni: TIniFile = nil);
 const sMain = 'Config';
-var nStr: string;
+var nStr,nDir: string;
     nBool: Boolean;
+    nSA,nSB: TStringHelper.TStringArray;
+
+    //Desc: 解析nData中的图片数据
+    procedure GetImage(var nImg: TImageData; nData: string);
+    var nInt: Integer;
+    begin
+      nData := Trim(nData);
+      if nData = '' then Exit;
+
+      if not TStringHelper.SplitArray(nData, nSA, ',', tpTrim) then Exit;
+      //img,w x h,positon
+      nInt := Length(nSA);
+
+      if nInt > 0 then
+        nImg.FFile := nDir + nSA[0];
+      //xxxxx
+
+      if (nInt > 1) and TStringHelper.SplitArray(nSA[1], nSB, 'x', tpTrim) then
+      begin
+        nImg.FWidth := StrToInt(nSB[0]);
+        nImg.FHeight := StrToInt(nSB[1]);
+      end;
+
+      if nInt > 2 then
+        nImg.FPosition := TStringHelper.Str2Enum<TImagePosition>(nSA[2]);
+      //xxxxx
+    end;
 begin
   nBool := Assigned(nIni);
   if not nBool then
@@ -130,13 +157,16 @@ begin
     nIni := TIniFile.Create(nStr);
     with gSystem.FImages, nIni do
     try
-      nStr       := SwtichPathDelim(sImageDir);
-      FBgLogin   := nStr + ExtractFileName(ReadString(sMain, 'BgLogin', ''));
-      FBgMain    := nStr + ExtractFileName(ReadString(sMain, 'BgMain', ''));
-      FImgLogo   := nStr + ExtractFileName(ReadString(sMain, 'ImgLogo', ''));
-      FImgKey    := nStr + ExtractFileName(ReadString(sMain, 'ImgKey', ''));
-      FImgMainTL := nStr + ExtractFileName(ReadString(sMain, 'ImgMainTL', ''));
-      FImgMainTR := nStr + ExtractFileName(ReadString(sMain, 'ImgMainTR', ''));
+      nDir := SwtichPathDelim(sImageDir);
+      FillChar(gSystem.FImages, SizeOf(TSystemImage), #0);
+
+      GetImage(FBgLogin,    ReadString(sMain, 'BgLogin', ''));
+      GetImage(FBgMain,     ReadString(sMain, 'BgMain', ''));
+      GetImage(FImgLogo,    ReadString(sMain, 'ImgLogo', ''));
+      GetImage(FImgKey,     ReadString(sMain, 'ImgKey', ''));
+      GetImage(FImgMainTL,  ReadString(sMain, 'ImgMainTL', ''));
+      GetImage(FImgMainTR,  ReadString(sMain, 'ImgMainTR', ''));
+      GetImage(FImgWelcome, ReadString(sMain, 'ImgWelcome', ''));
     finally
       nIni.Free;
     end;

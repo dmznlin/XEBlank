@@ -58,8 +58,8 @@ end;
 
 procedure TfFormLogin.UniLoginFormCreate(Sender: TObject);
 begin
-  ImageKey.Url := gSystem.FImages.FImgKey;
-  ImageLogo.Url := gSystem.FImages.FImgLogo;
+  ImageKey.Url := gSystem.FImages.FImgKey.FFile;
+  ImageLogo.Url := gSystem.FImages.FImgLogo.FFile;
 
   UniMainModule.FSToast1 := FSToast1;
   UniMainModule.FSConfirm1 := FSConfirm1;

@@ -27,13 +27,26 @@ const
   cCmd_GetData          = $1007;                     //Ñ¡ÔñÊý¾Ý
 
 type
+  TImagePosition = (ipDefault, ipTL, ipTM, ipTR,
+                               ipML, ipMM, ipMR,
+                               ipBL, ipBM, ipBR);
+  //Í¼Æ¬Î»ÖÃ: Top,Left,Middle,Right,Bottom
+
+  TImageData = record
+    FFile       : string;                            //Í¼Æ¬Â·¾¶
+    FWidth      : Integer;                           //Í¼Æ¬¿í¶È
+    FHeight     : Integer;                           //Í¼Æ¬¸ß¶È
+    FPosition   : TImagePosition;                    //Í¼Æ¬Î»ÖÃ
+  end;
+
   TSystemImage = record
-    FBgLogin    : string;                            //±³¾°:µÇÂ¼´°¿Ú
-    FBgMain     : string;                            //±³¾°:Ö÷´°¿Ú
-    FImgLogo    : string;                            //Í¼Æ¬:µÇÂ¼´°¿ÚLogo
-    FImgKey     : string;                            //Í¼Æ¬:µÇÂ¼´°¿ÚÃÜÂë×°ÊÎ
-    FImgMainTL  : string;                            //Í¼Æ¬:Ö÷´°¿ÚTop-Left
-    FImgMainTR  : string;                            //Í¼Æ¬:Ö÷´°¿ÚTop-Right
+    FBgLogin    : TImageData;                        //±³¾°:µÇÂ¼´°¿Ú
+    FBgMain     : TImageData;                        //±³¾°:Ö÷´°¿Ú
+    FImgLogo    : TImageData;                        //Í¼Æ¬:µÇÂ¼´°¿ÚLogo
+    FImgKey     : TImageData;                        //Í¼Æ¬:µÇÂ¼´°¿ÚÃÜÂë×°ÊÎ
+    FImgMainTL  : TImageData;                        //Í¼Æ¬:Ö÷´°¿ÚTop-Left
+    FImgMainTR  : TImageData;                        //Í¼Æ¬:Ö÷´°¿ÚTop-Right
+    FImgWelcome : TImageData;                        //Í¼Æ¬:Ö÷´°¿Ú»¶Ó­
   end;
 
   PSystemParam = ^TSystemParam;

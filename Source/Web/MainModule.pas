@@ -75,8 +75,8 @@ procedure TUniMainModule.UniGUIMainModuleCreate(Sender: TObject);
 begin
   FAdminLastLogin := 0;
   FSTheme1 := TTheme.bootstrap;
-  Background.Url := gSystem.FImages.FBgMain;
-  LoginBackground.Url := gSystem.FImages.FBgLogin;
+  Background.Url := gSystem.FImages.FBgMain.FFile;
+  LoginBackground.Url := gSystem.FImages.FBgLogin.FFile;
 end;
 
 //Date: 2021-04-30
