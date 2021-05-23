@@ -252,4 +252,58 @@ object fFormMain: TfFormMain
       Color = clBtnFace
     end
   end
+  object FSToast1: TUniFSToast
+    TitleSize = 13
+    TitleLineHeight = 0
+    MsgSize = 12
+    MsgLineHeight = 0
+    Theme = Dark
+    ImageWidth = 0
+    MaxWidth = 0
+    zIndex = 99999
+    Layout = SmallInt
+    Balloon = False
+    Close = True
+    CloseOnEscape = False
+    RTL = False
+    Position = bottomRight
+    TimeOut = 5000
+    Drag = True
+    Overlay = False
+    ToastOnce = False
+    PauseOnHover = True
+    ResetOnHover = False
+    ProgressBar = True
+    ProgressBarColor = 'rgb(0, 255, 184)'
+    ScreenMask.Enabled = False
+    Animateinside = True
+    TransitionIn = fadeInUp
+    TransitionOut = fadeOut
+    TransitionInMobile = fadeInUp
+    TransitionOutMobile = fadeOutDown
+    ButtonTextYes = 'Confirma'
+    ButtonTextNo = 'Cancela'
+    Left = 344
+    Top = 120
+  end
+  object FSConfirm1: TUniFSConfirm
+    Theme = modern
+    TypeColor = blue
+    TypeAnimated = False
+    Draggable = False
+    EscapeKey = False
+    CloseIcon = False
+    Icon = 'fa fa-smile-o'
+    RTL = False
+    boxWidth = '380px'
+    ButtonTextConfirm = 'Confirma'
+    ButtonTextCancel = 'Cancela'
+    ScreenMask.Enabled = False
+    ScreenMask.Text = 'Processing'
+    PromptType.TypePrompt = text
+    PromptType.RequiredField = False
+    PromptType.TextRequiredField = 'Field riquired'
+    Left = 288
+    Top = 120
+  end
 end

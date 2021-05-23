@@ -7,7 +7,7 @@ unit MainModule;
 interface
 
 uses
-  SysUtils, Classes, Controls, uniGUITypes, uniGUIDialogs, uniGUIForm,
+  SysUtils, Classes, Controls, UDBFun, uniGUITypes, uniGUIDialogs, uniGUIForm,
   uniGUIMainModule, UniFSToast, UniFSConfirm, uniImageList, System.ImageList,
   Vcl.ImgList, uniGUIBaseClasses, uniGUIClasses;
 
@@ -29,6 +29,8 @@ type
     FAdminLastLogin: Cardinal;
     {*管理员最后登录*}
   public
+    FUser: TDBCommand.TUserData;
+    {*用户数据*}
     FSToast1: TUniFSToast;
     FSConfirm1: TUniFSConfirm;
     FSTheme1: UniFSConfirm.TTheme;

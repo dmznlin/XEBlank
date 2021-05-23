@@ -8,8 +8,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  uniGUITypes, uniGUIForm, UniFSToast, uniGUIBaseClasses, uniGUIClasses,
-  UniFSConfirm, Vcl.Menus, uniMainMenu, UniFSButton, uniButton, uniBitBtn,
+  uniGUITypes, uniGUIForm, UniFSConfirm, uniGUIBaseClasses, uniGUIClasses,
+  UniFSToast, Vcl.Menus, uniMainMenu, UniFSButton, uniButton, uniBitBtn,
   uniMenuButton, UniFSMenuButton, uniEdit, uniLabel, uniPanel, uniImage;
 
 type
@@ -36,6 +36,7 @@ type
     procedure MenuDESClick(Sender: TObject);
     procedure MenuInitDBClick(Sender: TObject);
     procedure MenuInitMenuClick(Sender: TObject);
+    procedure BtnExitClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -49,7 +50,7 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, MainModule, ULibFun, Data.DB, USysDB, USysBusiness, USysConst;
+  uniGUIVars, MainModule, ULibFun, UDBFun, USysBusiness, USysConst;
 
 function fFormLogin: TfFormLogin;
 begin
@@ -101,75 +102,46 @@ begin
     end, Self);
 end;
 
+//Desc: 退出
+procedure TfFormLogin.BtnExitClick(Sender: TObject);
+begin
+  Close;
+end;
+
 //Desc: 登录
 procedure TfFormLogin.BtnOKClick(Sender: TObject);
 var nStr: string;
-    nQuery: TDataSet;
 begin
-  EditUser.Text := Trim(EditUser.Text);
-  if EditUser.Text = '' then
+  with UniMainModule do
   begin
-    ShowMessage('请输入用户名');
-    Exit;
-  end;
-
-
-  ModalResult := mrOk;
-{
-  nQuery := nil;
-  with ULibFun.TStringHelper do
-  try
-    nStr := 'Select U_NAME,U_PASSWORD,U_GROUP,U_Identity from $a ' +
-            'Where U_NAME=''$b'' and U_State=1';
-
-    nStr := MacroValue(nStr, [MI('$a',sTable_User),
-                              MI('$b',EditUser.Text)]);
-    //xxxxx
-
-    nQuery := LockDBQuery(ctMain);
-    DBQuery(nStr, nQuery);
-
-    if (nQuery.RecordCount <> 1) or
-       (nQuery.FieldByName('U_PASSWORD').AsString <> EditPwd.Text) then
+    EditUser.Text := Trim(EditUser.Text);
+    if EditUser.Text = '' then
     begin
-      ShowMessage('错误的用户名或密码,请重新输入');
+      ShowMsg('请输入用户名');
       Exit;
     end;
 
-    with UniMainModule.FUserConfig do
+    nStr := TDBCommand.GetUser(EditUser.Text, FUser);
+    if nStr <> '' then
     begin
-      FUserID := EditUser.Text;
-      FUserName := nQuery.FieldByName('U_NAME').AsString;
-      FUserPwd := EditPwd.Text;
-      FGroupID := nQuery.FieldByName('U_GROUP').AsString;
-      FIsAdmin := nQuery.FieldByName('U_Identity').AsString = '0';
+      ShowMsg(nStr);
+      Exit;
     end;
 
-    //--------------------------------------------------------------------------
-    nStr := 'Select D_Value,D_Memo From %s Where D_Name=''%s''';
-    nStr := Format(nStr, [sTable_SysDict, sFlag_SysParam]);
-
-    with DBQuery(nStr, nQuery),UniMainModule.FUserConfig do
-    if RecordCount > 0 then
+    if EditPwd.Text <> FUser.FPassword then
     begin
-      First;
-      while not Eof do
-      begin
-        nStr := Fields[1].AsString;
-        if nStr = sFlag_WXServiceMIT then
-          FWechatURL := Fields[0].AsString;
-        //xxxxx
-        Next;
-      end;
+      ShowMsg('登录密码错误');
+      Exit;
     end;
 
-    //--------------------------------------------------------------------------
-    
+    if FUser.FValidOn < Now() then
+    begin
+      ShowMsg('帐户已过期,请联系管理员');
+      Exit;
+    end;
 
     ModalResult := mrOk;
-  finally
-    ReleaseDBQuery(nQuery);
-  end; }
+  end;
 end;
 
 initialization

@@ -11,7 +11,8 @@ uses
   Controls, Forms, MainModule, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIRegClasses, uniGUIForm, uniTreeView, uniPageControl,
   uniButton, uniBitBtn, UniFSButton, uniMultiItem, uniComboBox, uniPanel,
-  uniStatusBar, uniLabel, uniImage, uniGUIBaseClasses, uniSplitter;
+  uniStatusBar, uniLabel, uniImage, uniGUIBaseClasses, uniSplitter,
+  UniFSConfirm, UniFSToast;
 
 type
   TfFormMain = class(TUniForm)
@@ -33,6 +34,8 @@ type
     SplitterLeft: TUniSplitter;
     ImageWelcome: TUniImage;
     LabelCopyRight: TUniLabel;
+    FSToast1: TUniFSToast;
+    FSConfirm1: TUniFSConfirm;
     procedure UniFormCreate(Sender: TObject);
   private
     { Private declarations }
@@ -56,7 +59,11 @@ begin
 end;
 
 procedure TfFormMain.UniFormCreate(Sender: TObject);
+var nStr: string;
 begin
+  UniMainModule.FSToast1 := FSToast1;
+  UniMainModule.FSConfirm1 := FSConfirm1;
+
   ImageLeft.Url := gSystem.FImages.FImgMainTL.FFile;
   ImageRight.Url := gSystem.FImages.FImgMainTR.FFile;
   LabelHint.Caption := gSystem.FMain.FActive.FDeployName;
@@ -79,6 +86,13 @@ begin
      ipTM, ipMM, ipBM: SheetWelcome.LayoutAttribs.Pack := 'center';
      ipTR, ipMR, ipBR: SheetWelcome.LayoutAttribs.Pack := 'end';
     end;
+  end;
+
+  with UniMainModule, UniSession do
+  begin
+    nStr := '※.用户:【%s】 来自:【%s】 系统:【%s】 浏览器:【%s】';
+    nStr := Format(nStr, [FUser.FUserName, RemoteIP, SystemUser, UserAgent]);
+    StatusBar1.SimpleText := nStr;
   end;
 end;
 

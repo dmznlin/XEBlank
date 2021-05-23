@@ -126,7 +126,7 @@ var nStr,nDir: string;
         nImg.FFile := nDir + nSA[0];
       //xxxxx
 
-      if (nInt > 1) and TStringHelper.SplitArray(nSA[1], nSB, 'x', tpTrim) then
+      if (nInt > 1) and TStringHelper.SplitArray(nSA[1],nSB,'x',tpTrim,2) then
       begin
         nImg.FWidth := StrToInt(nSB[0]);
         nImg.FHeight := StrToInt(nSB[1]);

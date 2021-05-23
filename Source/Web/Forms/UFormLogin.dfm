@@ -95,6 +95,9 @@ object fFormLogin: TfFormLogin
     DropdownMenu = PMenu1
     Caption = #30331#24405
     TabOrder = 2
+    ScreenMask.Enabled = True
+    ScreenMask.Message = #27491#22312#30331#24405
+    ScreenMask.Target = Owner
     OnClick = BtnOKClick
     StyleMenuButton = Default
     BadgeText.Text = '0'
@@ -117,6 +120,7 @@ object fFormLogin: TfFormLogin
     BadgeText.BackgroundColor = '#D50000'
     Caption = #36864#20986
     TabOrder = 3
+    OnClick = BtnExitClick
   end
   object PMenu1: TUniPopupMenu
     Left = 16
