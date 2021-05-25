@@ -10,6 +10,7 @@ object fFormMain: TfFormMain
   Font.Height = -12
   Font.Name = #23435#20307
   OnCreate = UniFormCreate
+  OnDestroy = UniFormDestroy
   PixelsPerInch = 96
   TextHeight = 12
   object PanelTop: TUniSimplePanel
@@ -117,7 +118,7 @@ object fFormMain: TfFormMain
           Align = alLeft
           TabOrder = 2
           Images = UniMainModule.SmallImages
-          ImageIndex = 19
+          ImageIndex = 25
         end
         object BtnExpand: TUniFSButton
           Left = 36
@@ -137,7 +138,8 @@ object fFormMain: TfFormMain
           Align = alLeft
           TabOrder = 3
           Images = UniMainModule.SmallImages
-          ImageIndex = 14
+          ImageIndex = 17
+          OnClick = BtnExpandClick
         end
         object BtnCollasp: TUniFSButton
           Left = 59
@@ -157,7 +159,8 @@ object fFormMain: TfFormMain
           Align = alLeft
           TabOrder = 4
           Images = UniMainModule.SmallImages
-          ImageIndex = 15
+          ImageIndex = 18
+          OnClick = BtnExpandClick
         end
         object EditSearch: TUniComboBox
           Left = 82
@@ -181,6 +184,8 @@ object fFormMain: TfFormMain
               HandleClicks = True
             end>
           IconItems = <>
+          OnTriggerEvent = EditSearchTriggerEvent
+          ExplicitTop = -6
         end
       end
       object PanelMenus: TUniContainerPanel
@@ -193,6 +198,7 @@ object fFormMain: TfFormMain
         Align = alClient
         TabOrder = 2
         Layout = 'accordion'
+        ExplicitTop = 44
       end
     end
     object PageWork: TUniPageControl
@@ -283,8 +289,8 @@ object fFormMain: TfFormMain
     TransitionOutMobile = fadeOutDown
     ButtonTextYes = 'Confirma'
     ButtonTextNo = 'Cancela'
-    Left = 344
-    Top = 120
+    Left = 80
+    Top = 184
   end
   object FSConfirm1: TUniFSConfirm
     Theme = modern
@@ -303,7 +309,14 @@ object fFormMain: TfFormMain
     PromptType.TypePrompt = text
     PromptType.RequiredField = False
     PromptType.TextRequiredField = 'Field riquired'
-    Left = 288
-    Top = 120
+    Left = 24
+    Top = 184
+  end
+  object PMenu1: TUniPopupMenu
+    Left = 135
+    Top = 184
+    object N1: TUniMenuItem
+      Caption = #32534#36753#33756#21333
+    end
   end
 end

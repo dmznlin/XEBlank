@@ -4,6 +4,7 @@
 *******************************************************************************}
 unit UFormLogin;
 
+{$I Link.Inc}
 interface
 
 uses
@@ -64,6 +65,11 @@ begin
 
   UniMainModule.FSToast1 := FSToast1;
   UniMainModule.FSConfirm1 := FSConfirm1;
+
+  {$IFDEF Debug}
+  EditUser.Text := 'admin';
+  EditPwd.Text  := 'admin';
+  {$ENDIF}
 end;
 
 //Desc: Êý¾Ý±àÂë

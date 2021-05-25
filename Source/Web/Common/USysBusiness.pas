@@ -52,6 +52,8 @@ type
       const nParams: PFormCommandParam = nil;
       const nResult: TFormModalResult = nil); static;
     {*显示模式窗体*}
+    class function UserConfigFile: TIniFile; static;
+    {*用户配置文件*}
   end;
 
 implementation
@@ -179,6 +181,26 @@ end;
 class function TWebSystem.SwtichPathDelim(const nPath,nFrom,nTo: string): string;
 begin
   Result := StringReplace(nPath, nFrom, nTo, [rfReplaceAll]);
+end;
+
+//Date: 2021-05-25
+//Desc: 用户自定义配置文件
+class function TWebSystem.UserConfigFile: TIniFile;
+var nStr: string;
+begin
+  nStr := gPath + 'users\';
+  if not DirectoryExists(nStr) then
+    ForceDirectories(nStr);
+  //new folder
+
+  nStr := nStr + UniMainModule.FUser.FUserID + '.ini';
+  Result := TIniFile.Create(nStr);
+
+  if not FileExists(nStr) then
+  begin
+    Result.WriteString('Config', 'Account', UniMainModule.FUser.FAccount);
+    Result.WriteString('Config', 'UserName', UniMainModule.FUser.FUserName);
+  end;
 end;
 
 //---------------------------------- 窗体调用 ----------------------------------
