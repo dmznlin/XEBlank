@@ -12,7 +12,7 @@ uses
   System.IniFiles,
   //----------------------------------------------------------------------------
   uniGUIAbstractClasses, uniGUITypes, uniGUIClasses, uniGUIBaseClasses,
-  uniGUISessionManager, uniGUIApplication, uniTreeView, uniGUIForm,
+  uniGUISessionManager, uniGUIApplication, uniTreeView, uniGUIForm, uniImage,
   uniDBGrid, uniStringGrid, uniComboBox, MainModule, UFormBase,
   //----------------------------------------------------------------------------
   UBaseObject, UManagerGroup, ULibFun, USysDB, USysConst, USysRemote;
@@ -54,6 +54,9 @@ type
     {*显示模式窗体*}
     class function UserConfigFile: TIniFile; static;
     {*用户配置文件*}
+    class procedure SetImageData(const nParent: TUniContainer;
+      const nImage: TUniImage; const nData: PImageData); static;
+    {*设置图片数据*}
   end;
 
 implementation
@@ -200,6 +203,32 @@ begin
   begin
     Result.WriteString('Config', 'Account', UniMainModule.FUser.FAccount);
     Result.WriteString('Config', 'UserName', UniMainModule.FUser.FUserName);
+  end;
+end;
+
+//Date: 2021-05-27
+//Parm: 父容器;图片;数据
+//Desc: 依据nData设置nImage属性
+class procedure TWebSystem.SetImageData(const nParent: TUniContainer;
+  const nImage: TUniImage; const nData: PImageData);
+begin
+  with nImage do
+  begin
+    Url := nData.FFile;
+    if nData.FWidth > 0 then Width := nData.FWidth;
+    if nData.FHeight > 0 then Height := nData.FHeight;
+
+    case nData.FPosition of
+     ipTL, ipTM, ipTR: nParent.LayoutAttribs.Align := 'top';
+     ipML, ipMM, ipMR: nParent.LayoutAttribs.Align := 'middle';
+     ipBL, ipBM, ipBR: nParent.LayoutAttribs.Align := 'bottom';
+    end;
+
+    case gSystem.FImages.FImgWelcome.FPosition of
+     ipTL, ipML, ipBL: nParent.LayoutAttribs.Pack := 'start';
+     ipTM, ipMM, ipBM: nParent.LayoutAttribs.Pack := 'center';
+     ipTR, ipMR, ipBR: nParent.LayoutAttribs.Pack := 'end';
+    end;
   end;
 end;
 

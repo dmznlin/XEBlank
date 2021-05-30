@@ -123,12 +123,15 @@ object fFormLogin: TfFormLogin
     OnClick = BtnExitClick
   end
   object PMenu1: TUniPopupMenu
+    Images = UniMainModule.SmallImages
     Left = 16
     Top = 16
     object N1: TUniMenuItem
       Caption = #31649#29702#21592#24037#20855
+      ImageIndex = 13
       object MenuDES: TUniMenuItem
         Caption = #25968#25454#32534#30721' && '#35299#30721
+        ImageIndex = 33
         OnClick = MenuDESClick
       end
       object N2: TUniMenuItem
@@ -136,11 +139,24 @@ object fFormLogin: TfFormLogin
       end
       object MenuInitDB: TUniMenuItem
         Caption = #21021#22987#21270#25968#25454#24211
+        ImageIndex = 37
         OnClick = MenuInitDBClick
       end
       object MenuInitMenu: TUniMenuItem
         Caption = #21021#22987#21270#31995#32479#33756#21333
+        ImageIndex = 21
         OnClick = MenuInitMenuClick
+      end
+      object N3: TUniMenuItem
+        Caption = '-'
+      end
+      object N4: TUniMenuItem
+        Caption = #31995#32479#20869#23384#23545#35937#29366#24577
+        ImageIndex = 31
+      end
+      object N5: TUniMenuItem
+        Caption = #31995#32479#23454#26102#36816#34892#26085#24535
+        ImageIndex = 32
       end
     end
   end

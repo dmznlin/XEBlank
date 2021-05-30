@@ -19,6 +19,21 @@ type
     FDesc  : string;                   //描述
   end;
 
+  PFormCommandParam = ^TFormCommandParam;
+  TFormCommandParam = record
+    FCommand: integer;                               //命令
+    FParamA: Variant;
+    FParamB: Variant;
+    FParamC: Variant;
+    FParamD: Variant;
+    FParamE: Variant;                                //参数A-E
+    FParamP: Pointer;                                //指针参数
+  end;
+
+  TFormModalResult = reference to  procedure(const nResult: Integer;
+    const nParam: PFormCommandParam = nil);
+  //模式窗体结果回调
+
   TfFormBase = class(TUniForm)
     PanelWork: TUniSimplePanel;
     procedure UniFormCreate(Sender: TObject);

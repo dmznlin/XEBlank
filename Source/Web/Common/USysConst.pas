@@ -32,6 +32,7 @@ type
                                ipBL, ipBM, ipBR);
   //图片位置: Top,Left,Middle,Right,Bottom
 
+  PImageData = ^TImageData;
   TImageData = record
     FFile       : string;                            //图片路径
     FWidth      : Integer;                           //图片宽度
@@ -79,20 +80,6 @@ type
   end;
 
   TMenuModuleItems = array of TMenuModuleItem;       //模块列表
-
-  PFormCommandParam = ^TFormCommandParam;
-  TFormCommandParam = record
-    FCommand: integer;                               //命令
-    FParamA: Variant;
-    FParamB: Variant;
-    FParamC: Variant;
-    FParamD: Variant;
-    FParamE: Variant;                                //参数A-E
-  end;
-
-  TFormModalResult = reference to  procedure(const nResult: Integer;
-    const nParam: PFormCommandParam = nil);
-  //模式窗体结果回调
 
 //------------------------------------------------------------------------------
 var

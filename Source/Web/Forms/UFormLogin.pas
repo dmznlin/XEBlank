@@ -32,6 +32,9 @@ type
     MenuDES: TUniMenuItem;
     N2: TUniMenuItem;
     FSConfirm1: TUniFSConfirm;
+    N3: TUniMenuItem;
+    N4: TUniMenuItem;
+    N5: TUniMenuItem;
     procedure UniLoginFormCreate(Sender: TObject);
     procedure BtnOKClick(Sender: TObject);
     procedure MenuDESClick(Sender: TObject);

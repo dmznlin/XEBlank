@@ -45,8 +45,8 @@ object UniServerModule: TUniServerModule
   SSL.SSLOptions.VerifyMode = []
   SSL.SSLOptions.VerifyDepth = 0
   Options = [soAutoPlatformSwitch, soWipeShadowSessions]
-  ConnectionFailureRecovery.ErrorMessage = 'Connection Error'
-  ConnectionFailureRecovery.RetryMessage = 'Retrying...'
+  ConnectionFailureRecovery.ErrorMessage = #26381#21153#24050#26029#24320
+  ConnectionFailureRecovery.RetryMessage = #33258#21160#36830#25509'...'
   OnBeforeInit = UniGUIServerModuleBeforeInit
   OnBeforeShutdown = UniGUIServerModuleBeforeShutdown
   Height = 252

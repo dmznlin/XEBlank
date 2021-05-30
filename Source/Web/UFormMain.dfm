@@ -141,7 +141,7 @@ object fFormMain: TfFormMain
           ImageIndex = 17
           OnClick = BtnExpandClick
         end
-        object BtnCollasp: TUniFSButton
+        object BtnCollapse: TUniFSButton
           Left = 59
           Top = 0
           Width = 23
@@ -184,8 +184,8 @@ object fFormMain: TfFormMain
               HandleClicks = True
             end>
           IconItems = <>
+          OnChange = EditSearchChange
           OnTriggerEvent = EditSearchTriggerEvent
-          ExplicitTop = -6
         end
       end
       object PanelMenus: TUniContainerPanel
@@ -198,7 +198,6 @@ object fFormMain: TfFormMain
         Align = alClient
         TabOrder = 2
         Layout = 'accordion'
-        ExplicitTop = 44
       end
     end
     object PageWork: TUniPageControl
@@ -233,7 +232,7 @@ object fFormMain: TfFormMain
           Font.Color = clGray
           Font.Height = -12
           Font.Name = #23435#20307
-          TabOrder = 1
+          TabOrder = 0
           LayoutConfig.Padding = '0 20 0 0'
         end
         object ImageWelcome: TUniImage
@@ -313,10 +312,26 @@ object fFormMain: TfFormMain
     Top = 184
   end
   object PMenu1: TUniPopupMenu
+    Images = UniMainModule.SmallImages
     Left = 135
     Top = 184
-    object N1: TUniMenuItem
+    object MenuExpand: TUniMenuItem
+      Caption = #20840#37096#23637#24320
+      ImageIndex = 17
+      OnClick = BtnExpandClick
+    end
+    object MenuCollapse: TUniMenuItem
+      Caption = #20840#37096#25910#36215
+      ImageIndex = 18
+      OnClick = BtnExpandClick
+    end
+    object MenuS1: TUniMenuItem
+      Caption = '-'
+    end
+    object MenuEdit: TUniMenuItem
       Caption = #32534#36753#33756#21333
+      ImageIndex = 12
+      OnClick = MenuEditClick
     end
   end
 end
