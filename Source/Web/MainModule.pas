@@ -79,6 +79,13 @@ begin
   FSTheme1 := TTheme.bootstrap;
   Background.Url := gSystem.FImages.FBgMain.FFile;
   LoginBackground.Url := gSystem.FImages.FBgLogin.FFile;
+
+  with FUser do
+  begin
+    FUserID   := 'default';        //用户编号
+    FUserName := 'sys_dmzn';       //用户名称
+    FAccount  := 'dmzn@163.com';   //用户帐户(登录名)
+  end;
 end;
 
 //Date: 2021-04-30

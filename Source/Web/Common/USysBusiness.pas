@@ -9,7 +9,7 @@ interface
 
 uses
   Vcl.Controls, System.Classes, System.SysUtils, Data.DB, System.SyncObjs,
-  System.IniFiles,
+  System.IniFiles, Vcl.Forms,
   //----------------------------------------------------------------------------
   uniGUIAbstractClasses, uniGUITypes, uniGUIClasses, uniGUIBaseClasses,
   uniGUISessionManager, uniGUIApplication, uniTreeView, uniGUIForm, uniImage,
@@ -52,6 +52,10 @@ type
       const nParams: PFormCommandParam = nil;
       const nResult: TFormModalResult = nil); static;
     {*显示模式窗体*}
+    class procedure LoadFormConfig(const nForm: TfFormBase;
+      const nIniF: TIniFile = nil); static;
+    class procedure SaveFormConfig(const nForm: TfFormBase;
+      const nIniF: TIniFile = nil); static;
     class function UserConfigFile: TIniFile; static;
     {*用户配置文件*}
     class procedure SetImageData(const nParent: TUniContainer;
@@ -191,18 +195,113 @@ end;
 class function TWebSystem.UserConfigFile: TIniFile;
 var nStr: string;
 begin
-  nStr := gPath + 'users\';
-  if not DirectoryExists(nStr) then
-    ForceDirectories(nStr);
-  //new folder
+  Result := nil;
+  try
+    nStr := gPath + 'users\';
+    if not DirectoryExists(nStr) then
+      ForceDirectories(nStr);
+    //new folder
 
-  nStr := nStr + UniMainModule.FUser.FUserID + '.ini';
-  Result := TIniFile.Create(nStr);
+    nStr := nStr + UniMainModule.FUser.FUserID + '.ini';
+    Result := TIniFile.Create(nStr);
 
-  if not FileExists(nStr) then
-  begin
-    Result.WriteString('Config', 'Account', UniMainModule.FUser.FAccount);
-    Result.WriteString('Config', 'UserName', UniMainModule.FUser.FUserName);
+    if not FileExists(nStr) then
+    begin
+      Result.WriteString('Config', 'Account', UniMainModule.FUser.FAccount);
+      Result.WriteString('Config', 'UserName', UniMainModule.FUser.FUserName);
+    end;
+  except
+    Result.Free;
+  end;
+end;
+
+//Date: 2021-05-31
+//Parm: 窗体
+//Desc: 载入窗体信息
+class procedure TWebSystem.LoadFormConfig(const nForm: TfFormBase;
+  const nIniF: TIniFile);
+var nIni: TIniFile;
+    nValue,nMax: integer;
+begin
+  if Assigned(nIniF) then
+       nIni := nIniF
+  else nIni := UserConfigFile;
+
+  try
+    with nForm do
+    begin
+      nMax := High(integer);
+      nValue := nIni.ReadInteger(Name, 'FormTop', nMax);
+
+      if nValue < nMax then
+      begin
+        Top := nValue;
+      end else
+      begin
+        if Position = TPosition.poDesigned then
+          Position := TPosition.poScreenCenter;
+        //初次加载时居中,避免设计时分辨率不同越界
+      end;
+
+      nValue := nIni.ReadInteger(Name, 'FormLeft', nMax);
+      if nValue < nMax then Left := nValue;
+
+      if BorderStyle = TFormBorderStyle.bsSizeable then
+      begin
+        nValue := nIni.ReadInteger(Name, 'FormWidth', nMax);
+        if nValue < nMax then Width := nValue;
+
+        nValue := nIni.ReadInteger(Name, 'FormHeight', nMax);
+        if nValue < nMax then Height := nValue;
+      end; //载入窗体位置和宽高
+
+      if nIni.ReadBool(Name, 'Maximized', False) = True then
+         WindowState := TWindowState.wsMaximized;
+      //最大化状态
+    end;
+  finally
+    if not Assigned(nIniF) then nIni.Free;
+  end;
+
+end;
+
+//Date: 2021-05-31
+//Parm: 窗体
+//Desc: 保存窗体信息
+class procedure TWebSystem.SaveFormConfig(const nForm: TfFormBase;
+  const nIniF: TIniFile);
+var nIni: TIniFile;
+    nBool: Boolean;
+begin
+  nBool := False;
+  nIni := nil;
+  try
+    if Assigned(nIniF) then
+         nIni := nIniF
+    else nIni := UserConfigFile;
+
+    with nForm do
+    begin
+      nBool := WindowState = wsMaximized;
+      if nBool then
+        WindowState := wsNormal;
+      //还原,记录正常位置宽高
+
+      nIni.WriteInteger(Name, 'FormTop', Top);
+      nIni.WriteInteger(Name, 'FormLeft', Left);
+      nIni.WriteInteger(Name, 'FormWidth', Width);
+      nIni.WriteInteger(Name, 'FormHeight', Height);
+      nIni.WriteBool(Name, 'Maximized', nBool);
+      //保存窗体位置和宽高
+    end;
+  finally
+    if not Assigned(nIniF) then
+      nIni.Free;
+    //xxxxx
+
+    if nBool then
+      nForm.WindowState := wsMaximized;
+    //xxxx
   end;
 end;
 

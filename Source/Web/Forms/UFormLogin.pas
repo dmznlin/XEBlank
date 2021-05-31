@@ -33,14 +33,16 @@ type
     N2: TUniMenuItem;
     FSConfirm1: TUniFSConfirm;
     N3: TUniMenuItem;
-    N4: TUniMenuItem;
-    N5: TUniMenuItem;
+    MenuSatus: TUniMenuItem;
+    MenuLog: TUniMenuItem;
     procedure UniLoginFormCreate(Sender: TObject);
     procedure BtnOKClick(Sender: TObject);
     procedure MenuDESClick(Sender: TObject);
     procedure MenuInitDBClick(Sender: TObject);
     procedure MenuInitMenuClick(Sender: TObject);
     procedure BtnExitClick(Sender: TObject);
+    procedure MenuSatusClick(Sender: TObject);
+    procedure MenuLogClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -107,6 +109,30 @@ begin
     begin
       if nType = ctYes then
         TWebSystem.ShowModalForm('TfFormInitMenus');
+      //xxxxx
+    end, Self);
+end;
+
+//Desc: 内存对象
+procedure TfFormLogin.MenuSatusClick(Sender: TObject);
+begin
+  UniMainModule.VerifyAdministrator(
+    procedure(const nType: TButtonClickType; const nText: string)
+    begin
+      if nType = ctYes then
+        TWebSystem.ShowModalForm('TfFormMemStatus');
+      //xxxxx
+    end, Self);
+end;
+
+//Desc: 实时日志
+procedure TfFormLogin.MenuLogClick(Sender: TObject);
+begin
+  UniMainModule.VerifyAdministrator(
+    procedure(const nType: TButtonClickType; const nText: string)
+    begin
+      if nType = ctYes then
+        TWebSystem.ShowModalForm('TfFormRunLog');
       //xxxxx
     end, Self);
 end;

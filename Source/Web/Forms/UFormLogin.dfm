@@ -128,7 +128,7 @@ object fFormLogin: TfFormLogin
     Top = 16
     object N1: TUniMenuItem
       Caption = #31649#29702#21592#24037#20855
-      ImageIndex = 13
+      ImageIndex = 14
       object MenuDES: TUniMenuItem
         Caption = #25968#25454#32534#30721' && '#35299#30721
         ImageIndex = 33
@@ -139,7 +139,7 @@ object fFormLogin: TfFormLogin
       end
       object MenuInitDB: TUniMenuItem
         Caption = #21021#22987#21270#25968#25454#24211
-        ImageIndex = 37
+        ImageIndex = 34
         OnClick = MenuInitDBClick
       end
       object MenuInitMenu: TUniMenuItem
@@ -150,13 +150,15 @@ object fFormLogin: TfFormLogin
       object N3: TUniMenuItem
         Caption = '-'
       end
-      object N4: TUniMenuItem
+      object MenuSatus: TUniMenuItem
         Caption = #31995#32479#20869#23384#23545#35937#29366#24577
         ImageIndex = 31
+        OnClick = MenuSatusClick
       end
-      object N5: TUniMenuItem
+      object MenuLog: TUniMenuItem
         Caption = #31995#32479#23454#26102#36816#34892#26085#24535
         ImageIndex = 32
+        OnClick = MenuLogClick
       end
     end
   end

@@ -9,7 +9,8 @@ unit USysModule;
 interface
 
 uses
-  USysDB, USysMenu, UFormEncrypt, UFormInitDB, UFormInitMenus, UFormEditSysMenu;
+  USysDB, USysMenu, UFormEncrypt, UFormInitDB, UFormInitMenus, UFormEditSysMenu,
+  UFormMemStatus, UFormRunLog;
 
 implementation
 
