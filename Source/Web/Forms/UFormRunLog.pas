@@ -41,6 +41,7 @@ uses
 class function TfFormRunLog.DescMe: TfFormDesc;
 begin
   Result := inherited DescMe();
+  Result.FVerifyAdmin := True;
   Result.FDesc := '查看实时运行日志';
 end;
 

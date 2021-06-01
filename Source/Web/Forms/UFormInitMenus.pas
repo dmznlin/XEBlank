@@ -32,6 +32,7 @@ uses
 class function TfFormInitMenus.DescMe: TfFormDesc;
 begin
   Result := inherited DescMe();
+  Result.FVerifyAdmin := True;
   Result.FDesc := '初始化系统菜单';
 end;
 

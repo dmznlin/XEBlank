@@ -16,6 +16,7 @@ type
     BtnExit: TUniFSButton;
     BtnOK: TUniFSButton;
     procedure BtnOKClick(Sender: TObject);
+    procedure BtnExitClick(Sender: TObject);
   protected
     { Protected declarations }
     FConnID: string;
@@ -98,6 +99,11 @@ end;
 procedure TfFormNormal.AfterSaveData(var nDefault: Boolean);
 begin
 
+end;
+
+procedure TfFormNormal.BtnExitClick(Sender: TObject);
+begin
+  Close;
 end;
 
 procedure TfFormNormal.BtnOKClick(Sender: TObject);

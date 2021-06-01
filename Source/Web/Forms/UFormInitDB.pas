@@ -39,6 +39,7 @@ const
 class function TfFormInitDB.DescMe: TfFormDesc;
 begin
   Result := inherited DescMe();
+  Result.FVerifyAdmin := True;
   Result.FDesc := '初始化数据库';
 end;
 

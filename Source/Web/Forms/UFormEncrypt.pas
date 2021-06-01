@@ -58,6 +58,7 @@ uses
 class function TfFormEncrypt.DescMe: TfFormDesc;
 begin
   Result := inherited DescMe();
+  Result.FVerifyAdmin := True;
   Result.FDesc := 'Êý¾Ý±àÂë';
 end;
 

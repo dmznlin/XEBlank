@@ -18,6 +18,7 @@ inherited fFormNormal: TfFormNormal
     Cancel = True
     Anchors = [akRight, akBottom]
     TabOrder = 0
+    OnClick = BtnExitClick
   end
   object BtnOK: TUniFSButton [1]
     Left = 136

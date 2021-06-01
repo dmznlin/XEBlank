@@ -1,22 +1,24 @@
 inherited fFormRunLog: TfFormRunLog
-  ClientHeight = 441
-  ClientWidth = 645
+  ClientHeight = 323
+  ClientWidth = 512
   Caption = #31995#32479#36816#34892#26085#24535
   BorderStyle = bsSizeable
-  ExplicitWidth = 653
-  ExplicitHeight = 468
+  Constraints.MinHeight = 350
+  Constraints.MinWidth = 520
+  ExplicitWidth = 520
+  ExplicitHeight = 350
   PixelsPerInch = 96
   TextHeight = 12
   inherited PanelWork: TUniSimplePanel
-    Width = 629
-    Height = 421
-    ExplicitWidth = 629
-    ExplicitHeight = 421
+    Width = 496
+    Height = 303
+    ExplicitWidth = 496
+    ExplicitHeight = 303
     object EditLog: TUniMemo
       Left = 8
       Top = 42
-      Width = 611
-      Height = 369
+      Width = 478
+      Height = 251
       Hint = ''
       ScrollBars = ssBoth
       Anchors = [akLeft, akTop, akRight, akBottom]
@@ -24,7 +26,7 @@ inherited fFormRunLog: TfFormRunLog
       TabOrder = 1
     end
     object CheckShow: TUniCheckBox
-      Left = 517
+      Left = 384
       Top = 14
       Width = 102
       Height = 17

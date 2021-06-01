@@ -415,9 +415,7 @@ begin
     end;
   end;
 
-  if (nMenu.FUserID = '') and UniMainModule.FUser.FIsAdmin then
-       TWebSystem.ShowModalForm('TfFormEditSysMenu', @nData, nResult)
-  else TWebSystem.ShowModalForm('', @nData, nResult)
+  TWebSystem.ShowModalForm('TfFormEditSysMenu', @nData, nResult);
 end;
 
 initialization

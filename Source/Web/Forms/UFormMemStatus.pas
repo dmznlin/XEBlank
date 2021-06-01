@@ -34,6 +34,7 @@ uses
 class function TfFormMemStatus.DescMe: TfFormDesc;
 begin
   Result := inherited DescMe();
+  Result.FVerifyAdmin := True;
   Result.FDesc := '查看内存对象状态';
 end;
 

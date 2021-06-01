@@ -15,8 +15,9 @@ type
   TfFormClass = class of TfFormBase;
 
   TfFormDesc = record
-    FName  : string;                   //类名
-    FDesc  : string;                   //描述
+    FName          : string;                         //类名
+    FDesc          : string;                         //描述
+    FVerifyAdmin   : Boolean;                        //验证管理员
   end;
 
   PFormCommandParam = ^TFormCommandParam;
@@ -85,6 +86,7 @@ class function TfFormBase.DescMe: TfFormDesc;
 begin
   FillChar(Result, SizeOf(TfFormDesc), #0);
   Result.FName := ClassName;
+  Result.FVerifyAdmin := False;
 end;
 
 //Date: 2021-04-27
