@@ -41,6 +41,7 @@ type
     MenuS1: TUniMenuItem;
     MenuExpand: TUniMenuItem;
     MenuCollapse: TUniMenuItem;
+    MenuDel: TUniMenuItem;
     procedure UniFormCreate(Sender: TObject);
     procedure UniFormDestroy(Sender: TObject);
     procedure BtnExpandClick(Sender: TObject);
@@ -48,6 +49,7 @@ type
       AButtonId: Integer);
     procedure EditSearchChange(Sender: TObject);
     procedure MenuEditClick(Sender: TObject);
+    procedure MenuDelClick(Sender: TObject);
   private
     type
       TMenuSearch = record
@@ -270,11 +272,19 @@ end;
 //Desc: 弹出快捷菜单
 procedure TfFormMain.OnMenuMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
+var nMenu: PMenuItem;
 begin
   with Sender as TUniTreeView do
   begin
     if (Button = mbRight) and (Sender = FActiveMenu) then
     begin
+      if Assigned(Selected) then
+        nMenu := Selected.Data;
+      //xxxxx
+
+      MenuDel.Enabled := Assigned(Selected) and (not Selected.HasChildren) and
+                         (nMenu.FUserID <> '');
+      //user define menu
       MenuEdit.Enabled := Assigned(Selected);
       PMenu1.Popup(X, Y, Sender);
     end;
@@ -416,6 +426,23 @@ begin
   end;
 
   TWebSystem.ShowModalForm('TfFormEditSysMenu', @nData, nResult);
+end;
+
+//Date: 2021-06-02
+//Desc: 删除当前菜单
+procedure TfFormMain.MenuDelClick(Sender: TObject);
+var nMenu: PMenuItem;
+begin
+  nMenu := FActiveMenu.Selected.Data;
+  UniMainModule.QueryDlg(Format('确定要删除[ %s ]菜单吗?', [nMenu.FTitle]),
+    procedure (const nType: TButtonClickType)
+    begin
+      if nType = ctYes then
+      begin
+        gMenuManager.DeleteMenu(nMenu);
+        FActiveMenu.Items.Delete(FActiveMenu.Selected);
+      end;
+    end);
 end;
 
 initialization

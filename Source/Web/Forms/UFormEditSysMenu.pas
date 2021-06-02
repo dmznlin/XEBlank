@@ -46,7 +46,7 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, UManagerGroup, ULibFun, USysBusiness;
+  uniGUIVars, UManagerGroup, ULibFun, USysMenu, USysBusiness, USysConst;
 
 class function TfFormEditSysMenu.DescMe: TfFormDesc;
 begin
@@ -119,7 +119,7 @@ begin
       for nIdx := Low(Forms) to High(Forms) do
       with Forms[nIdx].DescMe do
       begin
-        AddObject(FDesc, Pointer(nIdx));
+        AddObject(Format('%2d.%s', [nIdx+1, FDesc]), Pointer(nIdx));
         if Assigned(FMenuItem) and (FMenuItem.FActionData = FName) then
           EditData.ItemIndex := nIdx;
         //xxxxx
@@ -169,28 +169,71 @@ begin
 
   nMenu.FExpaned := CheckExpand.Checked;
   nMenu.FDeploy := [];
-  if CheckDesktop.Checked then Include(nMenu.FDeploy, dtDesktop);
-  if CheckWeb.Checked then Include(nMenu.FDeploy, dtWeb);
-  if CheckMobile.Checked then Include(nMenu.FDeploy, dtMobile);
+  if CheckDesktop.Checked then Include(nMenu.FDeploy, Desktop);
+  if CheckWeb.Checked then Include(nMenu.FDeploy, Web);
+  if CheckMobile.Checked then Include(nMenu.FDeploy, Mobile);
 end;
 
 //Desc: 保存
 procedure TfFormEditSysMenu.BtnOKClick(Sender: TObject);
-var nStr: string;
+var nMenu: TMenuItem;
 begin
   if not IsDataValid then Exit;
   //invalid
 
-  if (FMenuItem.FUserID = '') and UniMainModule.FUser.FIsAdmin then //系统菜单
+  if Assigned(FMenuItem) and (
+    (FMenuItem.FUserID <> '') or UniMainModule.FUser.FIsAdmin) then
   begin
     ApplyData(FMenuItem);
-    nStr := gMenuManager.BuildMenuSQL(FMenuItem);
-    gMG.FDBManager.DBExecute(nStr);
+    gMenuManager.AddMenu(FMenuItem);
+    //自定义或系统菜单,直接保存
 
     ModalResult := mrOk;
     UniMainModule.ShowMsg('菜单保存成功');
     Exit;
   end;
+
+  if Assigned(FMenuItem) and (FMenuItem.FUserID = '') then
+  begin
+    nMenu := FMenuItem^;
+    ApplyData(@nMenu);
+
+    with nMenu do
+    begin
+      FRecordID  := '';
+      FPMenu     := '';
+      FNewOrder  := -1;
+
+      FEntity    := sEntity_User;
+      FLang      := UniMainModule.FUser.FLangID;
+      FUserID    := UniMainModule.FUser.FUserID;
+    end;
+
+    gMenuManager.AddMenu(@nMenu);
+    //系统菜单转自定义
+  end else
+  begin
+    ApplyData(@nMenu);
+    //new menu
+
+    with nMenu do
+    begin
+      FRecordID  := '';
+      FPMenu     := '';
+      FNewOrder  := -1;
+
+      FProgID    := gSystem.FMain.FActive.FProgram;
+      FEntity    := sEntity_User;
+      FLang      := UniMainModule.FUser.FLangID;
+      FUserID    := UniMainModule.FUser.FUserID;
+    end;
+
+    gMenuManager.AddMenu(@nMenu);
+    //新添加菜单项
+  end;
+
+  ModalResult := mrOk;
+  UniMainModule.ShowMsg('菜单保存成功,重启后生效');
 end;
 
 initialization

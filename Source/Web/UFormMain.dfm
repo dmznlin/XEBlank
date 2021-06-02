@@ -330,8 +330,13 @@ object fFormMain: TfFormMain
     end
     object MenuEdit: TUniMenuItem
       Caption = #32534#36753#33756#21333
-      ImageIndex = 12
+      ImageIndex = 4
       OnClick = MenuEditClick
+    end
+    object MenuDel: TUniMenuItem
+      Caption = #21024#38500#33756#21333
+      ImageIndex = 6
+      OnClick = MenuDelClick
     end
   end
 end
