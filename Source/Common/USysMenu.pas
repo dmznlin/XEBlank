@@ -16,6 +16,11 @@ const
   sEntity_Main = 'MAIN';              //主菜单标识
   sEntity_User = 'USER';              //用户菜单标识
 
+  sCMD_Exit    = 'ExitSystem';        //退出系统
+
+  sMenuCommands: array[0..0] of string = (sCMD_Exit);
+  //可用指令列表
+
 implementation
 
 //Desc: 系统菜单项
@@ -29,11 +34,9 @@ begin
       AddM('D00', '业务').
       AddM('E00', '帮助').
     SetParent('A00').SetType(mtItem).                //A00
-      AddM('A01', 'A01').
-      AddM('A02', 'A02').
-      AddM('A03', 'A03').
-      AddM('A04', 'A04').
-      AddM('A05', 'A05').
+      AddM('A01', '切换语言').
+      AddM('A02', '修改密码').
+      AddM('A03', '退出系统', maExecute, sCMD_Exit).
     SetParent('B00').SetType(mtItem).                //B00
       AddM('B01', 'B01', maNewForm, 'formB01').
       AddM('B02', 'B02').
@@ -44,11 +47,21 @@ begin
 
   gMenuManager.AddEntity(sProg_Admin, '管理工具', sEntity_Main, '主菜单', nList).
     SetParent('').SetType(mtItem).                   //1 level
-      AddM('A01', 'A01').
-      AddM('A02', 'A02').
-      AddM('A03', 'A03').
-      AddM('A04', 'A04').
-      AddM('A05', 'A05');
+      AddM('A00', '系统管理').
+      AddM('B00', '基础信息').
+    SetParent('A00').SetType(mtItem).
+      AddM('A01', '数据备份').
+      AddM('A02', '数据恢复').
+      AddM('A03', '操作日志').
+      AddM('A04', '消息管理').
+      AddM('A05', '安全授权').
+    SetParent('B00').SetType(mtItem).
+      AddM('B01', '系统参数').
+      AddM('B02', '组织结构').
+      AddM('B03', '用户管理').
+      AddM('B04', '权限管理').
+      AddM('B05', '通讯地址').
+      AddM('B06', '通讯方式');
   //RunAdmin.MAIN
 end;
 

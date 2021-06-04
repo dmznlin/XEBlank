@@ -9,6 +9,8 @@ uses
   UFormLogin in 'Forms\UFormLogin.pas' {fFormLogin: TUniLoginForm},
   UFormBase in 'Forms\UFormBase.pas' {fFormBase: TUniForm},
   UFormNormal in 'Forms\UFormNormal.pas' {fFormNormal: TUniForm},
+  UFrameBase in 'Forms\UFrameBase.pas' {fFrameBase: TUniFrame},
+  UFrameNormal in 'Forms\UFrameNormal.pas' {fFrameNormal: TUniFrame},
   USysModule in 'Common\USysModule.pas',
   USysBusiness in 'Common\USysBusiness.pas',
   USysConst in 'Common\USysConst.pas';

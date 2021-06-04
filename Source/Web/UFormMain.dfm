@@ -213,7 +213,7 @@ object fFormMain: TfFormMain
         Hint = ''
         AlignmentControl = uniAlignmentClient
         ParentAlignmentControl = False
-        Caption = #27426#36814#39029#38754
+        Caption = #27426#36814#39318#39029
         Layout = 'hbox'
         LayoutAttribs.Align = 'bottom'
         LayoutAttribs.Pack = 'end'

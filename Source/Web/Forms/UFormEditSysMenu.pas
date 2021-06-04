@@ -109,24 +109,36 @@ end;
 procedure TfFormEditSysMenu.EditActionChange(Sender: TObject);
 var nIdx: Integer;
 begin
-  if EditAction.ItemIndex = Ord(maNewForm) then
-  begin
-    with EditData.Items,TWebSystem,TStringHelper do
-    try
-      BeginUpdate;
-      Clear;
+  with EditData.Items,TWebSystem,TStringHelper do
+  try
+    BeginUpdate;
+    Clear;
 
-      for nIdx := Low(Forms) to High(Forms) do
-      with Forms[nIdx].DescMe do
+    if (EditAction.ItemIndex < Ord(TMenuAction.maDefault)) or
+       (EditAction.ItemIndex > Ord(TMenuAction.maExecute)) then Exit;
+    //xxxxx
+
+    case TMenuAction(EditAction.ItemIndex) of
+     maNewForm: //form
       begin
-        AddObject(Format('%2d.%s', [nIdx+1, FDesc]), Pointer(nIdx));
-        if Assigned(FMenuItem) and (FMenuItem.FActionData = FName) then
-          EditData.ItemIndex := nIdx;
+        for nIdx := Low(Forms) to High(Forms) do
+        with Forms[nIdx].DescMe do
+        begin
+          AddObject(Format('%2d.%s', [nIdx+1, FDesc]), Pointer(nIdx));
+          if Assigned(FMenuItem) and (FMenuItem.FActionData = FName) then
+            EditData.ItemIndex := nIdx;
+          //xxxxx
+        end;
+      end;
+     maExecute: //commands
+      begin
+        for nIdx := Low(sMenuCommands) to High(sMenuCommands) do
+          Add(sMenuCommands[nIdx]);
         //xxxxx
       end;
-    finally
-      EndUpdate;
     end;
+  finally
+    EndUpdate;
   end;
 end;
 

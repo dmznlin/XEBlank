@@ -129,6 +129,14 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="Forms\UFrameBase.pas">
+            <Form>fFrameBase</Form>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\UFrameNormal.pas">
+            <Form>fFrameNormal</Form>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
         <DCCReference Include="Common\USysModule.pas"/>
         <DCCReference Include="Common\USysBusiness.pas"/>
         <DCCReference Include="Common\USysConst.pas"/>

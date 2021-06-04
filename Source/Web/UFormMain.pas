@@ -256,15 +256,55 @@ end;
 //Date: 2021-05-25
 //Desc: 执行菜单业务
 procedure TfFormMain.OnMenuItemDblClick(Sender: TObject);
-var nMenu: PMenuItem;
+var nCls: TClass;
+    nMenu: PMenuItem;
 begin
-  with Sender as TUniTreeView do
+  with Sender as TUniTreeView,UniMainModule do
   if Assigned(Selected) and (not Selected.HasChildren) then
   begin
     nMenu := Selected.Data;
     if nMenu.FType <> mtItem then Exit;
     
-    UniMainModule.ShowMsg(nMenu.FMenuID);
+    if nMenu.FAction = maNewForm then //form
+    begin
+      if nMenu.FActionData = '' then Exit;
+      nCls := GetClass(nMenu.FActionData);
+
+      if not Assigned(nCls) then
+      begin
+        ShowMsg(Format('窗体类[ %s ]无效.', [nMenu.FActionData]), True);
+        Exit;
+      end;
+
+      if TfFormClass(nCls).DescMe.FVerifyAdmin then
+      begin
+        UniMainModule.VerifyAdministrator(
+          procedure(const nType: TButtonClickType; const nText: string)
+          begin
+            if nType = ctYes then
+              TUniForm(UniMainModule.GetFormInstance(nCls)).ShowModalN;
+            //xxxxx
+          end);
+      end else
+      begin
+        TUniForm(UniMainModule.GetFormInstance(nCls)).ShowModalN;
+      end;
+    end else
+
+    if nMenu.FAction = maExecute then //commands
+    begin
+      if nMenu.FActionData = sCMD_Exit then //exit system
+      begin
+        UniMainModule.QueryDlg('确定要退出系统吗?',
+          procedure(const nType: TButtonClickType)
+          begin
+            if nType = ctYes then
+              UniSession.Terminate('您已退出');
+            //xxxxx
+          end);
+        Exit;
+      end;
+    end;
   end;
 end;
 
@@ -279,8 +319,8 @@ begin
     if (Button = mbRight) and (Sender = FActiveMenu) then
     begin
       if Assigned(Selected) then
-        nMenu := Selected.Data;
-      //xxxxx
+           nMenu := Selected.Data
+      else nMenu := nil;
 
       MenuDel.Enabled := Assigned(Selected) and (not Selected.HasChildren) and
                          (nMenu.FUserID <> '');
