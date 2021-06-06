@@ -36,7 +36,8 @@ begin
     SetParent('A00').SetType(mtItem).                //A00
       AddM('A01', '切换语言').
       AddM('A02', '修改密码').
-      AddM('A03', '退出系统', maExecute, sCMD_Exit).
+      AddM('A03', '动态口令').
+      AddM('A04', '退出系统', maExecute, sCMD_Exit).
     SetParent('B00').SetType(mtItem).                //B00
       AddM('B01', 'B01', maNewForm, 'formB01').
       AddM('B02', 'B02').

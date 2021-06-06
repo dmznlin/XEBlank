@@ -17,7 +17,7 @@ inherited fFormNormal: TfFormNormal
     Caption = #21462#28040
     Cancel = True
     Anchors = [akRight, akBottom]
-    TabOrder = 0
+    TabOrder = 2
     OnClick = BtnExitClick
   end
   object BtnOK: TUniFSButton [1]
@@ -39,7 +39,7 @@ inherited fFormNormal: TfFormNormal
   end
   inherited PanelWork: TUniSimplePanel
     Height = 120
-    TabOrder = 2
+    TabStop = False
     ExplicitHeight = 120
   end
 end

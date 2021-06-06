@@ -77,7 +77,7 @@ begin
         //xxxxx
 
         if nStr <> '' then
-          UniMainModule.ShowMsg(nStr);
+          UniMainModule.ShowMsg(nStr, True);
         //xxxxx
 
         Result := False;
