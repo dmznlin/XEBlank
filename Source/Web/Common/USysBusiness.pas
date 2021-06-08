@@ -25,6 +25,9 @@ type
       FSyncLock: TCriticalSection;
       {*全局同步锁*}
   public
+    type
+      TUserFileType = (ufOPTCode);
+      {*用户文件*}
     class var
       Forms: array of TfFormClass;
       {*窗体列表*}
@@ -56,8 +59,11 @@ type
       const nIniF: TIniFile = nil); static;
     class procedure SaveFormConfig(const nForm: TfFormBase;
       const nIniF: TIniFile = nil); static;
+    class function UserFile(const nType: TUserFileType;
+      const nRelative: Boolean = True;
+      const nForceRefresh: Boolean = False): string; static;
     class function UserConfigFile: TIniFile; static;
-    {*用户配置文件*}
+    {*用户私有文件*}
     class procedure SetImageData(const nParent: TUniContainer;
       const nImage: TUniImage; const nData: PImageData); static;
     {*设置图片数据*}
@@ -188,6 +194,37 @@ end;
 class function TWebSystem.SwtichPathDelim(const nPath,nFrom,nTo: string): string;
 begin
   Result := StringReplace(nPath, nFrom, nTo, [rfReplaceAll]);
+end;
+
+//Date: 2021-06-06
+//Parm: 类型;相对路径;强制刷新
+//Desc: 返回当前用户的nType文件路径
+class function TWebSystem.UserFile(const nType: TUserFileType;
+  const nRelative: Boolean; const nForceRefresh: Boolean): string;
+begin
+  with UniMainModule do
+  begin
+    case nType of
+     ufOPTCode: //启用动态口令时生成的二维码
+      Result := Format('%s_opt.bmp', [FUser.FUserID]);
+     else
+      begin
+        Result := '';
+        Exit;
+      end;
+    end;
+
+    if nRelative then //前端相对路径
+    begin
+      Result := 'users/' + Result;
+      if nForceRefresh then
+        Result := Result + '?t=' + TDateTimeHelper.DateTimeSerial;
+      //添加序列号改变图片链接,使前端刷新
+    end else
+    begin
+      Result := gPath + 'users\' + Result;
+    end;
+  end;
 end;
 
 //Date: 2021-05-25

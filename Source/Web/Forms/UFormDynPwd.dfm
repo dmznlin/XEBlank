@@ -1,32 +1,33 @@
 inherited fFormDynPwd: TfFormDynPwd
-  ClientHeight = 360
+  ClientHeight = 350
   ClientWidth = 327
   Caption = #21160#24577#21475#20196
   ExplicitWidth = 333
-  ExplicitHeight = 385
+  ExplicitHeight = 375
   PixelsPerInch = 96
   TextHeight = 12
   inherited BtnExit: TUniFSButton
     Left = 244
-    Top = 326
-    ExplicitLeft = 182
-    ExplicitTop = 118
+    Top = 316
+    ExplicitLeft = 244
+    ExplicitTop = 326
   end
   inherited BtnOK: TUniFSButton
     Left = 161
-    Top = 326
-    ExplicitLeft = 99
-    ExplicitTop = 118
+    Top = 316
+    ExplicitLeft = 161
+    ExplicitTop = 326
   end
   inherited PanelWork: TUniSimplePanel
     Width = 311
-    Height = 310
-    ExplicitWidth = 249
-    ExplicitHeight = 102
+    Height = 300
+    Border = True
+    ExplicitWidth = 311
+    ExplicitHeight = 310
     object EditCode: TUniEdit
-      Left = 20
-      Top = 280
-      Width = 225
+      Left = 91
+      Top = 270
+      Width = 128
       Hint = ''
       Text = ''
       TabOrder = 1
@@ -35,11 +36,11 @@ inherited fFormDynPwd: TfFormDynPwd
     object UniLabel1: TUniLabel
       Left = 5
       Top = 15
-      Width = 558
+      Width = 588
       Height = 12
       Hint = ''
       TextConversion = txtHTML
-      Caption = #35828#26126#65306#21160#24577#21475#20196#20351#29992#29305#27530#31639#27861#65292#27599'"30'#31186'" '#26356#26032#19968#27425#24744#30340'<br>'#23494#30721#65292#26497#22823#38480#24230#30340#20445#25252#36134#25143#23433#20840#65292#24314#35758#24320#21551#12290
+      Caption = #35828#26126#65306#21160#24577#21475#20196#20351#29992#29305#27530#31639#27861#65292#27599#38388#38548'30'#31186#26356#26032#19968#27425#24744#30340'<br>'#23494#30721#65292#26497#22823#38480#24230#30340#20445#25252#36134#25143#23433#20840#12290#24320#21551#26041#27861#22914#19979#65306
       TabOrder = 2
     end
     object UniLabel2: TUniLabel
@@ -65,17 +66,17 @@ inherited fFormDynPwd: TfFormDynPwd
       TabOrder = 4
     end
     object ImageCode: TUniImage
-      Left = 88
-      Top = 120
+      Left = 91
+      Top = 115
       Width = 128
       Height = 128
       Hint = ''
+      Center = True
       Stretch = True
-      Proportional = True
     end
     object UniLabel4: TUniLabel
       Left = 5
-      Top = 260
+      Top = 250
       Width = 198
       Height = 12
       Hint = ''
@@ -83,5 +84,14 @@ inherited fFormDynPwd: TfFormDynPwd
       Caption = '3'#12289#22312#19979#38754#36755#20837'App'#19978#26174#31034#30340'6'#20301#25968#23383#65306
       TabOrder = 6
     end
+  end
+  object CheckClose: TUniCheckBox
+    Left = 8
+    Top = 316
+    Width = 97
+    Height = 17
+    Hint = ''
+    Caption = #20851#38381#21160#24577#23494#30721
+    TabOrder = 3
   end
 end
