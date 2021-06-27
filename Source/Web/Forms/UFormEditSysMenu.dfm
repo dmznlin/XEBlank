@@ -1,88 +1,98 @@
 inherited fFormEditSysMenu: TfFormEditSysMenu
-  ClientHeight = 295
-  ClientWidth = 348
+  ClientHeight = 301
+  ClientWidth = 319
   Caption = #32534#36753#33756#21333
-  ExplicitWidth = 354
-  ExplicitHeight = 320
+  ExplicitWidth = 325
+  ExplicitHeight = 326
   PixelsPerInch = 96
   TextHeight = 12
   inherited BtnExit: TUniFSButton
-    Left = 265
-    Top = 261
+    Left = 236
+    Top = 267
     ExplicitLeft = 265
-    ExplicitTop = 222
+    ExplicitTop = 261
   end
   inherited BtnOK: TUniFSButton
-    Left = 182
-    Top = 261
+    Left = 153
+    Top = 267
     ExplicitLeft = 182
-    ExplicitTop = 222
+    ExplicitTop = 261
   end
   inherited PanelWork: TUniSimplePanel
-    Width = 332
-    Height = 245
+    Width = 303
+    Height = 251
     ExplicitWidth = 332
-    ExplicitHeight = 206
+    ExplicitHeight = 245
     object EditTitle: TUniEdit
       Left = 5
       Top = 20
-      Width = 320
+      Width = 291
       Hint = ''
       MaxLength = 50
       Text = ''
+      Anchors = [akLeft, akTop, akRight]
       TabOrder = 1
       FieldLabel = #33756#21333#26631#39064':'
-      FieldLabelWidth = 62
+      FieldLabelWidth = 58
+      ExplicitWidth = 320
     end
     object EditImg: TUniComboBox
       Left = 5
       Top = 53
-      Width = 320
+      Width = 291
       Hint = ''
       Style = csDropDownList
       Text = ''
+      Anchors = [akLeft, akTop, akRight]
       TabOrder = 2
       FieldLabel = #33756#21333#22270#26631':'
-      FieldLabelWidth = 62
+      FieldLabelWidth = 58
       IconItems = <>
+      ExplicitWidth = 320
     end
     object EditAction: TUniComboBox
       Left = 5
       Top = 87
-      Width = 320
+      Width = 291
       Hint = ''
       Style = csDropDownList
       Text = ''
+      Anchors = [akLeft, akTop, akRight]
       TabOrder = 3
       FieldLabel = #33756#21333#21160#20316':'
-      FieldLabelWidth = 62
+      FieldLabelWidth = 58
       IconItems = <
         item
         end>
       OnChange = EditActionChange
+      ExplicitWidth = 320
     end
     object EditData: TUniComboBox
       Left = 5
       Top = 120
-      Width = 320
+      Width = 291
       Hint = ''
       MaxLength = 320
       Text = ''
+      Anchors = [akLeft, akTop, akRight]
       TabOrder = 4
       FieldLabel = #21160#20316#21442#25968':'
-      FieldLabelWidth = 62
+      FieldLabelWidth = 58
       IconItems = <
         item
         end>
+      ExplicitWidth = 320
     end
     object UniGroupBox1: TUniGroupBox
       Left = 5
-      Top = 150
-      Width = 320
+      Top = 155
+      Width = 291
       Height = 90
       Hint = ''
       Caption = #36873#39033
+      Anchors = [akLeft, akTop, akRight]
       TabOrder = 5
+      ExplicitWidth = 286
       object CheckExpand: TUniCheckBox
         Left = 8
         Top = 20
@@ -102,7 +112,7 @@ inherited fFormEditSysMenu: TfFormEditSysMenu
         TabOrder = 2
       end
       object CheckWeb: TUniCheckBox
-        Left = 120
+        Left = 105
         Top = 47
         Width = 75
         Height = 17
@@ -111,9 +121,9 @@ inherited fFormEditSysMenu: TfFormEditSysMenu
         TabOrder = 3
       end
       object CheckMobile: TUniCheckBox
-        Left = 210
+        Left = 201
         Top = 47
-        Width = 90
+        Width = 85
         Height = 17
         Hint = ''
         Caption = #31227#21160#31471#21487#29992

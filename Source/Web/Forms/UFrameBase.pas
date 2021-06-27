@@ -8,7 +8,7 @@ interface
 
 uses
   SysUtils, Classes, Graphics, Controls, uniGUITypes, uniGUIAbstractClasses,
-  uniGUIClasses, uniGUIFrame, Vcl.Forms, uniGUIBaseClasses, uniGUImJSForm,
+  uniGUIClasses, uniGUIFrame, Vcl.Forms, System.IniFiles, uniGUIBaseClasses,
   uniPanel;
 
 type
@@ -18,7 +18,10 @@ type
   TfFrameDesc = record
     FName          : string;                         //类名
     FDesc          : string;                         //描述
+    FDBConn        : string;                         //数据库标识
+    FDictEntity    : string;                         //数据字典标识
     FVerifyAdmin   : Boolean;                        //验证管理员
+    FUserConfig    : Boolean;                        //用户自定义配置
   end;
 
   PFrameCommandParam = ^TFrameCommandParam;
@@ -42,8 +45,8 @@ type
     { Protected declarations }
     FParam: TFrameCommandParam;
     {*命令参数*}
-    procedure OnCreateFrame(Sender: TObject); virtual;
-    procedure OnDestroyFrame(Sender: TObject); virtual;
+    procedure OnCreateFrame(const nIni: TIniFile); virtual;
+    procedure OnDestroyFrame(const nIni: TIniFile); virtual;
     {*基类函数*}
   public
     { Public declarations }
@@ -57,24 +60,48 @@ type
 implementation
 
 {$R *.dfm}
+uses
+  UManagerGroup, USysBusiness;
 
 procedure TfFrameBase.UniFrameCreate(Sender: TObject);
+var nIni: TIniFile;
 begin
   FillChar(FParam, SizeOf(FParam), #0);
-  OnCreateFrame(Sender);
+  nIni := nil;
+  try
+    if DescMe.FUserConfig then
+      nIni := TWebSystem.UserConfigFile;
+    //启用自定义配置
+
+    OnCreateFrame(nIni);
+    //子类处理
+  finally
+    nIni.Free;
+  end;
 end;
 
 procedure TfFrameBase.UniFrameDestroy(Sender: TObject);
+var nIni: TIniFile;
 begin
-  OnDestroyFrame(Sender);
+  nIni := nil;
+  try
+    if DescMe.FUserConfig then
+      nIni := TWebSystem.UserConfigFile;
+    //启用自定义配置
+
+    OnDestroyFrame(nIni);
+    //子类处理
+  finally
+    nIni.Free;
+  end;
 end;
 
-procedure TfFrameBase.OnCreateFrame(Sender: TObject);
+procedure TfFrameBase.OnCreateFrame(const nIni: TIniFile);
 begin
   //null
 end;
 
-procedure TfFrameBase.OnDestroyFrame(Sender: TObject);
+procedure TfFrameBase.OnDestroyFrame(const nIni: TIniFile);
 begin
   //null
 end;
@@ -84,8 +111,14 @@ end;
 class function TfFrameBase.DescMe: TfFrameDesc;
 begin
   FillChar(Result, SizeOf(TfFrameDesc), #0);
-  Result.FName := ClassName;
-  Result.FVerifyAdmin := False;
+  with Result do
+  begin
+    FVerifyAdmin  := False;
+    FUserConfig   := False;
+    FName         := ClassName;
+    FDBConn       := gMG.FDBManager.DefaultDB;
+    FDictEntity   := 'DE_' + ClassName; //datadict entity
+  end;
 end;
 
 //Date: 2021-06-03

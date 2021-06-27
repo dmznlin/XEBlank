@@ -35,6 +35,8 @@ type
     FSConfirm1: TUniFSConfirm;
     FSTheme1: UniFSConfirm.TTheme;
     {*消息框对象*}
+    FGridColumnAdjust: Boolean;
+    {*表格调整开关*}
     procedure VerifyAdministrator(const nPwd: string;
       const nCall: TButtonClickInputEvent;
       const nButton: TButtonClickType = ctYes); overload;
@@ -76,6 +78,7 @@ end;
 procedure TUniMainModule.UniGUIMainModuleCreate(Sender: TObject);
 begin
   FAdminLastLogin := 0;
+  FGridColumnAdjust := False;
   FSTheme1 := TTheme.bootstrap;
   Background.Url := gSystem.FImages.FBgMain.FFile;
   LoginBackground.Url := gSystem.FImages.FBgLogin.FFile;
@@ -251,8 +254,8 @@ begin
     RTL       := False;
     CloseIcon := False;
 
-    ButtonTextConfirm  := '是';
-    ButtonTextCancel   := '否';
+    ButtonTextConfirm  := '&nbsp;是&nbsp;';
+    ButtonTextCancel   := '&nbsp;否&nbsp;';
     ScreenMask.Enabled := Trim(nMask) <> '';
 
     if ScreenMask.Enabled then
