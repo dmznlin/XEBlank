@@ -142,6 +142,11 @@ object fFormLogin: TfFormLogin
         ImageIndex = 34
         OnClick = MenuInitDBClick
       end
+      object MenuInitDD: TUniMenuItem
+        Caption = #21021#22987#21270#25968#25454#23383#20856
+        ImageIndex = 4
+        OnClick = MenuInitDDClick
+      end
       object MenuInitMenu: TUniMenuItem
         Caption = #21021#22987#21270#31995#32479#33756#21333
         ImageIndex = 21

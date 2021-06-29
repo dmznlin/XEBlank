@@ -63,11 +63,11 @@ end;
 
 procedure TfFrameNormal.OnCreateFrame(const nIni: TIniFile);
 begin
-  with DescMe,gDataDictManager do
+  with DescMe.FDataDict,gDataDictManager do
   begin
-    if FDictEntity = '' then
+    if FEntity = '' then
          InitDict(@FDataDict, False)
-    else GetEntity(FDictEntity, UniMainModule.FUser.FLangID, @FDataDict);
+    else GetEntity(FEntity, UniMainModule.FUser.FLangID, @FDataDict);
   end;
 
   OnLoadGridConfig(nIni);

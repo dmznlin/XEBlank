@@ -75,6 +75,8 @@ type
     procedure SearchMenu(nText: string);
     function SearchMenuIndex(const nMenu: TObject): Integer;
     {*检索菜单项*}
+    procedure OnSheetClose(Sender: TObject; var nAllowClose: Boolean);
+    {*Frame关闭*}
   public
     { Public declarations }
   end;
@@ -87,7 +89,7 @@ implementation
 
 uses
   uniGUIVars, uniGUIApplication, MainModule, UManagerGroup, UMenuManager,
-  UFormBase, USysBusiness, USysMenu, USysConst;
+  UFormBase, UFrameBase, USysBusiness, USysMenu, USysConst;
 
 function fFormMain: TfFormMain;
 begin
@@ -291,6 +293,32 @@ begin
       end;
     end else
 
+    if nMenu.FAction = maNewFrame then //frame
+    begin
+      if nMenu.FActionData = '' then Exit;
+      nCls := GetClass(nMenu.FActionData);
+
+      if not Assigned(nCls) then
+      begin
+        ShowMsg(Format('框架类[ %s ]无效.', [nMenu.FActionData]), True);
+        Exit;
+      end;
+
+      if TfFrameClass(nCls).DescMe.FVerifyAdmin then
+      begin
+        UniMainModule.VerifyAdministrator(
+          procedure(const nType: TButtonClickType; const nText: string)
+          begin
+            if nType = ctYes then
+              TWebSystem.ShowFrame(nMenu, PageWork, OnSheetClose);
+            //xxxxx
+          end);
+      end else
+      begin
+        TWebSystem.ShowFrame(nMenu, PageWork, OnSheetClose);
+      end;
+    end else
+
     if nMenu.FAction = maExecute then //commands
     begin
       if nMenu.FActionData = sCMD_Exit then //exit system
@@ -329,6 +357,13 @@ begin
       PMenu1.Popup(X, Y, Sender);
     end;
   end;
+end;
+
+//Date: 2021-06-28
+//Desc: Frame关闭时清理引用
+procedure TfFormMain.OnSheetClose(Sender: TObject; var nAllowClose: Boolean);
+begin
+  (Sender as TUniTabSheet).Data := nil;
 end;
 
 //Date: 2021-05-25

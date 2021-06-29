@@ -13,7 +13,6 @@ uses
 
 type
   TfFormInitDB = class(TfFormBase)
-    UniLabel1: TUniLabel;
     EditDB: TUniComboBox;
     EditLog: TUniMemo;
     BtnStart: TUniButton;

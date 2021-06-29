@@ -68,19 +68,6 @@ type
     FUserAgent  : string;                            //浏览器类型
   end;
 
-  TModuleItemType = (mtFrame, mtForm);
-  //模块类型
-
-  PMenuModuleItem = ^TMenuModuleItem;
-  TMenuModuleItem = record
-    FMenuID: string;                                 //菜单名称
-    FModule: string;                                 //模块类型
-    FTabSheet: TUniTabSheet;                         //所在页面
-    FItemType: TModuleItemType;                      //模块类型
-  end;
-
-  TMenuModuleItems = array of TMenuModuleItem;       //模块列表
-
 //------------------------------------------------------------------------------
 var
   gPath: string;                                     //程序所在路径

@@ -7,23 +7,24 @@ inherited fFrameNormal: TfFrameNormal
     Width = 772
     Height = 495
     ExplicitLeft = 0
-    ExplicitTop = 96
+    ExplicitTop = 0
     ExplicitWidth = 772
-    ExplicitHeight = 399
+    ExplicitHeight = 495
     object DBGridMain: TUniDBGrid
       Left = 0
-      Top = 96
+      Top = 92
       Width = 772
-      Height = 399
+      Height = 403
       Hint = ''
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgRowSelect, dgConfirmDelete, dgAutoRefreshRow]
       LoadMask.Message = 'Loading data...'
+      BorderStyle = ubsNone
       Align = alClient
       TabOrder = 1
     end
     object PanelQuick: TUniSimplePanel
       Left = 0
-      Top = 46
+      Top = 42
       Width = 772
       Height = 50
       Hint = ''
@@ -31,22 +32,21 @@ inherited fFrameNormal: TfFrameNormal
       Border = True
       Align = alTop
       TabOrder = 2
-      ExplicitTop = 8
+      ExplicitTop = 46
     end
     object UniToolBar1: TUniToolBar
       Left = 0
       Top = 0
       Width = 772
-      Height = 46
+      Height = 42
       Hint = ''
-      ButtonHeight = 45
+      ButtonHeight = 40
       ButtonWidth = 82
       Images = UniMainModule.SmallImages
       ShowCaptions = True
       TabOrder = 3
       ParentColor = False
       Color = clBtnFace
-      ExplicitTop = 8
       object BtnAdd: TUniToolButton
         Left = 0
         Top = 0

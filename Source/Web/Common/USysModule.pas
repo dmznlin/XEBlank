@@ -10,7 +10,8 @@ interface
 
 uses
   USysDB, USysMenu, UFormEncrypt, UFormInitDB, UFormInitMenus, UFormEditSysMenu,
-  UFormMemStatus, UFormRunLog, UFormSwitchLang, UFormChangePwd, UFormDynPwd;
+  UFormMemStatus, UFormRunLog, UFormSwitchLang, UFormChangePwd, UFormDynPwd,
+  UFormInitDataDict, UFrameSyslog;
 
 implementation
 

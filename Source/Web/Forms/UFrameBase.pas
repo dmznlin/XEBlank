@@ -1,6 +1,16 @@
 {*******************************************************************************
   作者: dmzn@163.com 2021-06-03
   描述: Frame基类
+
+  备注:
+  *.TfFrameDesc:
+    1.FDBConn: 从指定数据库加载数据,用于多数据库时自动切换.
+    2.FVerifyAdmin: 是否验证管理员动态口令.
+    3.FUserConfig: 是否自动创建用户私有配置文件.
+    4.FDataDict.FEntity: 指定要加载的数据字典实体,用于自动构建表头.
+    5.FDataDict.FTables: 指定初始化数据字典时用到的表名称,可多个表(逗号分隔).
+    6.FDataDict.FFields: 指定初始化数据字典时用到的表字段,可多字段(逗号分隔).
+    7.FDataDict.FExclude: True,不包含FFields字段;False,仅包含FFields字段
 *******************************************************************************}
 unit UFrameBase;
 
@@ -15,11 +25,18 @@ type
   TfFrameBase = class;
   TfFrameClass = class of TfFrameBase;
 
+  TfFrameDict = record
+    FEntity        : string;                         //字典实体标识
+    FTables        : string;                         //涉及的表名称
+    FFields        : string;                         //涉及的字段名称
+    FExclude       : Boolean;                        //字段的使用方法(排除or仅包含)
+  end;
+
   TfFrameDesc = record
     FName          : string;                         //类名
     FDesc          : string;                         //描述
     FDBConn        : string;                         //数据库标识
-    FDictEntity    : string;                         //数据字典标识
+    FDataDict      : TfFrameDict;                    //数据字典
     FVerifyAdmin   : Boolean;                        //验证管理员
     FUserConfig    : Boolean;                        //用户自定义配置
   end;
@@ -117,7 +134,9 @@ begin
     FUserConfig   := False;
     FName         := ClassName;
     FDBConn       := gMG.FDBManager.DefaultDB;
-    FDictEntity   := 'DE_' + ClassName; //datadict entity
+
+    FDataDict.FEntity := 'DE_' + ClassName;
+    FDataDict.FExclude := True; //默认排除FTables指定的字段
   end;
 end;
 

@@ -35,6 +35,7 @@ type
     N3: TUniMenuItem;
     MenuSatus: TUniMenuItem;
     MenuLog: TUniMenuItem;
+    MenuInitDD: TUniMenuItem;
     procedure UniLoginFormCreate(Sender: TObject);
     procedure BtnOKClick(Sender: TObject);
     procedure MenuDESClick(Sender: TObject);
@@ -43,6 +44,7 @@ type
     procedure BtnExitClick(Sender: TObject);
     procedure MenuSatusClick(Sender: TObject);
     procedure MenuLogClick(Sender: TObject);
+    procedure MenuInitDDClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -97,6 +99,18 @@ begin
     begin
       if nType = ctYes then
         TWebSystem.ShowModalForm('TfFormInitDB');
+      //xxxxx
+    end, Self);
+end;
+
+//Desc: 初始化数据字典(DataDict)
+procedure TfFormLogin.MenuInitDDClick(Sender: TObject);
+begin
+  UniMainModule.VerifyAdministrator(
+    procedure(const nType: TButtonClickType; const nText: string)
+    begin
+      if nType = ctYes then
+        TWebSystem.ShowModalForm('TfFormInitDataDict');
       //xxxxx
     end, Self);
 end;

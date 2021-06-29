@@ -207,6 +207,7 @@ object fFormMain: TfFormMain
       Height = 445
       Hint = ''
       ActivePage = SheetWelcome
+      Images = UniMainModule.SmallImages
       Align = alClient
       TabOrder = 2
       object SheetWelcome: TUniTabSheet

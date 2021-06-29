@@ -14,9 +14,10 @@ uses
   //----------------------------------------------------------------------------
   uniGUIAbstractClasses, uniGUITypes, uniGUIClasses, uniGUIBaseClasses,
   uniGUISessionManager, uniGUIApplication, uniTreeView, uniGUIForm, uniImage,
-  uniDBGrid, uniStringGrid, uniComboBox, MainModule, UFormBase,
+  uniDBGrid, uniStringGrid, uniComboBox, MainModule, UFormBase, UFrameBase,
+  uniPageControl,
   //----------------------------------------------------------------------------
-  UBaseObject, UManagerGroup, UMgrDataDict, ULibFun,
+  UBaseObject, UManagerGroup, UMgrDataDict, UMenuManager, ULibFun,
   USysDB, USysConst, USysRemote;
 
 type
@@ -33,6 +34,8 @@ type
     class var
       Forms: array of TfFormClass;
       {*窗体列表*}
+      Frames: array of TfFrameClass;
+      {*框架列表*}
   public
     class procedure Init(const nForce: Boolean = False); static;
     {*初始化*}
@@ -49,6 +52,7 @@ type
       const nFrom: string = '\'; const nTo: string = '/'): string; static;
     {*切换路径分隔符*}
     class procedure AddForm(const nForm: TfFormClass); static;
+    class procedure AddFrame(const nFrame: TfFrameClass); static;
     {*注册窗体类*}
     class function GetForm(const nClass: string;
       const nException: Boolean = False): TUniForm; static;
@@ -57,6 +61,9 @@ type
       const nParams: PFormCommandParam = nil;
       const nResult: TFormModalResult = nil); static;
     {*显示模式窗体*}
+    class procedure ShowFrame(const nMenu: PMenuItem;
+      const nParent: TUniPageControl; const nOnClose: TTabCloseEvent); static;
+    {*显示Frame框架*}
     class procedure LoadFormConfig(const nForm: TfFormBase;
       const nIniF: TIniFile = nil); static;
     class procedure SaveFormConfig(const nForm: TfFormBase;
@@ -94,8 +101,8 @@ type
     class procedure SyncLock; static;
     class procedure SyncUnlock; static;
     {*全局同步*}
-    class procedure BindEntity(const nObj: TObject; const nDE: PDictEntity);
-    class procedure UnbindEntity(const nObj: TObject);
+    class procedure BindEntity(const nObj: TObject; const nDE: PDictEntity); static;
+    class procedure UnbindEntity(const nObj: TObject); static;
     {*绑定字典*}
     class procedure BuildDBGridColumn(const nEntity: PDictEntity;
       const nGrid: TUniDBGrid; const nFilter: string = ''); static;
@@ -454,6 +461,29 @@ begin
   //new class
 end;
 
+//Date: 2021-06-28
+//Parm: 框架类
+//Desc: 注册框架类
+class procedure TWebSystem.AddFrame(const nFrame: TfFrameClass);
+var nStr: string;
+    nIdx: Integer;
+begin
+  for nIdx := Low(Frames) to High(Frames) do
+  if Frames[nIdx] = nFrame then
+  begin
+    nStr := Format('TSysFun.AddFrame: %s Has Exists.', [nFrame.ClassName]);
+    gMG.WriteLog(TWebSystem, 'Web系统对象', nStr);
+    raise Exception.Create(nStr);
+  end;
+
+  nIdx := Length(Frames);
+  SetLength(Frames, nIdx + 1);
+  Frames[nIdx] := nFrame;
+
+  RegisterClass(nFrame);
+  //new class
+end;
+
 //Date: 2021-04-26
 //Parm: 窗体类名
 //Desc: 获取nClass类的对象
@@ -497,6 +527,52 @@ begin
         //xxxxx
       end);
   end;
+end;
+
+//Date: 2021-06-28
+//Parm: 菜单数据;父容器
+//Desc: 依据nMenu在nParent上创建Frame框架
+class procedure TWebSystem.ShowFrame(const nMenu: PMenuItem;
+  const nParent: TUniPageControl; const nOnClose: TTabCloseEvent);
+var nIdx: Integer;
+    nNew: TfFrameBase;
+    nFrame: TfFrameClass;
+    nSheet: TUniTabSheet;
+begin
+  nFrame := TfFrameClass(GetClass(nMenu.FActionData));
+  for nIdx := nParent.PageCount - 1 downto 0 do
+  begin
+    nSheet := nParent.Pages[nIdx];
+    if not Assigned(nSheet.Data) then Continue;
+    //no frame
+
+    nNew := nSheet.Data;
+    if nNew is nFrame then //exists
+    begin
+      nParent.ActivePage := nSheet;
+      Exit;
+    end;
+  end;
+
+  nSheet := TUniTabSheet.Create(nParent);
+  with nSheet do
+  begin
+    Pagecontrol := nParent;
+    Caption := nMenu.FTitle;
+    Closable := True;
+
+    if nMenu.FImgIndex >= 0 then
+      ImageIndex := nMenu.FImgIndex;
+    OnClose := nOnClose;
+  end;
+
+  nNew := nFrame.Create(nParent);
+  nNew.Parent := nSheet;
+  nNew.Align := alClient;
+  nSheet.Data := nNew;
+
+  nParent.ActivePage := nSheet;
+  //active
 end;
 
 //------------------------------------------------------------------------------

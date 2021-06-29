@@ -70,7 +70,7 @@ begin
   EditTitle.Text := FMenuItem.FTitle;
   EditData.Text := FMenuItem.FActionData;
 
-  TStringHelper.FillList(EditAction.Items, sMenuAction);
+  TStringHelper.FillList(EditAction.Items, sMenuAction, True, True);
   EditAction.ItemIndex := Ord(FMenuItem.FAction);
   EditActionChange(nil);
 
@@ -124,7 +124,18 @@ begin
         for nIdx := Low(Forms) to High(Forms) do
         with Forms[nIdx].DescMe do
         begin
-          AddObject(Format('%2d.%s', [nIdx+1, FDesc]), Pointer(nIdx));
+          AddObject(Format('%d.%s', [nIdx+1, FDesc]), Pointer(nIdx));
+          if Assigned(FMenuItem) and (FMenuItem.FActionData = FName) then
+            EditData.ItemIndex := nIdx;
+          //xxxxx
+        end;
+      end;
+     maNewFrame: //frame
+      begin
+        for nIdx := Low(Frames) to High(Frames) do
+        with Frames[nIdx].DescMe do
+        begin
+          AddObject(Format('%d.%s', [nIdx+1, FDesc]), Pointer(nIdx));
           if Assigned(FMenuItem) and (FMenuItem.FActionData = FName) then
             EditData.ItemIndex := nIdx;
           //xxxxx
@@ -177,6 +188,12 @@ begin
   begin
     nIdx := Integer(EditData.Items.Objects[EditData.ItemIndex]);
     nMenu.FActionData := TWebSystem.Forms[nIdx].DescMe.FName;
+  end else
+
+  if (nMenu.FAction = maNewFrame) and (EditData.ItemIndex >= 0) then
+  begin
+    nIdx := Integer(EditData.Items.Objects[EditData.ItemIndex]);
+    nMenu.FActionData := TWebSystem.Frames[nIdx].DescMe.FName;
   end else nMenu.FActionData := EditData.Text;
 
   nMenu.FExpaned := CheckExpand.Checked;
