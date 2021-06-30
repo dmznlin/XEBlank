@@ -10,7 +10,7 @@ interface
 uses
   Vcl.Controls, System.Classes, System.SysUtils, Data.DB, Datasnap.DBClient,
   System.Generics.Collections, System.SyncObjs, System.IniFiles, System.Variants,
-  Vcl.Forms, Vcl.Grids, Vcl.Graphics,
+  Datasnap.Provider, Vcl.Forms, Vcl.Grids, Vcl.DBGrids, Vcl.Graphics,
   //----------------------------------------------------------------------------
   uniGUIAbstractClasses, uniGUITypes, uniGUIClasses, uniGUIBaseClasses,
   uniGUISessionManager, uniGUIApplication, uniTreeView, uniGUIForm, uniImage,
@@ -109,8 +109,10 @@ type
     {*构建表格*}
     class procedure BuidDataSetSortIndex(const nDS: TClientDataSet); static;
     {*排序索引*}
+    class procedure DSClientDS(const nDS: TDataSet; const nCDS: TClientDataSet);
+    {*数据集转换*}
     class procedure SetGridColumnFormat(const nEntity: PDictEntity;
-      const nClientDS: TClientDataSet; const nOnData: TFieldGetTextEvent); static;
+      const nClientDS: TClientDataSet); static;
     {*格式化显示*}
     class procedure DoStringGridColumnResize(const nGrid: TObject;
       const nParam: TUniStrings); static;
@@ -589,6 +591,21 @@ begin
   if nForce or (not Assigned(FDictEntity)) then
     FDictEntity := TDictionary<TObject, PDictEntity>.Create();
   //xxxxx
+
+  with gMG.FObjectPool do
+  begin
+    NewClass(TDataSetProvider,
+      function(var nData: Pointer):TObject
+      begin
+        Result := TDataSetProvider.Create(nil);
+      end,
+
+      procedure(const nObj: TObject; const nData: Pointer)
+      begin
+        TDataSetProvider(nObj).Free;
+      end);
+    //data provider
+  end;
 end;
 
 class procedure TGridHelper.Release;
@@ -660,8 +677,13 @@ var nIdx: Integer;
     nList: TStrings;
     nColumn: TUniBaseDBGridColumn;
 begin
+  nList := nil;
   with nGrid do
-  begin
+  try
+    Columns.BeginUpdate;
+    Columns.Clear;
+    //clear first
+
     BorderStyle := ubsDefault;
     LoadMask.Message := '加载数据';
     Options := [dgTitles, dgIndicator, dgColLines, dgRowLines, dgRowSelect];
@@ -681,13 +703,6 @@ begin
     if not Assigned(OnColumnSummaryResult) then
       OnColumnSummaryResult := GetHelper.DoColumnSummaryResult;
     //xxxxx
-  end;
-
-  nList := nil;
-  try
-    nGrid.Columns.BeginUpdate;
-    nGrid.Columns.Clear;
-    //clear first
 
     if nFilter <> '' then
     begin
@@ -695,46 +710,43 @@ begin
       TStringHelper.Split(nFilter, nList, ';', tpTrim);
     end;
 
-    with nGrid do
+    with Summary do
     begin
-      with Summary do
+      Enabled := False;
+      GrandTotal := False;
+    end;
+
+    for nIdx := Low(nEntity.FItems) to High(nEntity.FItems) do
+    with nEntity.FItems[nIdx] do
+    begin
+      if not FVisible then Continue;
+
+      if Assigned(nList) and (nList.IndexOf(FDBItem.FField) >= 0) then
+        Continue;
+      //字段被过滤,不予显示
+
+      nColumn := Columns.Add;
+      with nColumn do
       begin
-        Enabled := False;
-        GrandTotal := False;
-      end;
+        Tag := nIdx;
+        Sortable := True;
+        Alignment := FAlign;
+        FieldName := FDBItem.FField;
 
-      for nIdx := Low(nEntity.FItems) to High(nEntity.FItems) do
-      with nEntity.FItems[nIdx] do
-      begin
-        if not FVisible then Continue;
+        Title.Alignment := FAlign;
+        Title.Caption := FTitle;
+        Width := FWidth;
 
-        if Assigned(nList) and (nList.IndexOf(FDBItem.FField) >= 0) then
-          Continue;
-        //字段被过滤,不予显示
-
-        nColumn := Columns.Add;
-        with nColumn do
+        if (FFooter.FKind = fkSum) or (FFooter.FKind = fkCount) then
         begin
-          Tag := nIdx;
-          Sortable := True;
-          Alignment := FAlign;
-          FieldName := FDBItem.FField;
-
-          Title.Alignment := FAlign;
-          Title.Caption := FTitle;
-          Width := FWidth;
-
-          if (FFooter.FKind = fkSum) or (FFooter.FKind = fkCount) then
-          begin
-            nColumn.ShowSummary := True;
-            Summary.Enabled := True;
-          end;
+          nColumn.ShowSummary := True;
+          Summary.Enabled := True;
         end;
       end;
     end;
   finally
-    gMG.FObjectPool.Release(nList);
     nGrid.Columns.EndUpdate;
+    gMG.FObjectPool.Release(nList);
   end;
 end;
 
@@ -970,7 +982,7 @@ end;
 //Parm: 数据字典;数据集;处理事件
 //Desc: 设置nClientDS数据格式化
 class procedure TGridHelper.SetGridColumnFormat(const nEntity: PDictEntity;
-  const nClientDS: TClientDataSet; const nOnData: TFieldGetTextEvent);
+  const nClientDS: TClientDataSet);
 var nIdx: Integer;
     nField: TField;
 begin
@@ -984,7 +996,7 @@ begin
     if Assigned(nField) then
     begin
       nField.Tag := nIdx;
-      nField.OnGetText := nOnData;
+      nField.OnGetText := GetHelper.DoColumnFormat;
     end;
   end;
 end;
@@ -1045,6 +1057,30 @@ begin
         IndexDefs.Add(nStr, Fields[nIdx].FieldName, [ixDescending]);
       //xxxxx
     end;
+  end;
+end;
+
+//Date: 2021-06-30
+//Parm: 本地数据集;远程数据集
+//Desc: 将nDS转换为nCDS
+class procedure TGridHelper.DSClientDS(const nDS: TDataSet;
+  const nCDS: TClientDataSet);
+var nProvider: TDataSetProvider;
+begin
+  nProvider := nil;
+  try
+    nProvider := gMG.FObjectPool.Lock(TDataSetProvider) as TDataSetProvider;
+    nProvider.DataSet := nDS;
+
+    if nCDS.Active then
+      nCDS.EmptyDataSet;
+    nCDS.Data := nProvider.Data;
+
+    nCDS.LogChanges := False;
+    nProvider.DataSet := nil;
+    //xxxxx
+  finally
+    gMG.FObjectPool.Release(nProvider);
   end;
 end;
 

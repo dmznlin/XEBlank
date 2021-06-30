@@ -141,7 +141,6 @@ begin
   BtnStart.Enabled := False;
   try
     nStr := Copy(EditLang.Text, 1, Pos(sTag, EditLang.Text) - 1);
-    gDataDictManager.AddDictBuilder(BuildeDictWidthTable, 0);
     gDataDictManager.InitDictData(nStr, EditLog.Lines);
   finally
     BtnStart.Enabled := True;
@@ -150,4 +149,5 @@ end;
 
 initialization
   TWebSystem.AddForm(TfFormInitDataDict);
+  gDataDictManager.AddDictBuilder(BuildeDictWidthTable, 0);
 end.

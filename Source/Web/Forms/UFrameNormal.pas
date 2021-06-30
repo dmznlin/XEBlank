@@ -43,6 +43,13 @@ type
     procedure OnLoadGridConfig(const nIni: TIniFile); virtual;
     procedure OnSaveGridConfig(const nIni: TIniFile); virtual;
     {*表格配置*}
+    procedure OnInitFormData(const nWhere: string; const nQuery: TDataset;
+    var nHasDone: Boolean); virtual;
+    procedure InitFormData(const nWhere: string = '';
+      const nQuery: TDataset = nil); virtual;
+    function InitFormDataSQL(const nWhere: string): string; virtual;
+    procedure AfterInitFormData; virtual;
+    {*载入数据*}
   public
     { Public declarations }
     class function DescMe: TfFrameDesc; override;
@@ -53,7 +60,7 @@ implementation
 
 {$R *.dfm}
 uses
-  UManagerGroup, USysBusiness;
+  UManagerGroup, UDBManager, USysBusiness;
 
 class function TfFrameNormal.DescMe: TfFrameDesc;
 begin
@@ -72,12 +79,17 @@ begin
 
   OnLoadGridConfig(nIni);
   //载入用户配置
+  InitFormData;
+  //初始化数据
 end;
 
 procedure TfFrameNormal.OnDestroyFrame(const nIni: TIniFile);
 begin
   OnSaveGridConfig(nIni);
   //保存用户配置
+  if ClientDS.Active then
+    ClientDS.EmptyDataSet;
+  //清空数据集
 end;
 
 //Desc: 过滤不显示字段
@@ -110,6 +122,63 @@ begin
   //解除字典
   TGridHelper.UserDefineGrid(ClassName, DBGridMain, False, nIni);
   //保存自定义表头
+end;
+
+//Desc: 构建数据载入SQL语句
+function TfFrameNormal.InitFormDataSQL(const nWhere: string): string;
+begin
+  Result := 'Select * From ' + DescMe.FDataDict.FTables;
+end;
+
+//Date: 2021-06-30
+//Parm: 查询条件;查询对象;是否完毕
+//Desc: 执行默认的数据查询
+procedure TfFrameNormal.OnInitFormData(const nWhere: string;
+  const nQuery: TDataset; var nHasDone: Boolean);
+begin
+
+end;
+
+//Desc: 载入界面数据
+procedure TfFrameNormal.InitFormData(const nWhere: string;
+  const nQuery: TDataset);
+var nStr: string;
+    nC: TDataset;
+    nBool: Boolean;
+begin
+  nC := nil;
+  try
+    if Assigned(nQuery) then
+         nC := nQuery
+    else nC := gDBManager.LockDBQuery(DescMe.FDBConn);
+
+    nBool := False;
+    OnInitFormData(nWhere, nC, nBool);
+    if nBool then Exit;
+
+    nStr := InitFormDataSQL(nWhere);
+    if nStr = '' then Exit;
+
+    gDBManager.DBQuery(nStr, nC);
+    //db query
+    TGridHelper.DSClientDS(nC, ClientDS);
+    //转换数据集
+
+    TGridHelper.BuidDataSetSortIndex(ClientDS);
+    //排序索引
+    TGridHelper.SetGridColumnFormat(@FDataDict, ClientDS);
+    //列格式化
+  finally
+    if not Assigned(nQuery) then
+      gDBManager.ReleaseDBQuery(nC);
+    AfterInitFormData;
+  end
+end;
+
+//Desc: 数据载入后
+procedure TfFrameNormal.AfterInitFormData;
+begin
+  //null
 end;
 
 end.

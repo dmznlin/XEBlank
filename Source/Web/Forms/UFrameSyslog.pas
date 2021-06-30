@@ -35,7 +35,6 @@ begin
 
   with nEty.ByField('R_ID').FFooter do
   begin
-    FDisplay  := 'total:';
     FFormat   := '合计:共 0 条';
     FKind     := fkCount;
     FPosition := fpAll;

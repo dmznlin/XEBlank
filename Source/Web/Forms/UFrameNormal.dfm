@@ -16,6 +16,7 @@ inherited fFrameNormal: TfFrameNormal
       Width = 772
       Height = 403
       Hint = ''
+      DataSource = DataSource1
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgRowSelect, dgConfirmDelete, dgAutoRefreshRow]
       LoadMask.Message = 'Loading data...'
       BorderStyle = ubsNone
@@ -32,7 +33,6 @@ inherited fFrameNormal: TfFrameNormal
       Border = True
       Align = alTop
       TabOrder = 2
-      ExplicitTop = 46
     end
     object UniToolBar1: TUniToolBar
       Left = 0
