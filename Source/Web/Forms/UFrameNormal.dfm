@@ -22,6 +22,7 @@ inherited fFrameNormal: TfFrameNormal
       BorderStyle = ubsNone
       Align = alClient
       TabOrder = 1
+      OnAjaxEvent = DBGridMainAjaxEvent
     end
     object PanelQuick: TUniSimplePanel
       Left = 0
@@ -142,15 +143,40 @@ inherited fFrameNormal: TfFrameNormal
     end
   end
   object DataSource1: TDataSource
-    DataSet = ClientDS
+    DataSet = MTable1
     Left = 80
     Top = 152
   end
-  object ClientDS: TClientDataSet
-    Aggregates = <>
-    ObjectView = False
-    Params = <>
-    Left = 24
+  object MTable1: TkbmMemTable
+    DesignActivation = True
+    AttachedAutoRefresh = True
+    AttachMaxCount = 1
+    FieldDefs = <>
+    IndexDefs = <>
+    SortOptions = []
+    PersistentBackup = False
+    ProgressFlags = [mtpcLoad, mtpcSave, mtpcCopy]
+    LoadedCompletely = False
+    SavedCompletely = False
+    FilterOptions = []
+    Version = '7.74.00 Professional Edition'
+    LanguageID = 0
+    SortID = 0
+    SubLanguageID = 1
+    LocaleID = 1024
+    Left = 16
     Top = 152
+  end
+  object HMenu1: TUniPopupMenu
+    Left = 16
+    Top = 208
+    object MenuGridAdjust: TUniMenuItem
+      Caption = #35843#25972#34920#26684
+      OnClick = MenuGridAdjustClick
+      CheckItem = True
+    end
+    object MenuEditDict: TUniMenuItem
+      Caption = #32534#36753#34920#26684
+    end
   end
 end

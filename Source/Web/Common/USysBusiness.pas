@@ -8,9 +8,9 @@ unit USysBusiness;
 interface
 
 uses
-  Vcl.Controls, System.Classes, System.SysUtils, Data.DB, Datasnap.DBClient,
-  System.Generics.Collections, System.SyncObjs, System.IniFiles, System.Variants,
-  Datasnap.Provider, Vcl.Forms, Vcl.Grids, Vcl.DBGrids, Vcl.Graphics,
+  System.Classes, System.SysUtils, System.Generics.Collections, System.SyncObjs,
+  System.IniFiles, System.Variants, Data.DB, kbmMemTable,
+  Vcl.Controls, Vcl.Forms, Vcl.Grids, Vcl.DBGrids, Vcl.Graphics,
   //----------------------------------------------------------------------------
   uniGUIAbstractClasses, uniGUITypes, uniGUIClasses, uniGUIBaseClasses,
   uniGUISessionManager, uniGUIApplication, uniTreeView, uniGUIForm, uniImage,
@@ -89,6 +89,7 @@ type
       {*数据集和字典*}
   public
     const
+      sEvent_DBGridHeaderPopmenu = 'DBGridHeaderPopmenu';
       sEvent_StrGridColumnResize = 'StringGridColResize';
       {*常量定义*}
   public
@@ -107,12 +108,10 @@ type
     class procedure BuildDBGridColumn(const nEntity: PDictEntity;
       const nGrid: TUniDBGrid; const nFilter: string = ''); static;
     {*构建表格*}
-    class procedure BuidDataSetSortIndex(const nDS: TClientDataSet); static;
+    class procedure BuidDataSetSortIndex(const nMT: TkbmMemTable); static;
     {*排序索引*}
-    class procedure DSClientDS(const nDS: TDataSet; const nCDS: TClientDataSet);
-    {*数据集转换*}
     class procedure SetGridColumnFormat(const nEntity: PDictEntity;
-      const nClientDS: TClientDataSet); static;
+      const nMT: TkbmMemTable); static;
     {*格式化显示*}
     class procedure DoStringGridColumnResize(const nGrid: TObject;
       const nParam: TUniStrings); static;
@@ -591,21 +590,6 @@ begin
   if nForce or (not Assigned(FDictEntity)) then
     FDictEntity := TDictionary<TObject, PDictEntity>.Create();
   //xxxxx
-
-  with gMG.FObjectPool do
-  begin
-    NewClass(TDataSetProvider,
-      function(var nData: Pointer):TObject
-      begin
-        Result := TDataSetProvider.Create(nil);
-      end,
-
-      procedure(const nObj: TObject; const nData: Pointer)
-      begin
-        TDataSetProvider(nObj).Free;
-      end);
-    //data provider
-  end;
 end;
 
 class procedure TGridHelper.Release;
@@ -673,12 +657,13 @@ end;
 //Desc: 使用数据字典nEntity构建nGrid的表头
 class procedure TGridHelper.BuildDBGridColumn(const nEntity: PDictEntity;
   const nGrid: TUniDBGrid; const nFilter: string);
-var nIdx: Integer;
+var nStr: string;
+    nIdx: Integer;
     nList: TStrings;
     nColumn: TUniBaseDBGridColumn;
 begin
   nList := nil;
-  with nGrid do
+  with nGrid, TStringHelper do
   try
     Columns.BeginUpdate;
     Columns.Clear;
@@ -695,6 +680,18 @@ begin
     ReadOnly := True;
     WebOptions.Paged := True;
     WebOptions.PageSize := 1000;
+
+    nStr := 'headercontextmenu=function headercontextmenu(ct, column, e, t, eOpts)' +
+      '{ajaxRequest($O, ''$E'', [''xy='' + e.getXY(),''col='' + column.dataIndex])}';
+    //grid column popmenu
+
+    nStr := MacroValue(nStr, [MI('$O', nGrid.JSName),
+      MI('$E', sEvent_DBGridHeaderPopmenu)]);
+    //xxxxx
+
+    if nGrid.ClientEvents.ExtEvents.IndexOf(nStr) < 0 then
+      nGrid.ClientEvents.ExtEvents.Add(nStr);
+    //xxxxx
 
     if not Assigned(OnColumnSort) then
       OnColumnSort := GetHelper.DoColumnSort;
@@ -882,7 +879,7 @@ begin
         'ajaxRequest($O, ''$E'', [''idx=''+column.dataIndex,''w=''+width])}';
       //add resize event
 
-      nStr := MacroValue(nStr, [MI('$O', nForm + '.' + nGrid.Name),
+      nStr := MacroValue(nStr, [MI('$O', nGrid.JSName),
         MI('$E', sEvent_StrGridColumnResize)]);
       //xxxx
 
@@ -982,7 +979,7 @@ end;
 //Parm: 数据字典;数据集;处理事件
 //Desc: 设置nClientDS数据格式化
 class procedure TGridHelper.SetGridColumnFormat(const nEntity: PDictEntity;
-  const nClientDS: TClientDataSet);
+  const nMT: TkbmMemTable);
 var nIdx: Integer;
     nField: TField;
 begin
@@ -992,7 +989,7 @@ begin
     if FFormat.FStyle <> fsFixed then Continue;
     if Trim(FFormat.FData) = '' then Continue;
 
-    nField := nClientDS.FindField(FDBItem.FField);
+    nField := nMT.FindField(FDBItem.FField);
     if Assigned(nField) then
     begin
       nField.Tag := nIdx;
@@ -1039,48 +1036,24 @@ end;
 //Date: 2021-06-24
 //Parm: 数据集
 //Desc: 构建nDS的排序索引
-class procedure TGridHelper.BuidDataSetSortIndex(const nDS: TClientDataSet);
+class procedure TGridHelper.BuidDataSetSortIndex(const nMT: TkbmMemTable);
 var nStr: string;
     nIdx: Integer;
 begin
-  with nDS do
+  with nMT do
   begin
     for nIdx := FieldCount-1 downto 0 do
     begin
       nStr := Fields[nIdx].FieldName + '_asc';
       if IndexDefs.IndexOf(nStr) < 0 then
-        IndexDefs.Add(nStr, Fields[nIdx].FieldName, []);
+        AddIndex(nStr, Fields[nIdx].FieldName, []);
       //xxxxx
 
       nStr := Fields[nIdx].FieldName + '_des';
       if IndexDefs.IndexOf(nStr) < 0 then
-        IndexDefs.Add(nStr, Fields[nIdx].FieldName, [ixDescending]);
+        AddIndex(nStr, Fields[nIdx].FieldName, [ixDescending]);
       //xxxxx
     end;
-  end;
-end;
-
-//Date: 2021-06-30
-//Parm: 本地数据集;远程数据集
-//Desc: 将nDS转换为nCDS
-class procedure TGridHelper.DSClientDS(const nDS: TDataSet;
-  const nCDS: TClientDataSet);
-var nProvider: TDataSetProvider;
-begin
-  nProvider := nil;
-  try
-    nProvider := gMG.FObjectPool.Lock(TDataSetProvider) as TDataSetProvider;
-    nProvider.DataSet := nDS;
-
-    if nCDS.Active then
-      nCDS.EmptyDataSet;
-    nCDS.Data := nProvider.Data;
-
-    nCDS.LogChanges := False;
-    nProvider.DataSet := nil;
-    //xxxxx
-  finally
-    gMG.FObjectPool.Release(nProvider);
   end;
 end;
 
@@ -1089,18 +1062,18 @@ end;
 //Desc: 按照nDirection对nCol排序
 procedure TGridHelper.DoColumnSort(nCol: TUniDBGridColumn; nDirection: Boolean);
 var nStr: string;
-    nDS: TClientDataSet;
+    nMT: TkbmMemTable;
 begin
-  if TUniDBGrid(nCol.Grid).DataSource.DataSet is TClientDataSet then
-       nDS := TUniDBGrid(nCol.Grid).DataSource.DataSet as TClientDataSet
+  if TUniDBGrid(nCol.Grid).DataSource.DataSet is TkbmMemTable then
+       nMT := TUniDBGrid(nCol.Grid).DataSource.DataSet as TkbmMemTable
   else Exit;
 
   if nDirection then
        nStr := nCol.FieldName + '_asc'
   else nStr := nCol.FieldName + '_des';
 
-  if nDS.IndexDefs.IndexOf(nStr) >= 0 then
-    nDS.IndexName := nStr;
+  if nMT.IndexDefs.IndexOf(nStr) >= 0 then
+    nMT.IndexName := nStr;
   //xxxxx
 end;
 

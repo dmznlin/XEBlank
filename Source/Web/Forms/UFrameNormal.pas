@@ -8,14 +8,13 @@ interface
 
 uses
   SysUtils, Classes, Graphics, Controls, UFrameBase, MainModule, uniGUITypes,
-  uniGUIAbstractClasses, Data.DB, System.IniFiles, Datasnap.DBClient,
-  UMgrDataDict, uniToolBar, uniPanel, uniGUIClasses, uniBasicGrid, uniDBGrid,
-  Vcl.Forms, uniGUIBaseClasses;
+  uniGUIAbstractClasses, Data.DB, System.IniFiles, UMgrDataDict, kbmMemTable,
+  uniToolBar, uniPanel, uniGUIClasses, uniBasicGrid, uniDBGrid, Vcl.Forms,
+  uniGUIBaseClasses, Vcl.Menus, uniMainMenu;
 
 type
   TfFrameNormal = class(TfFrameBase)
     DataSource1: TDataSource;
-    ClientDS: TClientDataSet;
     DBGridMain: TUniDBGrid;
     PanelQuick: TUniSimplePanel;
     UniToolBar1: TUniToolBar;
@@ -30,6 +29,13 @@ type
     BtnExport: TUniToolButton;
     BtnS3: TUniToolButton;
     BtnExit: TUniToolButton;
+    MTable1: TkbmMemTable;
+    HMenu1: TUniPopupMenu;
+    MenuGridAdjust: TUniMenuItem;
+    MenuEditDict: TUniMenuItem;
+    procedure DBGridMainAjaxEvent(Sender: TComponent; EventName: string;
+      Params: TUniStrings);
+    procedure MenuGridAdjustClick(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -60,7 +66,7 @@ implementation
 
 {$R *.dfm}
 uses
-  UManagerGroup, UDBManager, USysBusiness;
+  UManagerGroup, ULibFun, UDBManager, USysBusiness;
 
 class function TfFrameNormal.DescMe: TfFrameDesc;
 begin
@@ -87,8 +93,8 @@ procedure TfFrameNormal.OnDestroyFrame(const nIni: TIniFile);
 begin
   OnSaveGridConfig(nIni);
   //保存用户配置
-  if ClientDS.Active then
-    ClientDS.EmptyDataSet;
+  if MTable1.Active then
+    MTable1.Close;
   //清空数据集
 end;
 
@@ -104,7 +110,7 @@ begin
   if FDataDict.FEntity = '' then Exit;
   //没有字典数据
 
-  TGridHelper.BindEntity(ClientDS, @FDataDict);
+  TGridHelper.BindEntity(MTable1, @FDataDict);
   TGridHelper.BindEntity(DBGridMain, @FDataDict);
   //绑定数据字典
 
@@ -117,7 +123,7 @@ end;
 //Desc: 保存表格配置
 procedure TfFrameNormal.OnSaveGridConfig(const nIni: TIniFile);
 begin
-  TGridHelper.UnbindEntity(ClientDS);
+  TGridHelper.UnbindEntity(MTable1);
   TGridHelper.UnbindEntity(DBGridMain);
   //解除字典
   TGridHelper.UserDefineGrid(ClassName, DBGridMain, False, nIni);
@@ -161,12 +167,12 @@ begin
 
     gDBManager.DBQuery(nStr, nC);
     //db query
-    TGridHelper.DSClientDS(nC, ClientDS);
+    MTable1.LoadFromDataSet(nC, [mtcpoStructure]);
     //转换数据集
 
-    TGridHelper.BuidDataSetSortIndex(ClientDS);
+    TGridHelper.BuidDataSetSortIndex(MTable1);
     //排序索引
-    TGridHelper.SetGridColumnFormat(@FDataDict, ClientDS);
+    TGridHelper.SetGridColumnFormat(@FDataDict, MTable1);
     //列格式化
   finally
     if not Assigned(nQuery) then
@@ -179,6 +185,34 @@ end;
 procedure TfFrameNormal.AfterInitFormData;
 begin
   //null
+end;
+
+//------------------------------------------------------------------------------
+//Desc: 处理表格事件
+procedure TfFrameNormal.DBGridMainAjaxEvent(Sender: TComponent;
+  EventName: string; Params: TUniStrings);
+var nSA: TStringHelper.TStringArray;
+begin
+  if EventName = TGridHelper.sEvent_DBGridHeaderPopmenu then
+  begin
+    if TStringHelper.SplitArray(Params.Values['xy'], nSA, ',', tpTrim, 2) then
+    begin
+      MenuGridAdjust.Checked := UniMainModule.FGridColumnAdjust;
+      HMenu1.Popup(StrToInt(nSA[0]), StrToInt(nSA[1]), UniMainModule.MainForm);
+    end;
+  end;
+end;
+
+//Desc: 允许调整表格宽度和顺序
+procedure TfFrameNormal.MenuGridAdjustClick(Sender: TObject);
+begin
+  with DBGridMain, UniMainModule do
+  begin
+    FGridColumnAdjust := not FGridColumnAdjust;
+    if FGridColumnAdjust then
+      ShowMsg('表格的每一列可以调整位置和宽度', False, '重新打开生效');
+    //xxxxx
+  end;
 end;
 
 end.
