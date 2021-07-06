@@ -19,7 +19,7 @@ interface
 uses
   SysUtils, Classes, Graphics, Controls, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIFrame, Vcl.Forms, System.IniFiles, uniGUIBaseClasses,
-  uniPanel;
+  uniPanel, USysConst;
 
 type
   TfFrameBase = class;
@@ -41,17 +41,6 @@ type
     FUserConfig    : Boolean;                        //用户自定义配置
   end;
 
-  PFrameCommandParam = ^TFrameCommandParam;
-  TFrameCommandParam = record
-    FCommand: integer;                               //命令
-    FParamA: Variant;
-    FParamB: Variant;
-    FParamC: Variant;
-    FParamD: Variant;
-    FParamE: Variant;                                //参数A-E
-    FParamP: Pointer;                                //指针参数
-  end;
-
   TfFrameBase = class(TUniFrame)
     PanelWork: TUniContainerPanel;
     procedure UniFrameCreate(Sender: TObject);
@@ -60,7 +49,7 @@ type
     { Private declarations }
   protected
     { Protected declarations }
-    FParam: TFrameCommandParam;
+    FParam: TCommandParam;
     {*命令参数*}
     procedure OnCreateFrame(const nIni: TIniFile); virtual;
     procedure OnDestroyFrame(const nIni: TIniFile); virtual;
@@ -69,8 +58,8 @@ type
     { Public declarations }
     class function DescMe: TfFrameDesc; virtual;
     {*窗体描述*}
-    function SetData(const nData: PFrameCommandParam): Boolean; virtual;
-    function GetData(var nData: PFrameCommandParam): Boolean; virtual;
+    function SetData(const nData: PCommandParam): Boolean; virtual;
+    function GetData(var nData: TCommandParam): Boolean; virtual;
     {*读写参数*}
   end;
 
@@ -84,6 +73,8 @@ procedure TfFrameBase.UniFrameCreate(Sender: TObject);
 var nIni: TIniFile;
 begin
   FillChar(FParam, SizeOf(FParam), #0);
+  //init
+
   nIni := nil;
   try
     if DescMe.FUserConfig then
@@ -126,8 +117,12 @@ end;
 //Date: 2021-06-03
 //Desc: 描述frame信息
 class function TfFrameBase.DescMe: TfFrameDesc;
+var nInit: TfFrameDesc;
 begin
-  FillChar(Result, SizeOf(TfFrameDesc), #0);
+  FillChar(nInit, SizeOf(TfFrameDesc), #0);
+  Result := nInit;
+  //fill default
+
   with Result do
   begin
     FVerifyAdmin  := False;
@@ -143,7 +138,7 @@ end;
 //Date: 2021-06-03
 //Parm: 参数
 //Desc: 设置Frame的参数
-function TfFrameBase.SetData(const nData: PFrameCommandParam): Boolean;
+function TfFrameBase.SetData(const nData: PCommandParam): Boolean;
 begin
   if Assigned(nData) then
     FParam := nData^;
@@ -153,7 +148,7 @@ end;
 //Date: 2021-06-03
 //Parm: 参数
 //Desc: 读取Frame的数据,存入nData中
-function TfFrameBase.GetData(var nData: PFrameCommandParam): Boolean;
+function TfFrameBase.GetData(var nData: TCommandParam): Boolean;
 begin
   Result := True;
 end;

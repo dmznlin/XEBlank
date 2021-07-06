@@ -19,7 +19,6 @@ inherited fFrameNormal: TfFrameNormal
       DataSource = DataSource1
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgRowSelect, dgConfirmDelete, dgAutoRefreshRow]
       LoadMask.Message = 'Loading data...'
-      BorderStyle = ubsNone
       Align = alClient
       TabOrder = 1
       OnAjaxEvent = DBGridMainAjaxEvent
@@ -89,6 +88,7 @@ inherited fFrameNormal: TfFrameNormal
         Caption = #21047#26032
         ScreenMask.Message = #27491#22312#35835#21462
         TabOrder = 5
+        OnClick = BtnRefreshClick
       end
       object BtnS2: TUniToolButton
         Left = 336
@@ -122,6 +122,7 @@ inherited fFrameNormal: TfFrameNormal
         ImageIndex = 9
         Caption = #23548#20986
         TabOrder = 8
+        OnClick = BtnExportClick
       end
       object BtnS3: TUniToolButton
         Left = 590
@@ -139,6 +140,7 @@ inherited fFrameNormal: TfFrameNormal
         ImageIndex = 19
         Caption = #36864#20986
         TabOrder = 11
+        OnClick = BtnExitClick
       end
     end
   end
@@ -177,6 +179,7 @@ inherited fFrameNormal: TfFrameNormal
     end
     object MenuEditDict: TUniMenuItem
       Caption = #32534#36753#34920#26684
+      OnClick = MenuEditDictClick
     end
   end
 end

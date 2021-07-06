@@ -483,14 +483,14 @@ end;
 //Desc: ±à¼­µ±Ç°²Ëµ¥
 procedure TfFormMain.MenuEditClick(Sender: TObject);
 var nMenu: PMenuItem;
-    nData: TFormCommandParam;
+    nData: TCommandParam;
     nResult: TFormModalResult;
 begin
   nMenu := FActiveMenu.Selected.Data;
   nData.FCommand := cCmd_EditData;
-  nData.FParamP := nMenu;
+  nData.FParamP[0] := nMenu;
 
-  nResult := procedure(const nRes: Integer; const nParam: PFormCommandParam)
+  nResult := procedure(const nRes: Integer; const nParam: PCommandParam)
   begin
     if nRes = mrOk then
     begin

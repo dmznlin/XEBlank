@@ -8,10 +8,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, UFormNormal, UFormBase,
-  MainModule, UMenuManager, uniMultiItem, uniComboBox, uniGUIClasses, uniEdit,
+  MainModule, UMenuManager, USysConst, uniComboBox, uniGUIClasses, uniEdit,
   uniPanel, System.Classes, Vcl.Controls, Vcl.Forms, uniGUIBaseClasses,
   uniButton, uniBitBtn, UniFSButton, UniFSCombobox, uniCheckBox, uniGroupBox,
-  uniLabel;
+  uniLabel, uniMultiItem;
 
 type
   TfFormEditSysMenu = class(TfFormNormal)
@@ -37,7 +37,7 @@ type
     { Public declarations }
     class function DescMe: TfFormDesc; override;
     procedure OnCreateForm(Sender: TObject); override;
-    function SetData(const nData: PFormCommandParam): Boolean; override;
+    function SetData(const nData: PCommandParam): Boolean; override;
     function OnVerifyCtrl(Sender: TObject; var nHint: string): Boolean; override;
   end;
 
@@ -46,7 +46,7 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, UManagerGroup, ULibFun, USysMenu, USysBusiness, USysConst;
+  uniGUIVars, UManagerGroup, ULibFun, USysMenu, USysBusiness;
 
 class function TfFormEditSysMenu.DescMe: TfFormDesc;
 begin
@@ -61,11 +61,11 @@ begin
   FMenuItem := nil;
 end;
 
-function TfFormEditSysMenu.SetData(const nData: PFormCommandParam): Boolean;
+function TfFormEditSysMenu.SetData(const nData: PCommandParam): Boolean;
 var nIdx: Integer;
 begin
   Result := inherited SetData(nData);
-  FMenuItem := nData.FParamP;
+  FMenuItem := nData.FParamP[0];
 
   EditTitle.Text := FMenuItem.FTitle;
   EditData.Text := FMenuItem.FActionData;

@@ -10,11 +10,6 @@ uses
   SysUtils, Classes, Data.DB, uniPageControl, ULibFun;
 
 const
-  cSBar_Date            = 0;                         //日期面板索引
-  cSBar_Time            = 1;                         //时间面板索引
-  cSBar_User            = 2;                         //用户面板索引
-  cRecMenuMax           = 5;                         //最近使用导航区最大条目数
-
   {*Command*}
   cCmd_RefreshData      = $0002;                     //刷新数据
   cCmd_ViewSysLog       = $0003;                     //系统日志
@@ -26,7 +21,22 @@ const
   cCmd_ViewData         = $1006;                     //查看数据
   cCmd_GetData          = $1007;                     //选择数据
 
+const
+  cCPDim                = 5;
+  {*常量定义*}
+
 type
+  {*命令参数*}
+  PCommandParam = ^TCommandParam;
+  TCommandParam = record
+    FCommand: Integer;                               //命令类型
+    FParamS: array[0..cCPDim-1] of string;           //字符串
+    FParamI: array[0..cCPDim-1] of Integer;          //整数
+    FParamF: array[0..cCPDim-1] of Double;           //浮点
+    FParamP: array[0..cCPDim-1] of Pointer;          //指针
+    FParamO: array[0..cCPDim-1] of TObject;          //对象
+  end;
+
   TImagePosition = (ipDefault, ipTL, ipTM, ipTR,
                                ipML, ipMM, ipMR,
                                ipBL, ipBM, ipBR);

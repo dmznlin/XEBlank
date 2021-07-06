@@ -29,7 +29,7 @@ type
       {*全局同步锁*}
   public
     type
-      TUserFileType = (ufOPTCode);
+      TUserFileType = (ufOPTCode, ufExportXLS);
       {*用户文件*}
     class var
       Forms: array of TfFormClass;
@@ -58,7 +58,7 @@ type
       const nException: Boolean = False): TUniForm; static;
     {*获取窗体*}
     class procedure ShowModalForm(const nClass: string;
-      const nParams: PFormCommandParam = nil;
+      const nParams: PCommandParam = nil;
       const nResult: TFormModalResult = nil); static;
     {*显示模式窗体*}
     class procedure ShowFrame(const nMenu: PMenuItem;
@@ -277,6 +277,8 @@ begin
     case nType of
      ufOPTCode: //启用动态口令时生成的二维码
       Result := Format('%s_opt.bmp', [FUser.FUserID]);
+     ufExportXLS: //导出表格数据
+      Result := Format('%s_ept.xls', [FUser.FUserID]);
      else
       begin
         Result := '';
@@ -506,7 +508,7 @@ end;
 //Parm: 窗体类;输入参数;输出参数
 //Desc: 显示类名为nClass的模式窗体
 class procedure TWebSystem.ShowModalForm(const nClass: string;
-  const nParams: PFormCommandParam; const nResult: TFormModalResult);
+  const nParams: PCommandParam; const nResult: TFormModalResult);
 var nForm: TUniForm;
 begin
   nForm := TWebSystem.GetForm(nClass);
@@ -521,7 +523,7 @@ begin
 
     ShowModal(
       procedure(Sender: TComponent; nModalResult:Integer)
-      var nData: TFormCommandParam;
+      var nData: TCommandParam;
       begin
         if Assigned(nResult) and GetData(nData) then
           nResult(nModalResult, @nData);
@@ -669,7 +671,7 @@ begin
     Columns.Clear;
     //clear first
 
-    BorderStyle := ubsDefault;
+    BorderStyle := ubsNone;
     LoadMask.Message := '加载数据';
     Options := [dgTitles, dgIndicator, dgColLines, dgRowLines, dgRowSelect];
 

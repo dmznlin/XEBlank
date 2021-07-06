@@ -9,8 +9,8 @@ interface
 uses
   SysUtils, Classes, Graphics, Controls, UFrameBase, MainModule, uniGUITypes,
   uniGUIAbstractClasses, Data.DB, System.IniFiles, UMgrDataDict, kbmMemTable,
-  uniToolBar, uniPanel, uniGUIClasses, uniBasicGrid, uniDBGrid, Vcl.Forms,
-  uniGUIBaseClasses, Vcl.Menus, uniMainMenu;
+  uniPageControl, uniPanel, uniGUIClasses, uniBasicGrid, uniDBGrid, Vcl.Forms,
+  uniGUIBaseClasses, Vcl.Menus, uniMainMenu, uniToolBar;
 
 type
   TfFrameNormal = class(TfFrameBase)
@@ -36,10 +36,16 @@ type
     procedure DBGridMainAjaxEvent(Sender: TComponent; EventName: string;
       Params: TUniStrings);
     procedure MenuGridAdjustClick(Sender: TObject);
+    procedure BtnExitClick(Sender: TObject);
+    procedure BtnRefreshClick(Sender: TObject);
+    procedure BtnExportClick(Sender: TObject);
+    procedure MenuEditDictClick(Sender: TObject);
   private
     { Private declarations }
   protected
     { Protected declarations }
+    FWhere: string;
+    {*过滤条件*}
     FDataDict: TDictEntity;
     {*数据字典*}
     procedure OnCreateFrame(const nIni: TIniFile); override;
@@ -66,7 +72,7 @@ implementation
 
 {$R *.dfm}
 uses
-  UManagerGroup, ULibFun, UDBManager, USysBusiness;
+  UManagerGroup, ULibFun, UDBManager, USysBusiness, USysConst;
 
 class function TfFrameNormal.DescMe: TfFrameDesc;
 begin
@@ -76,6 +82,9 @@ end;
 
 procedure TfFrameNormal.OnCreateFrame(const nIni: TIniFile);
 begin
+  FWhere := '';
+  //init
+
   with DescMe.FDataDict,gDataDictManager do
   begin
     if FEntity = '' then
@@ -197,6 +206,7 @@ begin
   begin
     if TStringHelper.SplitArray(Params.Values['xy'], nSA, ',', tpTrim, 2) then
     begin
+      MenuEditDict.Enabled := UniMainModule.FUser.FIsAdmin;
       MenuGridAdjust.Checked := UniMainModule.FGridColumnAdjust;
       HMenu1.Popup(StrToInt(nSA[0]), StrToInt(nSA[1]), UniMainModule.MainForm);
     end;
@@ -213,6 +223,64 @@ begin
       ShowMsg('表格的每一列可以调整位置和宽度', False, '重新打开生效');
     //xxxxx
   end;
+end;
+
+//Desc: 编辑表格数据字典
+procedure TfFrameNormal.MenuEditDictClick(Sender: TObject);
+var nP: TCommandParam;
+begin
+  with nP do
+  begin
+    FParamO[0] := MTable1;    //数据集
+    FParamP[0] := @FDataDict; //数据字典
+  end;
+  TWebSystem.ShowModalForm('');
+end;
+
+//Desc: 关闭
+procedure TfFrameNormal.BtnExitClick(Sender: TObject);
+var nSheet: TUniTabSheet;
+begin
+  nSheet := Parent as TUniTabSheet;
+  nSheet.Close;
+end;
+
+//Desc: 刷新
+procedure TfFrameNormal.BtnRefreshClick(Sender: TObject);
+begin
+  FWhere := '';
+  InitFormData(FWhere);
+end;
+
+//Desc: 导出
+procedure TfFrameNormal.BtnExportClick(Sender: TObject);
+var nStr,nFile: string;
+begin
+  if (not MTable1.Active) or (MTable1.RecordCount < 1) then
+  begin
+    UniMainModule.ShowMsg('没有需要导出的数据', True);
+    Exit;
+  end;
+
+  nStr := '是否要导出当前表格内的数据?';
+  UniMainModule.QueryDlg(nStr,
+    procedure(const nType: TButtonClickType)
+    begin
+      if nType <> ctYes then Exit;
+      nFile := TWebSystem.UserFile(ufExportXLS, False);
+
+      if FileExists(nFile) then
+        DeleteFile(nFile);
+      //xxxxx
+
+      nStr := TGridHelper.GridExportExcel(DBGridMain, nFile);
+      if nStr = '' then
+      begin
+        UniSession.SendFile(nFile);
+        //send file
+      end else UniMainModule.ShowMsg(nStr, True);
+    end);
+  //xxxxx
 end;
 
 end.

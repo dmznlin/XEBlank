@@ -20,19 +20,8 @@ type
     FVerifyAdmin   : Boolean;                        //验证管理员
   end;
 
-  PFormCommandParam = ^TFormCommandParam;
-  TFormCommandParam = record
-    FCommand: integer;                               //命令
-    FParamA: Variant;
-    FParamB: Variant;
-    FParamC: Variant;
-    FParamD: Variant;
-    FParamE: Variant;                                //参数A-E
-    FParamP: Pointer;                                //指针参数
-  end;
-
   TFormModalResult = reference to  procedure(const nResult: Integer;
-    const nParam: PFormCommandParam = nil);
+    const nParam: PCommandParam = nil);
   //模式窗体结果回调
 
   TfFormBase = class(TUniForm)
@@ -41,7 +30,7 @@ type
     procedure UniFormDestroy(Sender: TObject);
   protected
     { Protected declarations }
-    FParam: TFormCommandParam;
+    FParam: TCommandParam;
     {*命令参数*}
     procedure OnCreateForm(Sender: TObject); virtual;
     procedure OnDestroyForm(Sender: TObject); virtual;
@@ -50,8 +39,8 @@ type
     { Public declarations }
     class function DescMe: TfFormDesc; virtual;
     {*窗体描述*}
-    function SetData(const nData: PFormCommandParam): Boolean; virtual;
-    function GetData(var nData: TFormCommandParam): Boolean; virtual;
+    function SetData(const nData: PCommandParam): Boolean; virtual;
+    function GetData(var nData: TCommandParam): Boolean; virtual;
     {*读写参数*}
   end;
 
@@ -60,8 +49,10 @@ implementation
 {$R *.dfm}
 
 procedure TfFormBase.UniFormCreate(Sender: TObject);
+var nInit: TCommandParam;
 begin
-  FillChar(FParam, SizeOf(FParam), #0);
+  FillChar(nInit, SizeOf(nInit), #0);
+  FParam := nInit;
   OnCreateForm(Sender);
 end;
 
@@ -83,8 +74,12 @@ end;
 //Date: 2021-05-06
 //Desc: 描述窗体信息
 class function TfFormBase.DescMe: TfFormDesc;
+var nInit: TfFormDesc;
 begin
-  FillChar(Result, SizeOf(TfFormDesc), #0);
+  FillChar(nInit, SizeOf(TfFormDesc), #0);
+  Result := nInit;
+  //fill default
+
   Result.FName := ClassName;
   Result.FVerifyAdmin := False;
 end;
@@ -92,7 +87,7 @@ end;
 //Date: 2021-04-27
 //Parm: 参数
 //Desc: 设置窗体的参数
-function TfFormBase.SetData(const nData: PFormCommandParam): Boolean;
+function TfFormBase.SetData(const nData: PCommandParam): Boolean;
 begin
   if Assigned(nData) then
     FParam := nData^;
@@ -102,7 +97,7 @@ end;
 //Date: 2021-04-27
 //Parm: 参数
 //Desc: 读取窗体的数据,存入nData中
-function TfFormBase.GetData(var nData: TFormCommandParam): Boolean;
+function TfFormBase.GetData(var nData: TCommandParam): Boolean;
 begin
   Result := True;
 end;
