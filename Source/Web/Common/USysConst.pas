@@ -21,22 +21,7 @@ const
   cCmd_ViewData         = $1006;                     //查看数据
   cCmd_GetData          = $1007;                     //选择数据
 
-const
-  cCPDim                = 5;
-  {*常量定义*}
-
 type
-  {*命令参数*}
-  PCommandParam = ^TCommandParam;
-  TCommandParam = record
-    FCommand: Integer;                               //命令类型
-    FParamS: array[0..cCPDim-1] of string;           //字符串
-    FParamI: array[0..cCPDim-1] of Integer;          //整数
-    FParamF: array[0..cCPDim-1] of Double;           //浮点
-    FParamP: array[0..cCPDim-1] of Pointer;          //指针
-    FParamO: array[0..cCPDim-1] of TObject;          //对象
-  end;
-
   TImagePosition = (ipDefault, ipTL, ipTM, ipTR,
                                ipML, ipMM, ipMR,
                                ipBL, ipBM, ipBR);

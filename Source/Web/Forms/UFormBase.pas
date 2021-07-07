@@ -8,7 +8,7 @@ interface
 
 uses
   System.SysUtils, System.Classes, Vcl.Controls, Vcl.Forms, uniGUIForm,
-  USysConst, uniGUIBaseClasses, uniGUIClasses, uniPanel;
+  ULibFun, uniGUIBaseClasses, uniGUIClasses, uniPanel;
 
 type
   TfFormBase = class;
@@ -49,10 +49,8 @@ implementation
 {$R *.dfm}
 
 procedure TfFormBase.UniFormCreate(Sender: TObject);
-var nInit: TCommandParam;
 begin
-  FillChar(nInit, SizeOf(nInit), #0);
-  FParam := nInit;
+  FParam.Init;
   OnCreateForm(Sender);
 end;
 

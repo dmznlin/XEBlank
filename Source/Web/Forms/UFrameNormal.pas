@@ -48,6 +48,8 @@ type
     {*过滤条件*}
     FDataDict: TDictEntity;
     {*数据字典*}
+    FActiveColumn: TUniBaseDBGridColumn;
+    {*当前活动列*}
     procedure OnCreateFrame(const nIni: TIniFile); override;
     procedure OnDestroyFrame(const nIni: TIniFile); override;
     {*创建释放*}
@@ -83,6 +85,7 @@ end;
 procedure TfFrameNormal.OnCreateFrame(const nIni: TIniFile);
 begin
   FWhere := '';
+  FActiveColumn := nil;
   //init
 
   with DescMe.FDataDict,gDataDictManager do
@@ -200,10 +203,25 @@ end;
 //Desc: 处理表格事件
 procedure TfFrameNormal.DBGridMainAjaxEvent(Sender: TComponent;
   EventName: string; Params: TUniStrings);
-var nSA: TStringHelper.TStringArray;
+var nStr: string;
+    nInt: Integer;
+    nSA: TStringHelper.TStringArray;
 begin
   if EventName = TGridHelper.sEvent_DBGridHeaderPopmenu then
   begin
+    FActiveColumn := nil;
+    nStr := Params.Values['col'];
+
+    if TStringHelper.IsNumber(nStr) then
+    begin
+      nInt := StrToInt(nStr);
+      if (nInt >= 0) and (nInt < DBGridMain.Columns.Count) then
+      begin
+        FActiveColumn := DBGridMain.Columns[nInt];
+        //获取菜单所在的列
+      end;
+    end;
+
     if TStringHelper.SplitArray(Params.Values['xy'], nSA, ',', tpTrim, 2) then
     begin
       MenuEditDict.Enabled := UniMainModule.FUser.FIsAdmin;
@@ -229,12 +247,12 @@ end;
 procedure TfFrameNormal.MenuEditDictClick(Sender: TObject);
 var nP: TCommandParam;
 begin
-  with nP do
-  begin
-    FParamO[0] := MTable1;    //数据集
-    FParamP[0] := @FDataDict; //数据字典
-  end;
-  TWebSystem.ShowModalForm('');
+  nP.Init.AddS(DescMe.FDataDict.FEntity).AddP(@FDataDict).AddO(MTable1);
+  if Assigned(FActiveColumn) then
+    nP.AddO(FActiveColumn);
+  //xxxxx
+
+  TWebSystem.ShowModalForm('TfFormEditDataDict', @nP);
 end;
 
 //Desc: 关闭

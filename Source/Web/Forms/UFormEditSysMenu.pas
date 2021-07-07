@@ -8,7 +8,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, UFormNormal, UFormBase,
-  MainModule, UMenuManager, USysConst, uniComboBox, uniGUIClasses, uniEdit,
+  MainModule, UMenuManager, ULibFun, uniComboBox, uniGUIClasses, uniEdit,
   uniPanel, System.Classes, Vcl.Controls, Vcl.Forms, uniGUIBaseClasses,
   uniButton, uniBitBtn, UniFSButton, UniFSCombobox, uniCheckBox, uniGroupBox,
   uniLabel, uniMultiItem;
@@ -46,7 +46,7 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, UManagerGroup, ULibFun, USysMenu, USysBusiness;
+  uniGUIVars, UManagerGroup, USysConst, USysMenu, USysBusiness;
 
 class function TfFormEditSysMenu.DescMe: TfFormDesc;
 begin
@@ -65,7 +65,7 @@ function TfFormEditSysMenu.SetData(const nData: PCommandParam): Boolean;
 var nIdx: Integer;
 begin
   Result := inherited SetData(nData);
-  FMenuItem := nData.FParamP[0];
+  FMenuItem := nData.Ptr[0].Value;
 
   EditTitle.Text := FMenuItem.FTitle;
   EditData.Text := FMenuItem.FActionData;

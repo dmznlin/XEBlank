@@ -19,7 +19,7 @@ interface
 uses
   SysUtils, Classes, Graphics, Controls, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIFrame, Vcl.Forms, System.IniFiles, uniGUIBaseClasses,
-  uniPanel, USysConst;
+  uniPanel, ULibFun;
 
 type
   TfFrameBase = class;
@@ -72,9 +72,7 @@ uses
 procedure TfFrameBase.UniFrameCreate(Sender: TObject);
 var nIni: TIniFile;
 begin
-  FillChar(FParam, SizeOf(FParam), #0);
-  //init
-
+  FParam.Init;
   nIni := nil;
   try
     if DescMe.FUserConfig then

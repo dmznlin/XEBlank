@@ -89,7 +89,7 @@ implementation
 
 uses
   uniGUIVars, uniGUIApplication, MainModule, UManagerGroup, UMenuManager,
-  UFormBase, UFrameBase, USysBusiness, USysMenu, USysConst;
+  ULibFun, UFormBase, UFrameBase, USysBusiness, USysMenu, USysConst;
 
 function fFormMain: TfFormMain;
 begin
@@ -487,8 +487,7 @@ var nMenu: PMenuItem;
     nResult: TFormModalResult;
 begin
   nMenu := FActiveMenu.Selected.Data;
-  nData.FCommand := cCmd_EditData;
-  nData.FParamP[0] := nMenu;
+  nData.Init(cCmd_EditData).AddP(nMenu);
 
   nResult := procedure(const nRes: Integer; const nParam: PCommandParam)
   begin
