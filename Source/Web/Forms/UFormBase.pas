@@ -8,7 +8,7 @@ interface
 
 uses
   System.SysUtils, System.Classes, Vcl.Controls, Vcl.Forms, uniGUIForm,
-  ULibFun, uniGUIBaseClasses, uniGUIClasses, uniPanel;
+  System.IniFiles, ULibFun, uniGUIBaseClasses, uniGUIClasses, uniPanel;
 
 type
   TfFormBase = class;
@@ -18,6 +18,7 @@ type
     FName          : string;                         //类名
     FDesc          : string;                         //描述
     FVerifyAdmin   : Boolean;                        //验证管理员
+    FUserConfig    : Boolean;                        //用户自定义配置
   end;
 
   TFormModalResult = reference to  procedure(const nResult: Integer;
@@ -34,6 +35,7 @@ type
     {*命令参数*}
     procedure OnCreateForm(Sender: TObject); virtual;
     procedure OnDestroyForm(Sender: TObject); virtual;
+    procedure DoFormConfig(nIni: TIniFile; const nLoad: Boolean); virtual;
     {*基类函数*}
   public
     { Public declarations }
@@ -47,16 +49,36 @@ type
 implementation
 
 {$R *.dfm}
+uses
+  USysBusiness;
 
 procedure TfFormBase.UniFormCreate(Sender: TObject);
+var nIni: TIniFile;
 begin
   FParam.Init;
   OnCreateForm(Sender);
+  nIni := nil;
+  try
+    if DescMe.FUserConfig then
+      nIni := TWebSystem.UserConfigFile;
+    DoFormConfig(nIni, True);
+  finally
+    nIni.Free;
+  end;
 end;
 
 procedure TfFormBase.UniFormDestroy(Sender: TObject);
+var nIni: TIniFile;
 begin
   OnDestroyForm(Sender);
+  nIni := nil;
+  try
+    if DescMe.FUserConfig then
+      nIni := TWebSystem.UserConfigFile;
+    DoFormConfig(nIni, False);
+  finally
+    nIni.Free;
+  end;
 end;
 
 procedure TfFormBase.OnCreateForm(Sender: TObject);
@@ -65,6 +87,11 @@ begin
 end;
 
 procedure TfFormBase.OnDestroyForm(Sender: TObject);
+begin
+  //null
+end;
+
+procedure TfFormBase.DoFormConfig(nIni: TIniFile; const nLoad: Boolean);
 begin
   //null
 end;

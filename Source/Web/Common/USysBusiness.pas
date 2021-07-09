@@ -886,22 +886,19 @@ begin
       //xxxx
 
       nIdx := nGrid.ClientEvents.ExtEvents.IndexOf(nStr);
-      if UniMainModule.FGridColumnAdjust and (nIdx < 0) then
+      if goColSizing in nGrid.Options then
       begin
-        nGrid.Options := nGrid.Options + [goColSizing];
-        //添加可调列宽
+        if nIdx < 0 then
+        begin
+          nGrid.ClientEvents.ExtEvents.Add(nStr);
+          //添加事件监听
 
-        nGrid.ClientEvents.ExtEvents.Add(nStr);
-        //添加事件监听
-
-        if not Assigned(nGrid.OnAjaxEvent) then
-          nGrid.OnAjaxEvent := GetHelper.DoGridEvent;
-        //添加事件处理
+          if not Assigned(nGrid.OnAjaxEvent) then
+            nGrid.OnAjaxEvent := GetHelper.DoGridEvent;
+          //添加事件处理
+        end;
       end else
       begin
-        nGrid.Options := nGrid.Options - [goColSizing];
-        //删除可调列宽
-
         if nIdx >= 0 then
           nGrid.ClientEvents.ExtEvents.Delete(nIdx);
         //xxxxx
@@ -919,7 +916,7 @@ begin
       end;
     end else
 
-    if UniMainModule.FGridColumnAdjust then
+    if goColSizing in nGrid.Options then
     begin
       nStr := '';
       for nIdx := 0 to nCount do

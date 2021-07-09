@@ -51,8 +51,9 @@ type
     { Protected declarations }
     FParam: TCommandParam;
     {*命令参数*}
-    procedure OnCreateFrame(const nIni: TIniFile); virtual;
-    procedure OnDestroyFrame(const nIni: TIniFile); virtual;
+    procedure OnCreateFrame(Sender: TObject); virtual;
+    procedure OnDestroyFrame(Sender: TObject); virtual;
+    procedure DoFrameConfig(nIni: TIniFile; const nLoad: Boolean); virtual;
     {*基类函数*}
   public
     { Public declarations }
@@ -73,14 +74,12 @@ procedure TfFrameBase.UniFrameCreate(Sender: TObject);
 var nIni: TIniFile;
 begin
   FParam.Init;
+  OnCreateFrame(Sender);
   nIni := nil;
   try
     if DescMe.FUserConfig then
       nIni := TWebSystem.UserConfigFile;
-    //启用自定义配置
-
-    OnCreateFrame(nIni);
-    //子类处理
+    DoFrameConfig(nIni, True);
   finally
     nIni.Free;
   end;
@@ -89,25 +88,28 @@ end;
 procedure TfFrameBase.UniFrameDestroy(Sender: TObject);
 var nIni: TIniFile;
 begin
+  OnDestroyFrame(Sender);
   nIni := nil;
   try
     if DescMe.FUserConfig then
       nIni := TWebSystem.UserConfigFile;
-    //启用自定义配置
-
-    OnDestroyFrame(nIni);
-    //子类处理
+    DoFrameConfig(nIni, False);
   finally
     nIni.Free;
   end;
 end;
 
-procedure TfFrameBase.OnCreateFrame(const nIni: TIniFile);
+procedure TfFrameBase.OnCreateFrame(Sender: TObject);
 begin
   //null
 end;
 
-procedure TfFrameBase.OnDestroyFrame(const nIni: TIniFile);
+procedure TfFrameBase.OnDestroyFrame(Sender: TObject);
+begin
+  //null
+end;
+
+procedure TfFrameBase.DoFrameConfig(nIni: TIniFile; const nLoad: Boolean);
 begin
   //null
 end;

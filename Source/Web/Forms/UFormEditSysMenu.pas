@@ -65,7 +65,8 @@ function TfFormEditSysMenu.SetData(const nData: PCommandParam): Boolean;
 var nIdx: Integer;
 begin
   Result := inherited SetData(nData);
-  FMenuItem := nData.Ptr[0].Value;
+  if not nData.IsValid(ptPtr) then Exit;
+  FMenuItem := nData.Ptr[0];
 
   EditTitle.Text := FMenuItem.FTitle;
   EditData.Text := FMenuItem.FActionData;

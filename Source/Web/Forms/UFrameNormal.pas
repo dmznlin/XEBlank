@@ -50,8 +50,7 @@ type
     {*数据字典*}
     FActiveColumn: TUniBaseDBGridColumn;
     {*当前活动列*}
-    procedure OnCreateFrame(const nIni: TIniFile); override;
-    procedure OnDestroyFrame(const nIni: TIniFile); override;
+    procedure DoFrameConfig(nIni: TIniFile; const nLoad: Boolean); override;
     {*创建释放*}
     function FilterColumnField: string; virtual;
     procedure OnLoadGridConfig(const nIni: TIniFile); virtual;
@@ -82,32 +81,33 @@ begin
   Result.FUserConfig := True;
 end;
 
-procedure TfFrameNormal.OnCreateFrame(const nIni: TIniFile);
+procedure TfFrameNormal.DoFrameConfig(nIni: TIniFile; const nLoad: Boolean);
 begin
-  FWhere := '';
-  FActiveColumn := nil;
-  //init
-
-  with DescMe.FDataDict,gDataDictManager do
+  if nLoad then
   begin
-    if FEntity = '' then
-         InitDict(@FDataDict, False)
-    else GetEntity(FEntity, UniMainModule.FUser.FLangID, @FDataDict);
+    FWhere := '';
+    FActiveColumn := nil;
+    //init
+
+    with DescMe.FDataDict,gDataDictManager do
+    begin
+      if FEntity = '' then
+           InitDict(@FDataDict, False)
+      else GetEntity(FEntity, UniMainModule.FUser.FLangID, @FDataDict);
+    end;
+
+    OnLoadGridConfig(nIni);
+    //载入用户配置
+    InitFormData;
+    //初始化数据
+  end else
+  begin
+    OnSaveGridConfig(nIni);
+    //保存用户配置
+    if MTable1.Active then
+      MTable1.Close;
+    //清空数据集
   end;
-
-  OnLoadGridConfig(nIni);
-  //载入用户配置
-  InitFormData;
-  //初始化数据
-end;
-
-procedure TfFrameNormal.OnDestroyFrame(const nIni: TIniFile);
-begin
-  OnSaveGridConfig(nIni);
-  //保存用户配置
-  if MTable1.Active then
-    MTable1.Close;
-  //清空数据集
 end;
 
 //Desc: 过滤不显示字段
