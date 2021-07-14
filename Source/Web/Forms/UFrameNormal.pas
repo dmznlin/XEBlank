@@ -92,7 +92,7 @@ begin
     with DescMe.FDataDict,gDataDictManager do
     begin
       if FEntity = '' then
-           InitDict(@FDataDict, False)
+           FDataDict.Init(False)
       else GetEntity(FEntity, UniMainModule.FUser.FLangID, @FDataDict);
     end;
 
