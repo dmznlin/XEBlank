@@ -23,9 +23,6 @@ type
     {*数据标识*}
     procedure OnCreateForm(Sender: TObject); override;
     {*基类方法*}
-    function OnVerifyCtrl(Sender: TObject; var nHint: string): Boolean; virtual;
-    function IsDataValid: Boolean; virtual;
-    {*验证数据*}
     procedure GetSaveSQLList(const nList: TStrings); virtual;
     {*写SQL列表*}
     procedure AfterSaveData(var nDefault: Boolean); virtual;
@@ -45,48 +42,6 @@ procedure TfFormNormal.OnCreateForm(Sender: TObject);
 begin
   inherited;
   FConnID := '';
-end;
-
-//Desc: 验证Sender的数据是否正确,返回提示内容
-function TfFormNormal.OnVerifyCtrl(Sender: TObject; var nHint: string): Boolean;
-begin
-  nHint := '';
-  Result := True;
-end;
-
-function TfFormNormal.IsDataValid: Boolean;
-var nStr: string;
-    nList: TList;
-    nObj: TObject;
-    i,nLen: integer;
-begin
-  nList := nil;
-  try
-    Result := True;
-    nList := gMG.FObjectPool.Lock(TList) as TList;
-    TApplicationHelper.EnumSubCtrlList(Self, nList);
-
-    nLen := nList.Count - 1;
-    for i:=0 to nLen do
-    begin
-      nObj := TObject(nList[i]);
-      if not OnVerifyCtrl(nObj, nStr) then
-      begin
-        if nObj is TWinControl then
-          TWinControl(nObj).SetFocus;
-        //xxxxx
-
-        if nStr <> '' then
-          UniMainModule.ShowMsg(nStr, True);
-        //xxxxx
-
-        Result := False;
-        Exit;
-      end;
-    end;
-  finally
-    gMG.FObjectPool.Release(nList);
-  end;
 end;
 
 //Desc: 写数据SQL列表

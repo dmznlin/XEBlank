@@ -1,79 +1,60 @@
 inherited fFormEditDataDict: TfFormEditDataDict
-  ClientHeight = 490
-  ClientWidth = 728
+  ClientHeight = 512
+  ClientWidth = 749
   Caption = #32534#36753#25968#25454#23383#20856
   BorderStyle = bsSizeable
-  ExplicitWidth = 736
-  ExplicitHeight = 517
+  ExplicitWidth = 757
+  ExplicitHeight = 539
   PixelsPerInch = 96
   TextHeight = 12
   inherited PanelWork: TUniSimplePanel
-    Width = 712
-    Height = 470
-    ExplicitWidth = 688
+    Width = 733
+    Height = 492
+    ExplicitWidth = 712
     ExplicitHeight = 470
     object PanelClient: TUniSimplePanel
       Left = 0
       Top = 35
-      Width = 712
-      Height = 435
+      Width = 733
+      Height = 457
       Hint = ''
       ParentColor = False
       Align = alClient
-      TabOrder = 1
-      ExplicitWidth = 688
-      object GridItems: TUniStringGrid
-        Left = 0
-        Top = 0
-        Width = 200
-        Height = 435
-        Hint = ''
-        FixedCols = 0
-        FixedRows = 0
-        ColCount = 3
-        Options = [goVertLine, goHorzLine, goColSizing, goRowSelect]
-        ShowColumnTitles = True
-        Columns = <
-          item
-            Title.Caption = #39034#24207
-          end
-          item
-            Title.Caption = #23383#27573
-          end
-          item
-            Title.Caption = #26631#39064
-          end>
-        Align = alLeft
-        TabOrder = 1
-      end
+      TabOrder = 2
+      ExplicitWidth = 712
+      ExplicitHeight = 435
       object UniSplitter1: TUniSplitter
-        Left = 200
+        Left = 237
         Top = 0
         Width = 6
-        Height = 435
+        Height = 457
         Hint = ''
         Align = alLeft
         ParentColor = False
         Color = clBtnFace
+        ExplicitLeft = 200
+        ExplicitHeight = 435
       end
       object PanelDetail: TUniSimplePanel
-        Left = 206
+        Left = 243
         Top = 0
-        Width = 506
-        Height = 435
+        Width = 490
+        Height = 457
         Hint = ''
         ParentColor = False
         Border = True
         Align = alClient
-        TabOrder = 3
-        ExplicitWidth = 482
+        TabOrder = 2
+        ExplicitLeft = 206
+        ExplicitWidth = 506
+        ExplicitHeight = 435
         DesignSize = (
-          506
-          435)
+          490
+          457)
         object PanelBase: TUniPanel
           Left = 5
           Top = 5
-          Width = 494
+          Width = 478
           Height = 90
           Hint = ''
           Anchors = [akLeft, akTop, akRight]
@@ -81,11 +62,13 @@ inherited fFormEditDataDict: TfFormEditDataDict
           TitleVisible = True
           Title = #22522#26412#23646#24615
           Caption = ''
+          ExplicitWidth = 494
           object EditTitle: TUniEdit
             Left = 5
             Top = 5
             Width = 220
             Hint = ''
+            MaxLength = 32
             Text = ''
             TabOrder = 1
             FieldLabel = #26174#31034#26631#39064
@@ -127,7 +110,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
         object PanelDB: TUniPanel
           Left = 5
           Top = 100
-          Width = 494
+          Width = 478
           Height = 120
           Hint = ''
           Anchors = [akLeft, akTop, akRight]
@@ -135,11 +118,13 @@ inherited fFormEditDataDict: TfFormEditDataDict
           TitleVisible = True
           Title = #25968#25454#24211
           Caption = ''
+          ExplicitWidth = 494
           object EditTable: TUniEdit
             Left = 5
             Top = 5
             Width = 220
             Hint = ''
+            MaxLength = 32
             Text = ''
             TabOrder = 1
             FieldLabel = #34920#21517#31216
@@ -151,8 +136,8 @@ inherited fFormEditDataDict: TfFormEditDataDict
             Width = 220
             Hint = ''
             Text = ''
-            TabOrder = 2
-            FieldLabel = #25968#25454#31867#22411
+            TabOrder = 5
+            FieldLabel = #23383#27573#31867#22411
             FieldLabelWidth = 58
             IconItems = <>
           end
@@ -162,7 +147,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
             Width = 220
             Hint = ''
             Text = ''
-            TabOrder = 3
+            TabOrder = 6
             FieldLabel = #26159#21542#20027#38190
             FieldLabelWidth = 58
             IconItems = <>
@@ -173,7 +158,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
             Width = 220
             Hint = ''
             Text = ''
-            TabOrder = 4
+            TabOrder = 3
             FieldLabel = #23383#27573#23485#24230
             FieldLabelWidth = 58
           end
@@ -183,7 +168,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
             Width = 220
             Hint = ''
             Text = ''
-            TabOrder = 5
+            TabOrder = 4
             FieldLabel = #23567#25968#20301
             FieldLabelWidth = 58
           end
@@ -192,8 +177,9 @@ inherited fFormEditDataDict: TfFormEditDataDict
             Top = 35
             Width = 220
             Hint = ''
+            MaxLength = 32
             Text = ''
-            TabOrder = 6
+            TabOrder = 2
             FieldLabel = #23383#27573#21517#31216
             FieldLabelWidth = 58
             IconItems = <>
@@ -202,7 +188,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
         object PanelFormat: TUniPanel
           Left = 5
           Top = 225
-          Width = 494
+          Width = 478
           Height = 90
           Hint = ''
           Anchors = [akLeft, akTop, akRight]
@@ -210,13 +196,15 @@ inherited fFormEditDataDict: TfFormEditDataDict
           TitleVisible = True
           Title = #26684#24335#21270
           Caption = ''
+          ExplicitWidth = 494
           object EditFText: TUniEdit
             Left = 250
             Top = 5
             Width = 220
             Hint = ''
+            MaxLength = 100
             Text = ''
-            TabOrder = 1
+            TabOrder = 3
             FieldLabel = #20869#23481
             FieldLabelWidth = 58
           end
@@ -225,6 +213,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
             Top = 35
             Width = 220
             Hint = ''
+            MaxLength = 200
             Text = ''
             TabOrder = 2
             FieldLabel = #25968#25454
@@ -236,7 +225,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
             Width = 220
             Hint = ''
             Text = ''
-            TabOrder = 3
+            TabOrder = 1
             FieldLabel = #26041#24335
             FieldLabelWidth = 58
             IconItems = <>
@@ -246,6 +235,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
             Top = 35
             Width = 220
             Hint = ''
+            MaxLength = 100
             Text = ''
             TabOrder = 4
             FieldLabel = #25193#23637
@@ -255,7 +245,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
         object PanelGroup: TUniPanel
           Left = 5
           Top = 320
-          Width = 494
+          Width = 478
           Height = 90
           Hint = ''
           Anchors = [akLeft, akTop, akRight]
@@ -263,11 +253,13 @@ inherited fFormEditDataDict: TfFormEditDataDict
           TitleVisible = True
           Title = #21512#35745#20998#32452
           Caption = ''
+          ExplicitWidth = 498
           object EditDisplay: TUniEdit
             Left = 5
             Top = 5
             Width = 220
             Hint = ''
+            MaxLength = 50
             Text = ''
             TabOrder = 1
             FieldLabel = #26174#31034#25991#26412
@@ -278,6 +270,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
             Top = 35
             Width = 220
             Hint = ''
+            MaxLength = 50
             Text = ''
             TabOrder = 2
             FieldLabel = #26684#24335#21270':'
@@ -306,83 +299,195 @@ inherited fFormEditDataDict: TfFormEditDataDict
             IconItems = <>
           end
         end
+        object PanelDBottom: TUniSimplePanel
+          Left = 0
+          Top = 422
+          Width = 490
+          Height = 35
+          Hint = ''
+          ParentColor = False
+          Align = alBottom
+          TabOrder = 5
+          ExplicitLeft = 6
+          ExplicitTop = 416
+          ExplicitWidth = 498
+          DesignSize = (
+            490
+            35)
+          object BtnApply: TUniButton
+            Left = 412
+            Top = 5
+            Width = 75
+            Height = 25
+            Hint = ''
+            Caption = #24212#29992
+            Anchors = [akTop, akRight]
+            TabOrder = 1
+            Images = UniMainModule.SmallImages
+            ImageIndex = 19
+            OnClick = BtnApplyClick
+            ExplicitLeft = 420
+          end
+          object BtnReloead: TUniButton
+            Left = 334
+            Top = 5
+            Width = 75
+            Height = 25
+            Hint = ''
+            Caption = #37325#32622
+            Anchors = [akTop, akRight]
+            TabOrder = 2
+            Images = UniMainModule.SmallImages
+            ImageIndex = 20
+            OnClick = BtnReloeadClick
+            ExplicitLeft = 342
+          end
+        end
+      end
+      object PanelL: TUniSimplePanel
+        Left = 0
+        Top = 0
+        Width = 237
+        Height = 457
+        Hint = ''
+        ParentColor = False
+        Border = True
+        Align = alLeft
+        TabOrder = 3
+        object GridItems: TUniStringGrid
+          Left = 0
+          Top = 0
+          Width = 237
+          Height = 422
+          Hint = #21452#20987#32534#36753#23383#20856
+          ShowHint = True
+          ParentShowHint = False
+          FixedCols = 0
+          FixedRows = 0
+          ColCount = 3
+          Options = [goVertLine, goHorzLine, goColSizing, goRowSelect]
+          ShowColumnTitles = True
+          Columns = <
+            item
+              Title.Caption = #39034#24207
+            end
+            item
+              Title.Caption = #23383#27573
+            end
+            item
+              Title.Caption = #26631#39064
+            end>
+          OnDblClick = GridItemsDblClick
+          BorderStyle = ubsNone
+          Align = alClient
+          TabOrder = 1
+          ExplicitLeft = 8
+          ExplicitWidth = 200
+          ExplicitHeight = 457
+        end
+        object PanelLBottom: TUniSimplePanel
+          Left = 0
+          Top = 422
+          Width = 237
+          Height = 35
+          Hint = ''
+          ParentColor = False
+          Align = alBottom
+          TabOrder = 2
+          ExplicitLeft = -186
+          ExplicitTop = 416
+          ExplicitWidth = 442
+          object BtnUp: TUniButton
+            Left = 5
+            Top = 5
+            Width = 55
+            Height = 25
+            Hint = ''
+            Caption = #19978#31227
+            TabOrder = 1
+            IconCls = 'arrow_up'
+            OnClick = BtnUpClick
+          end
+          object BtnDown: TUniButton
+            Left = 62
+            Top = 5
+            Width = 55
+            Height = 25
+            Hint = ''
+            Caption = #19979#31227
+            TabOrder = 2
+            IconCls = 'arrow_down'
+            OnClick = BtnUpClick
+          end
+          object BtnAdd: TUniButton
+            Left = 119
+            Top = 5
+            Width = 55
+            Height = 25
+            Hint = ''
+            Caption = #28155#21152
+            TabOrder = 3
+            IconCls = 'add'
+            OnClick = BtnAddClick
+          end
+          object BtnDel: TUniButton
+            Left = 176
+            Top = 5
+            Width = 55
+            Height = 25
+            Hint = ''
+            Caption = #21024#38500
+            TabOrder = 4
+            IconCls = 'delete'
+            OnClick = BtnDelClick
+          end
+        end
       end
     end
     object PanelTop: TUniSimplePanel
       Left = 0
       Top = 0
-      Width = 712
+      Width = 733
       Height = 35
       Hint = ''
       ParentColor = False
       Align = alTop
-      TabOrder = 2
-      ExplicitWidth = 688
+      TabOrder = 1
+      ExplicitWidth = 712
       object EditEntity: TUniEdit
         Left = 0
-        Top = 6
-        Width = 200
+        Top = 7
+        Width = 237
         Hint = ''
+        MaxLength = 32
         Text = ''
         TabOrder = 1
-        ReadOnly = True
         FieldLabel = #23454#20307#26631#35782
         FieldLabelWidth = 56
       end
-      object BtnUp: TUniButton
-        Left = 206
-        Top = 5
-        Width = 45
-        Height = 25
-        Hint = ''
-        Caption = #19978#31227
-        TabOrder = 2
-        OnClick = BtnUpClick
-      end
-      object BtnDown: TUniButton
-        Left = 255
-        Top = 5
-        Width = 45
-        Height = 25
-        Hint = ''
-        Caption = #19979#31227
-        TabOrder = 3
-        OnClick = BtnUpClick
-      end
       object BtnSave: TUniButton
-        Left = 435
+        Left = 320
         Top = 5
         Width = 75
         Height = 25
         Hint = ''
         Caption = #20445#23384
-        TabOrder = 4
+        TabOrder = 2
         Images = UniMainModule.SmallImages
         ImageIndex = 8
+        OnClick = BtnSaveClick
       end
-      object BtnAdd: TUniButton
-        Left = 319
+      object BtnLoad: TUniButton
+        Left = 243
         Top = 5
-        Width = 55
+        Width = 75
         Height = 25
         Hint = ''
-        Caption = #28155#21152
-        TabOrder = 5
+        Caption = #21152#36733
+        TabOrder = 3
         Images = UniMainModule.SmallImages
-        ImageIndex = 1
-        OnClick = BtnAddClick
-      end
-      object BtnDel: TUniButton
-        Left = 377
-        Top = 5
-        Width = 55
-        Height = 25
-        Hint = ''
-        Caption = #21024#38500
-        TabOrder = 6
-        Images = UniMainModule.SmallImages
-        ImageIndex = 3
-        OnClick = BtnDelClick
+        ImageIndex = 12
+        OnClick = BtnLoadClick
       end
     end
   end
