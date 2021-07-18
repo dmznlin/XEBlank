@@ -53,6 +53,8 @@ type
     BtnDel: TUniButton;
     BtnSave: TUniButton;
     BtnLoad: TUniButton;
+    EditLock: TUniComboBox;
+    EditMulti: TUniComboBox;
     procedure BtnUpClick(Sender: TObject);
     procedure BtnAddClick(Sender: TObject);
     procedure BtnDelClick(Sender: TObject);
@@ -151,6 +153,26 @@ begin
     Items.EndUpdate;
   end;
 
+  with EditLock do
+  try
+    Items.BeginUpdate;
+    Items.Clear;
+    Items.Add('0.否');
+    Items.Add('1.是');
+  finally
+    Items.EndUpdate;
+  end;
+
+  with EditMulti do
+  try
+    Items.BeginUpdate;
+    Items.Clear;
+    Items.Add('0.否');
+    Items.Add('1.是');
+  finally
+    Items.EndUpdate;
+  end;
+
   with EditFType do
   try
     Items.BeginUpdate;
@@ -163,8 +185,8 @@ begin
   try
     Items.BeginUpdate;
     Items.Clear;
-    Items.Add('0.是');
-    Items.Add('1.否');
+    Items.Add('0.否');
+    Items.Add('1.是');
   finally
     Items.EndUpdate;
   end;
@@ -318,6 +340,14 @@ begin
          EditVisible.ItemIndex := 0
     else EditVisible.ItemIndex := 1;
 
+    if FLocked then
+         EditLock.ItemIndex := 1
+    else EditLock.ItemIndex := 0;
+
+    if FMSelect then
+         EditMulti.ItemIndex := 1
+    else EditMulti.ItemIndex := 0;
+
     EditTable.Text      := FDBItem.FTable;
     EditField.Text      := FDBItem.FField;
     EditFType.ItemIndex := Ord(FDBItem.FType);
@@ -325,8 +355,8 @@ begin
     EditPre.Text        := IntToStr(FDBItem.FDecimal);
 
     if FDBItem.FIsKey then
-         EditKey.ItemIndex := 0
-    else EditKey.ItemIndex := 1;
+         EditKey.ItemIndex := 1
+    else EditKey.ItemIndex := 0;
 
     EditStype.ItemIndex := Ord(FFormat.FStyle);
     EditData.Text       := FFormat.FData;
@@ -517,13 +547,15 @@ begin
     FWidth := StrToInt(EditWidth.Text);
     FAlign := TAlignment(EditAlign.ItemIndex);
     FVisible := EditVisible.ItemIndex = 0;
+    FLocked := EditLock.ItemIndex = 1;
+    FMSelect := EditMulti.ItemIndex = 1;
 
     FDBItem.FTable := EditTable.Text;
     FDBItem.FField := EditField.Text;
     FDBItem.FType := TFieldType(EditFType.ItemIndex);
     FDBItem.FWidth := StrToInt(EditFWidth.Text);
     FDBItem.FDecimal := StrToInt(EditPre.Text);
-    FDBItem.FIsKey := EditKey.ItemIndex = 0;
+    FDBItem.FIsKey := EditKey.ItemIndex = 1;
 
     FFormat.FStyle := TDictFormatStyle(EditStype.ItemIndex);
     FFormat.FData := EditData.Text;

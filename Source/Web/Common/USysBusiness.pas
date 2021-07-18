@@ -667,7 +667,7 @@ begin
   nList := nil;
   with nGrid, TStringHelper do
   try
-    Columns.BeginUpdate;
+    nGrid.BeginUpdate;
     Columns.Clear;
     //clear first
 
@@ -718,8 +718,11 @@ begin
     for nIdx := Low(nEntity.FItems) to High(nEntity.FItems) do
     with nEntity.FItems[nIdx] do
     begin
-      if not FVisible then Continue;
+      if FMSelect and (not (dgMultiSelect in Options)) then
+        Options := Options + [dgMultiSelect, dgCheckSelect, dgCheckSelectCheckOnly];
+      //xxxxx
 
+      if not FVisible then Continue;
       if Assigned(nList) and (nList.IndexOf(FDBItem.FField) >= 0) then
         Continue;
       //字段被过滤,不予显示
@@ -728,13 +731,14 @@ begin
       with nColumn do
       begin
         Tag := nIdx;
+        Width := FWidth;
         Sortable := True;
-        Alignment := FAlign;
-        FieldName := FDBItem.FField;
+        Locked := FLocked;
 
+        Alignment := FAlign;
         Title.Alignment := FAlign;
         Title.Caption := FTitle;
-        Width := FWidth;
+        FieldName := FDBItem.FField;
 
         if (FFooter.FKind = fkSum) or (FFooter.FKind = fkCount) then
         begin
@@ -744,7 +748,7 @@ begin
       end;
     end;
   finally
-    nGrid.Columns.EndUpdate;
+    nGrid.EndUpdate;
     gMG.FObjectPool.Release(nList);
   end;
 end;
@@ -765,12 +769,13 @@ begin
 
   with TStringHelper do
   try
+    nGrid.BeginUpdate;
+    nCount := nGrid.Columns.Count - 1;
+    //column num
+
     if not nBool then
       nIni := TWebSystem.UserConfigFile;
     //xxxxx
-
-    nCount := nGrid.Columns.Count - 1;
-    //column num
 
     if nLoad then
     begin
@@ -844,6 +849,7 @@ begin
       end;
     end;
   finally
+    nGrid.EndUpdate;
     gMG.FObjectPool.Release(nList);
     if not nBool then
       nIni.Free;
@@ -867,13 +873,13 @@ begin
 
   with TStringHelper do
   try
+    nGrid.BeginUpdate;
+    nCount := nGrid.Columns.Count - 1;
+    //column num
 
     if not nBool then
       nIni := TWebSystem.UserConfigFile;
     //xxxxx
-
-    nCount := nGrid.Columns.Count - 1;
-    //column num
 
     if nLoad then
     begin
@@ -927,6 +933,7 @@ begin
       nIni.WriteString(nForm, 'GridWidth_' + nGrid.Name, nStr);
     end;
   finally
+    nGrid.EndUpdate;
     gMG.FObjectPool.Release(nList);
     if not nBool then
       nIni.Free;
