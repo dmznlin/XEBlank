@@ -21,7 +21,6 @@ inherited fFrameNormal: TfFrameNormal
       LoadMask.Message = 'Loading data...'
       Align = alClient
       TabOrder = 1
-      OnAjaxEvent = DBGridMainAjaxEvent
     end
     object PanelQuick: TUniSimplePanel
       Left = 0
@@ -168,18 +167,5 @@ inherited fFrameNormal: TfFrameNormal
     LocaleID = 1024
     Left = 16
     Top = 152
-  end
-  object HMenu1: TUniPopupMenu
-    Left = 16
-    Top = 208
-    object MenuGridAdjust: TUniMenuItem
-      Caption = #35843#25972#34920#26684
-      OnClick = MenuGridAdjustClick
-      CheckItem = True
-    end
-    object MenuEditDict: TUniMenuItem
-      Caption = #32534#36753#34920#26684
-      OnClick = MenuEditDictClick
-    end
   end
 end

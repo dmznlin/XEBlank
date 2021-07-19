@@ -13,7 +13,8 @@ uses
   UFrameNormal in 'Forms\UFrameNormal.pas' {fFrameNormal: TUniFrame},
   USysModule in 'Common\USysModule.pas',
   USysBusiness in 'Common\USysBusiness.pas',
-  USysConst in 'Common\USysConst.pas';
+  USysConst in 'Common\USysConst.pas',
+  UGridHelper in 'Common\UGridHelper.pas';
 
 {$R *.res}
 

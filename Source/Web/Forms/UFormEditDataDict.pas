@@ -90,7 +90,7 @@ implementation
 
 {$R *.dfm}
 uses
-  Vcl.StdCtrls, Data.DB, kbmMemTable, UManagerGroup, USysBusiness;
+  Vcl.StdCtrls, Data.DB, kbmMemTable, UManagerGroup, UGridHelper, USysBusiness;
 
 const
   cDel = #9;

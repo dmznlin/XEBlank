@@ -9,8 +9,8 @@ interface
 uses
   SysUtils, Classes, Graphics, Controls, UFrameBase, MainModule, uniGUITypes,
   uniGUIAbstractClasses, Data.DB, System.IniFiles, UMgrDataDict, kbmMemTable,
-  uniPageControl, uniPanel, uniGUIClasses, uniBasicGrid, uniDBGrid, Vcl.Forms,
-  uniGUIBaseClasses, Vcl.Menus, uniMainMenu, uniToolBar;
+  uniPageControl, Vcl.Menus, uniMainMenu, uniToolBar, uniPanel, uniGUIClasses,
+  uniBasicGrid, uniDBGrid, Vcl.Forms, uniGUIBaseClasses;
 
 type
   TfFrameNormal = class(TfFrameBase)
@@ -30,16 +30,9 @@ type
     BtnS3: TUniToolButton;
     BtnExit: TUniToolButton;
     MTable1: TkbmMemTable;
-    HMenu1: TUniPopupMenu;
-    MenuGridAdjust: TUniMenuItem;
-    MenuEditDict: TUniMenuItem;
-    procedure DBGridMainAjaxEvent(Sender: TComponent; EventName: string;
-      Params: TUniStrings);
-    procedure MenuGridAdjustClick(Sender: TObject);
     procedure BtnExitClick(Sender: TObject);
     procedure BtnRefreshClick(Sender: TObject);
     procedure BtnExportClick(Sender: TObject);
-    procedure MenuEditDictClick(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -73,7 +66,7 @@ implementation
 
 {$R *.dfm}
 uses
-  UManagerGroup, ULibFun, UDBManager, USysBusiness, USysConst;
+  UManagerGroup, ULibFun, UDBManager, UGridHelper, USysBusiness, USysConst;
 
 class function TfFrameNormal.DescMe: TfFrameDesc;
 begin
@@ -122,10 +115,16 @@ begin
   if FDataDict.FEntity = '' then Exit;
   //没有字典数据
 
-  TGridHelper.BindEntity(MTable1, @FDataDict);
-  TGridHelper.BindEntity(DBGridMain, @FDataDict);
-  //绑定数据字典
+  with TGridHelper.BindData(DBGridMain)^ do
+  begin
+    FParentControl := Self;
+    FEntity := @FDataDict;
+    FMemTable := MTable1;
+    BuildColumnMenu(UniMainModule.SmallImages);
+  end; //绑定表格数据和菜单
 
+  TGridHelper.BindData(MTable1).FEntity := @FDataDict;
+  //绑定数据
   TGridHelper.BuildDBGridColumn(@FDataDict, DBGridMain, FilterColumnField());
   //构建表头
   TGridHelper.UserDefineGrid(ClassName, DBGridMain, True, nIni);
@@ -135,11 +134,11 @@ end;
 //Desc: 保存表格配置
 procedure TfFrameNormal.OnSaveGridConfig(const nIni: TIniFile);
 begin
-  TGridHelper.UnbindEntity(MTable1);
-  TGridHelper.UnbindEntity(DBGridMain);
-  //解除字典
   TGridHelper.UserDefineGrid(ClassName, DBGridMain, False, nIni);
   //保存自定义表头
+  TGridHelper.UnbindData(MTable1);
+  TGridHelper.UnbindData(DBGridMain);
+  //解除字典
 end;
 
 //Desc: 构建数据载入SQL语句
@@ -200,61 +199,6 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-//Desc: 处理表格事件
-procedure TfFrameNormal.DBGridMainAjaxEvent(Sender: TComponent;
-  EventName: string; Params: TUniStrings);
-var nStr: string;
-    nInt: Integer;
-    nSA: TStringHelper.TStringArray;
-begin
-  if EventName = TGridHelper.sEvent_DBGridHeaderPopmenu then
-  begin
-    FActiveColumn := nil;
-    nStr := Params.Values['col'];
-
-    if TStringHelper.IsNumber(nStr) then
-    begin
-      nInt := StrToInt(nStr);
-      if (nInt >= 0) and (nInt < DBGridMain.Columns.Count) then
-      begin
-        FActiveColumn := DBGridMain.Columns[nInt];
-        //获取菜单所在的列
-      end;
-    end;
-
-    if TStringHelper.SplitArray(Params.Values['xy'], nSA, ',', tpTrim, 2) then
-    begin
-      MenuEditDict.Enabled := UniMainModule.FUser.FIsAdmin;
-      MenuGridAdjust.Checked := UniMainModule.FGridColumnAdjust;
-      HMenu1.Popup(StrToInt(nSA[0]), StrToInt(nSA[1]), UniMainModule.MainForm);
-    end;
-  end;
-end;
-
-//Desc: 允许调整表格宽度和顺序
-procedure TfFrameNormal.MenuGridAdjustClick(Sender: TObject);
-begin
-  with DBGridMain, UniMainModule do
-  begin
-    FGridColumnAdjust := not FGridColumnAdjust;
-    if FGridColumnAdjust then
-      ShowMsg('表格的每一列可以调整位置和宽度', False, '重新打开生效');
-    //xxxxx
-  end;
-end;
-
-//Desc: 编辑表格数据字典
-procedure TfFrameNormal.MenuEditDictClick(Sender: TObject);
-var nP: TCommandParam;
-begin
-  nP.Init.AddS(DescMe.FDataDict.FEntity).AddP(@FDataDict).AddO(MTable1);
-  if Assigned(FActiveColumn) then
-    nP.AddO(FActiveColumn);
-  //xxxxx
-
-  TWebSystem.ShowModalForm('TfFormEditDataDict', @nP);
-end;
-
 //Desc: 关闭
 procedure TfFrameNormal.BtnExitClick(Sender: TObject);
 var nSheet: TUniTabSheet;
