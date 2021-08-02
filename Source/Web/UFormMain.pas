@@ -436,7 +436,7 @@ begin
         nMenu := FActiveMenu.Items[nIdx].Data;
         FActiveMenu.Items[nIdx].Visible := (nText = '') or
           (Pos(nText, LowerCase(nMenu.FTitle)) > 0) or
-          (Pos(nText, LowerCase(nMenu.FMenuID)) > 0) or
+          (Pos(nText, LowerCase(nMenu.FTitlePy)) > 0) or
           (Pos(nText, LowerCase(nMenu.FActionData)) > 0);
         //visible
 

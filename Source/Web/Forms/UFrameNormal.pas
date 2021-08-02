@@ -9,7 +9,7 @@ interface
 uses
   SysUtils, Classes, Graphics, Controls, UFrameBase, MainModule, uniGUITypes,
   uniGUIAbstractClasses, Data.DB, System.IniFiles, UMgrDataDict, kbmMemTable,
-  uniPageControl, Vcl.Menus, uniMainMenu, uniToolBar, uniPanel, uniGUIClasses,
+  uniPageControl, UGridHelper, uniToolBar, uniPanel, uniGUIClasses,
   uniBasicGrid, uniDBGrid, Vcl.Forms, uniGUIBaseClasses;
 
 type
@@ -56,6 +56,8 @@ type
     function InitFormDataSQL(const nWhere: string): string; virtual;
     procedure AfterInitFormData; virtual;
     {*载入数据*}
+    procedure OnFilterData(const nData: PBindData); virtual;
+    {*数据查询*}
   public
     { Public declarations }
     class function DescMe: TfFrameDesc; override;
@@ -66,7 +68,7 @@ implementation
 
 {$R *.dfm}
 uses
-  UManagerGroup, ULibFun, UDBManager, UGridHelper, USysBusiness, USysConst;
+  UManagerGroup, ULibFun, UDBManager, USysBusiness, USysConst;
 
 class function TfFrameNormal.DescMe: TfFrameDesc;
 begin
@@ -118,6 +120,7 @@ begin
   with TGridHelper.BindData(DBGridMain)^ do
   begin
     FParentControl := Self;
+    FFilterEvent := OnFilterData;
     FEntity := @FDataDict;
     FMemTable := MTable1;
     BuildColumnMenu(UniMainModule.SmallImages);
@@ -196,6 +199,14 @@ end;
 procedure TfFrameNormal.AfterInitFormData;
 begin
   //null
+end;
+
+//Date: 2021-08-02
+//Parm: 表格绑定数据
+//Desc: 知行表格的查询操作
+procedure TfFrameNormal.OnFilterData(const nData: PBindData);
+begin
+  
 end;
 
 //------------------------------------------------------------------------------

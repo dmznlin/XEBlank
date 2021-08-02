@@ -1,49 +1,52 @@
 inherited fFormEditDataDict: TfFormEditDataDict
-  ClientHeight = 531
+  ClientHeight = 565
   ClientWidth = 749
   Caption = #32534#36753#25968#25454#23383#20856
   BorderStyle = bsSizeable
-  ExplicitWidth = 765
-  ExplicitHeight = 570
+  ExplicitWidth = 757
+  ExplicitHeight = 592
   PixelsPerInch = 96
   TextHeight = 12
   inherited PanelWork: TUniSimplePanel
     Width = 733
-    Height = 511
+    Height = 545
     ExplicitWidth = 733
     ExplicitHeight = 511
     object PanelClient: TUniSimplePanel
       Left = 0
       Top = 35
       Width = 733
-      Height = 476
+      Height = 510
       Hint = ''
       ParentColor = False
       Align = alClient
       TabOrder = 2
+      ExplicitHeight = 476
       object UniSplitter1: TUniSplitter
         Left = 237
         Top = 0
         Width = 6
-        Height = 476
+        Height = 510
         Hint = ''
         Align = alLeft
         ParentColor = False
         Color = clBtnFace
+        ExplicitHeight = 476
       end
       object PanelDetail: TUniSimplePanel
         Left = 243
         Top = 0
         Width = 490
-        Height = 476
+        Height = 510
         Hint = ''
         ParentColor = False
         Border = True
         Align = alClient
         TabOrder = 3
+        ExplicitHeight = 476
         DesignSize = (
           490
-          476)
+          510)
         object PanelBase: TUniPanel
           Left = 5
           Top = 5
@@ -125,7 +128,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
           Left = 5
           Top = 130
           Width = 478
-          Height = 120
+          Height = 150
           Hint = ''
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 3
@@ -197,10 +200,21 @@ inherited fFormEditDataDict: TfFormEditDataDict
             FieldLabelWidth = 58
             IconItems = <>
           end
+          object EditQuery: TUniComboBox
+            Left = 5
+            Top = 95
+            Width = 220
+            Hint = ''
+            Text = ''
+            TabOrder = 7
+            FieldLabel = #25903#25345#26597#35810':'
+            FieldLabelWidth = 58
+            IconItems = <>
+          end
         end
         object PanelFormat: TUniPanel
           Left = 5
-          Top = 255
+          Top = 285
           Width = 478
           Height = 90
           Hint = ''
@@ -256,7 +270,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
         end
         object PanelGroup: TUniPanel
           Left = 5
-          Top = 350
+          Top = 380
           Width = 478
           Height = 90
           Hint = ''
@@ -312,13 +326,14 @@ inherited fFormEditDataDict: TfFormEditDataDict
         end
         object PanelDBottom: TUniSimplePanel
           Left = 0
-          Top = 441
+          Top = 475
           Width = 490
           Height = 35
           Hint = ''
           ParentColor = False
           Align = alBottom
           TabOrder = 1
+          ExplicitTop = 441
           DesignSize = (
             490
             35)
@@ -354,17 +369,18 @@ inherited fFormEditDataDict: TfFormEditDataDict
         Left = 0
         Top = 0
         Width = 237
-        Height = 476
+        Height = 510
         Hint = ''
         ParentColor = False
         Border = True
         Align = alLeft
         TabOrder = 1
+        ExplicitHeight = 476
         object GridItems: TUniStringGrid
           Left = 0
           Top = 0
           Width = 237
-          Height = 441
+          Height = 475
           Hint = #21452#20987#32534#36753#23383#20856
           ShowHint = True
           ParentShowHint = False
@@ -387,16 +403,18 @@ inherited fFormEditDataDict: TfFormEditDataDict
           BorderStyle = ubsNone
           Align = alClient
           TabOrder = 0
+          ExplicitHeight = 441
         end
         object PanelLBottom: TUniSimplePanel
           Left = 0
-          Top = 441
+          Top = 475
           Width = 237
           Height = 35
           Hint = ''
           ParentColor = False
           Align = alBottom
           TabOrder = 2
+          ExplicitTop = 441
           object BtnUp: TUniButton
             Left = 5
             Top = 5

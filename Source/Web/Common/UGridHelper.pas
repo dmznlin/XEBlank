@@ -26,7 +26,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Grids, Vcl.Graphics, Vcl.Menus,
   //----------------------------------------------------------------------------
   uniGUIAbstractClasses, uniGUITypes, uniGUIClasses, uniDBGrid, uniStringGrid,
-  MainModule, uniMainMenu, uniImageList,
+  MainModule, uniMainMenu, uniImageList, uniPanel, uniEdit,
   //----------------------------------------------------------------------------
   UManagerGroup, UMgrDataDict, ULibFun, USysBusiness;
 
@@ -47,8 +47,10 @@ const
 type
   TOnBuildMenu = reference to procedure (const nItem: TUniMenuItem);
   //自定义菜单
-
   PBindData = ^TBindData;
+  TOnFilterData = procedure (const nData: PBindData) of object;
+  //表格过滤数据
+
   TBindData = record
     FParentControl  : TWinControl;                    //所在控件
     FEntity         : PDictEntity;                    //字典实体数据
@@ -58,6 +60,10 @@ type
     FActiveColumn   : TUniBaseDBGridColumn;           //当前活动列
     FGroupField     : string;                         //用于分组的字段
     FGroupCloseAuto : Boolean;                        //自动取消分组
+
+    FFilterPanel    : TUniHiddenPanel;                //数据筛选面板
+    FFilterWhere    : string;                         //过滤查询条件
+    FFilterEvent    : TOnFilterData;                  //过滤数据事件
   public
     procedure Init();
     {*初始化*}
@@ -66,6 +72,9 @@ type
     {*构建菜单*}
     function GetMenu(const nTag: Integer): TUniMenuItem;
     {*检索菜单*}
+    function FindFilterCtrl(const nIdx: Integer): TControl;
+    function AddFilterCtrl(const nIdx: Integer): TControl;
+    {*数据过滤*}
   end;
 
   TGridHelper = class
@@ -82,6 +91,8 @@ type
     {*初始化*}
     class procedure Release; static;
     {*释放资源*}
+    class procedure WriteLog(const nEvent: string); static;
+    {*记录日志*}
     class function GetHelper: TGridHelper;
     {*获取实例*}
     class procedure SyncLock; static;
@@ -111,6 +122,10 @@ type
     class function GridExportExcel(const nGrid: TUniDBGrid;
       const nFile: string): string; static;
     {*导出数据*}
+    procedure DoGridClearFilters(Sender: TObject);
+    procedure DoGridColumnFilter(Sender: TUniDBGrid;
+      const nColumn: TUniDBGridColumn; const nValue: Variant);
+    {*数据过滤*}
     procedure DoColumnMenuClick(Sender: TObject);
     procedure DoGridEvent(Sender: TComponent; nEventName: string;
       nParams: TUniStrings);
@@ -181,6 +196,7 @@ begin
     FColumnMenu.Items.Add(nMenu);
   end;
 
+  //----------------------------------------------------------------------------
   nMenu := TUniMenuItem.Create(FColumnMenu);
   with nMenu do
   begin
@@ -194,7 +210,7 @@ begin
   begin
     Caption := '使用此列分组';
     Tag := cMenu_GroupEnable;
-    ImageIndex := 19;
+    ImageIndex := 21;
     OnClick := TGridHelper.GetHelper.DoColumnMenuClick;
 
     if Assigned(nOnBind) then
@@ -292,6 +308,55 @@ begin
   Result := FindMenu(FColumnMenu.Items);
 end;
 
+//Date: 2021-08-01
+//Parm: FEntity.FItems索引
+//Desc: 检索索引为nIdx的过滤组件
+function TBindData.FindFilterCtrl(const nIdx: Integer): TControl;
+var i: Integer;
+begin
+  for i := FFilterPanel.ControlCount-1 downto 0 do
+   if FFilterPanel.Controls[i].Tag = nIdx then
+   begin
+     Result := FFilterPanel.Controls[i];
+     Exit;
+   end;
+
+  Result := nil;
+end;
+
+//Date: 2021-08-01
+//Parm: FEntity.FItems索引
+//Desc: 依据nIdx字典项,创建过滤组件
+function TBindData.AddFilterCtrl(const nIdx: Integer): TControl;
+var nEdit: TUniEdit;
+begin
+  if not Assigned(FFilterPanel) then
+  begin
+    FFilterPanel := TUniHiddenPanel.Create(FParentControl);
+    FFilterPanel.Parent := FDBGrid.Parent;
+    //this needs to have a parent assigned and coexist with the TUniDBGrid
+    FFilterPanel.Visible := False;
+  end;
+
+  Result := FindFilterCtrl(nIdx);
+  if Assigned(Result) then Exit;
+  if not FEntity.FItems[nIdx].FQuery then Exit;
+
+  nEdit := TUniEdit.Create(FParentControl);
+  with nEdit do
+  begin
+    Parent := FFilterPanel;
+    CharEOL := #13;
+    EmptyText := 'search...';
+
+    Tag := nIdx;
+    ClearButton := True;
+    Visible := FEntity.FItems[nIdx].FQuery;
+  end;
+
+  Result := nEdit;
+end;
+
 //------------------------------------------------------------------------------
 class procedure TGridHelper.Init(const nForce: Boolean);
 begin
@@ -313,6 +378,13 @@ begin
   FreeAndNil(FGridHelper);
   FreeAndNil(FBindData);
   FreeAndNil(FSyncLock);
+end;
+
+//Date: 2021-07-31
+//Desc: 记录日志
+class procedure TGridHelper.WriteLog(const nEvent: string);
+begin
+  gMG.FLogManager.AddLog(TGridHelper, '表格功能扩展', nEvent);
 end;
 
 //Date: 2021-06-25
@@ -407,8 +479,19 @@ class procedure TGridHelper.BuildDBGridColumn(const nEntity: PDictEntity;
 var nStr: string;
     nIdx: Integer;
     nList: TStrings;
+    nBind: PBindData;
     nColumn: TUniBaseDBGridColumn;
 begin
+  if not (FBindData.TryGetValue(nGrid, nBind) and 
+     Assigned(nBind.FParentControl) and Assigned(nBind.FEntity)) then
+  begin
+    nStr := 'UGridHelper.BuildDBGridColumn: Grid "%s" Need BindData First.';
+    nStr := Format(nStr, [nGrid.Name]);
+    
+    TGridHelper.WriteLog(nStr);
+    raise Exception.Create(nStr);
+  end;
+
   nList := nil;
   with nGrid, TStringHelper do
   try
@@ -442,6 +525,10 @@ begin
 
     if not Assigned(OnAjaxEvent) then
       OnAjaxEvent := GetHelper.DoGridEvent;
+    if not Assigned(OnClearFilters) then
+      OnClearFilters := GetHelper.DoGridClearFilters;
+    if not Assigned(OnColumnFilter) then
+      OnColumnFilter := GetHelper.DoGridColumnFilter;
     if not Assigned(OnColumnSort) then
       OnColumnSort := GetHelper.DoColumnSort;
     if not Assigned(OnColumnSummary) then
@@ -491,6 +578,16 @@ begin
         begin
           nColumn.ShowSummary := True;
           Summary.Enabled := True;
+        end;
+
+        if FQuery then //数据过滤
+        begin
+          if not (dgFilterClearButton in Options) then
+            Options := Options + [dgFilterClearButton];
+          //xxxxx
+
+          Filtering.Enabled := True;
+          Filtering.Editor := nBind.AddFilterCtrl(nIdx);
         end;
       end;
     end;
@@ -870,6 +967,43 @@ begin
         JSInterface.JSCall('getView().getFeature("grouping").collapseAll', []);
       //xxxxx
     end;
+  end;
+end;
+
+//Date: 2021-08-01
+//Desc: 清理所有查询内容
+procedure TGridHelper.DoGridClearFilters(Sender: TObject);
+var nBind: PBindData;
+begin
+  SyncLock;
+  try
+    if not (FBindData.TryGetValue(Sender, nBind) and
+      Assigned(nBind.FFilterEvent) and Assigned(nBind.FFilterPanel)) then Exit;
+    //no bind datadict,no dataset
+
+    nBind.FFilterWhere := '';
+    nBind.FFilterEvent(nBind); //do event
+  finally
+    SyncUnlock;
+  end;
+end;
+
+//Date: 2021-08-01
+//Desc: 过滤数据
+procedure TGridHelper.DoGridColumnFilter(Sender: TUniDBGrid;
+  const nColumn: TUniDBGridColumn; const nValue: Variant);
+var nBind: PBindData;
+begin
+  SyncLock;
+  try
+    if not (FBindData.TryGetValue(Sender, nBind) and
+      Assigned(nBind.FFilterEvent) and Assigned(nBind.FFilterPanel)) then Exit;
+    //no bind datadict
+
+    nBind.FFilterWhere := nValue;
+    nBind.FFilterEvent(nBind); //do event
+  finally
+    SyncUnlock;
   end;
 end;
 

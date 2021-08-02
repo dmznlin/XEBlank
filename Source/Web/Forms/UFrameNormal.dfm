@@ -12,9 +12,9 @@ inherited fFrameNormal: TfFrameNormal
     ExplicitHeight = 495
     object DBGridMain: TUniDBGrid
       Left = 0
-      Top = 92
+      Top = 45
       Width = 772
-      Height = 403
+      Height = 450
       Hint = ''
       DataSource = DataSource1
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgRowSelect, dgConfirmDelete, dgAutoRefreshRow]
@@ -26,7 +26,7 @@ inherited fFrameNormal: TfFrameNormal
       Left = 0
       Top = 42
       Width = 772
-      Height = 50
+      Height = 3
       Hint = ''
       ParentColor = False
       Border = True
