@@ -38,6 +38,7 @@ const
   cMenu_GroupCloseAuto       = $05;
   cMenu_ExpandAll            = $06;
   cMenu_CollapseAll          = $07;
+  cMenu_ForQuery             = $08;
   {*菜单定义*}
 
   sEvent_DBGridHeaderPopmenu = 'DBGridHeaderPopmenu';
@@ -62,7 +63,6 @@ type
     FGroupCloseAuto : Boolean;                        //自动取消分组
 
     FFilterPanel    : TUniHiddenPanel;                //数据筛选面板
-    FFilterWhere    : string;                         //过滤查询条件
     FFilterEvent    : TOnFilterData;                  //过滤数据事件
   public
     procedure Init();
@@ -72,6 +72,7 @@ type
     {*构建菜单*}
     function GetMenu(const nTag: Integer): TUniMenuItem;
     {*检索菜单*}
+    function FilterString(): string;
     function FindFilterCtrl(const nIdx: Integer): TControl;
     function AddFilterCtrl(const nIdx: Integer): TControl;
     {*数据过滤*}
@@ -158,6 +159,28 @@ end;
 procedure TBindData.BuildColumnMenu(const nImages: TUniCustomImageList;
  const nOnBind: TOnBuildMenu);
 var nMenu,nSub: TUniMenuItem;
+
+  //Desc: 自定义菜单配置
+  procedure UserDefine(const nParent: TUniMenuItem);
+  var nIdx: Integer;
+  begin
+    for nIdx := nParent.Count - 1 downto 0 do
+    begin
+      if Assigned(nOnBind) then
+        nOnBind(nParent.Items[nIdx]);
+      //do user define event
+
+      if nParent.Items[nIdx].Count > 0 then
+      begin
+        UserDefine(nParent.Items[nIdx]);
+        Continue;
+      end;
+
+      if nParent.Items[nIdx].Tag > 0 then
+        nParent.Items[nIdx].OnClick := TGridHelper.GetHelper.DoColumnMenuClick;
+      //click event
+    end;
+  end;
 begin
   if Assigned(FColumnMenu) then Exit;
   FColumnMenu := TUniPopupMenu.Create(FParentControl);
@@ -169,10 +192,6 @@ begin
     Caption := '调整表格';
     Tag := cMenu_GridAdjust;
     CheckItem := True;
-    OnClick := TGridHelper.GetHelper.DoColumnMenuClick;
-
-    if Assigned(nOnBind) then
-      nOnBind(nMenu);
     FColumnMenu.Items.Add(nMenu);
   end;
 
@@ -182,10 +201,6 @@ begin
     Caption := '编辑表格';
     Tag := cMenu_EditDict;
     ImageIndex := 13;
-    OnClick := TGridHelper.GetHelper.DoColumnMenuClick;
-
-    if Assigned(nOnBind) then
-      nOnBind(nMenu);
     FColumnMenu.Items.Add(nMenu);
   end;
 
@@ -211,10 +226,6 @@ begin
     Caption := '使用此列分组';
     Tag := cMenu_GroupEnable;
     ImageIndex := 21;
-    OnClick := TGridHelper.GetHelper.DoColumnMenuClick;
-
-    if Assigned(nOnBind) then
-      nOnBind(nMenu);
     nMenu.Add(nSub);
   end;
 
@@ -224,10 +235,6 @@ begin
     Caption := '撤销分组显示';
     Tag := cMenu_GroupClose;
     ImageIndex := 20;
-    OnClick := TGridHelper.GetHelper.DoColumnMenuClick;
-
-    if Assigned(nOnBind) then
-      nOnBind(nMenu);
     nMenu.Add(nSub);
   end;
 
@@ -237,10 +244,6 @@ begin
     Caption := '自动撤销分组';
     Tag := cMenu_GroupCloseAuto;
     CheckItem := True;
-    OnClick := TGridHelper.GetHelper.DoColumnMenuClick;
-
-    if Assigned(nOnBind) then
-      nOnBind(nMenu);
     nMenu.Add(nSub);
   end;
 
@@ -257,10 +260,6 @@ begin
     Caption := '展开全部数据';
     Tag := cMenu_ExpandAll;
     ImageIndex := 17;
-    OnClick := TGridHelper.GetHelper.DoColumnMenuClick;
-
-    if Assigned(nOnBind) then
-      nOnBind(nMenu);
     nMenu.Add(nSub);
   end;
 
@@ -270,12 +269,21 @@ begin
     Caption := '收起全部数据';
     Tag := cMenu_CollapseAll;
     ImageIndex := 18;
-    OnClick := TGridHelper.GetHelper.DoColumnMenuClick;
-
-    if Assigned(nOnBind) then
-      nOnBind(nMenu);
     nMenu.Add(nSub);
   end;
+
+  //----------------------------------------------------------------------------
+  nMenu := TUniMenuItem.Create(FColumnMenu);
+  with nMenu do
+  begin
+    Caption := '查询说明';
+    ImageIndex := 38;
+    Tag := cMenu_ForQuery;
+    FColumnMenu.Items.Add(nMenu);
+  end;
+
+  UserDefine(FColumnMenu.Items);
+  //自定义菜单项
 end;
 
 //Date: 2021-07-19
@@ -351,10 +359,181 @@ begin
 
     Tag := nIdx;
     ClearButton := True;
-    Visible := FEntity.FItems[nIdx].FQuery;
   end;
 
   Result := nEdit;
+end;
+
+//Date: 2021-08-02
+//Desc: 依据过滤组件构建SQL Where
+function TBindData.FilterString: string;
+const
+  sAnd = 'and';
+  sOR  = 'or';
+  sNot = 'not';
+  sEqual = '=';
+  sGreater = '>';
+  sSmaller = '<';
+var nStr,nTmp: string;
+    nLike: Boolean;
+    nFirst: TObject;
+    nIdx,nL,nH,nPos: Integer;
+    nArray: TStringHelper.TStringArray;
+
+    function MakeSQLWhere(const nDict: Integer): string;
+    var i,j: Integer;
+    begin
+      Result := '';
+      nH := High(nArray);
+
+      for i := nL to nH do
+      with FEntity.FItems[nDict], TStringHelper, TDateTimeHelper do
+      begin
+        if nArray[i] = '' then Continue;
+        //empty
+
+        //examp: not,lucy,or %lily
+        nPos := Pos(' ', nArray[i]);
+        if nPos > 1 then
+        begin
+          nTmp := LowerCase(CopyLeft(nArray[i], nPos - 1));
+          //连接符
+
+          if (nTmp = sAnd) or (nTmp = sOR) or (nTmp = sNot) then
+          begin
+            nArray[i] := TrimLeft(CopyNoLeft(nArray[i], nPos));
+            if nArray[i] = '' then Exit;
+          end;
+
+          if i > nL then
+          begin
+            if nTmp = sOR then
+              Result := Result + ' or '
+            else
+            if nTmp = sNot then
+              Result := Result + ' and not '
+            else
+              Result := Result + ' and ';
+          end;
+        end else
+        begin
+          if i > nL then
+            Result := Result + ' and ';
+          //xxxxx
+        end;
+
+        case FDBItem.FType of
+         ftSmallint, ftInteger, ftWord:
+          begin
+            nTmp := CopyLeft(nArray[i], 1);
+            if StrArrayIndex(nTmp, [sEqual, sGreater, sSmaller]) < 0 then
+                 Result := Result + FDBItem.FField + '=' + nArray[i]
+            else Result := Result + FDBItem.FField + nArray[i];
+          end;
+         ftDate, ftTime, ftDateTime:
+          begin
+            nTmp := CopyLeft(nArray[i], 1);
+            if StrArrayIndex(nTmp, [sEqual, sGreater, sSmaller]) < 0 then
+            begin
+              Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
+            end else
+            begin
+              nPos := Length(nArray[i]);
+              //total length
+
+              for j := 2 to nPos do
+              begin
+                if not CharInSet(nArray[i][j], ['0'..'9']) then Continue;
+                nStr := CopyLeft(nArray[i], j - 1);    //比较符号
+                nTmp := CopyNoLeft(nArray[i], j - 1);  //数据
+
+                Result := Result + FDBItem.FField + nStr + '''' + nTmp + '''';
+                Break;
+              end;
+            end;
+          end else
+          begin
+            nTmp := CopyLeft(nArray[i], 1);
+            nLike := nTmp = '%';
+
+            if nLike or (nTmp = '=') then
+            begin
+              nArray[i] := TrimLeft(CopyNoLeft(nArray[i], 1));
+              if nArray[i] = '' then Exit;
+            end;
+
+            if nLike then
+                 Result := Result + FDBItem.FField + ' Like ''%' + nArray[i] + '%'''
+            else Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
+          end;
+        end;
+      end;
+    end;
+
+    procedure ParseSQLWhere(const nEdit: TUniEdit; var nWhere: string);
+    begin
+      nStr := Trim(nEdit.Text);
+      if nStr = '' then Exit;
+      //no data to parse
+
+      TStringHelper.SplitArray(nStr, nArray, ',', tpTrim);
+      nL := Low(nArray);
+      if nL < 0 then Exit; //empty filter string
+
+      nTmp := LowerCase(nArray[nL]);
+      if nWhere = '' then
+      begin
+        nStr := '(';
+      end else
+      begin
+        if nTmp = sOR then
+          nStr := ' or ('
+        else
+        if nTmp = sNot then
+          nStr := ' and not ('
+        else
+          nStr := ' and (';
+      end;
+
+      if TStringHelper.StrArrayIndex(nTmp, [sAnd, sOR, sNot]) >= 0 then
+        Inc(nL);
+      nWhere := nWhere + nStr + MakeSQLWhere(nEdit.Tag) + ')';
+    end;
+begin
+  Result := '';
+  if not Assigned(FFilterPanel) then Exit; //no filter control
+  nFirst := nil;
+
+  for nIdx := FFilterPanel.ControlCount-1 downto 0 do
+   if FFilterPanel.Controls[nIdx] is TUniEdit then
+    with FFilterPanel.Controls[nIdx] as TUniEdit, TStringHelper do
+    begin
+      nPos := Pos(',', Text);
+      if nPos > 1 then
+      begin
+        nStr := LowerCase(Trim(CopyLeft(Text, nPos - 1)));
+        if StrArrayIndex(nStr, [sOR, sNot]) < 0 then
+          nFirst := FFilterPanel.Controls[nIdx];
+        //连接符不是 or 和 not
+      end else
+      begin
+        nFirst := FFilterPanel.Controls[nIdx];
+        //没有连接符,默认为 and
+      end;
+
+      if Assigned(nFirst) then
+      begin
+        ParseSQLWhere(FFilterPanel.Controls[nIdx] as TUniEdit, Result);
+        //先处理连接符为 and 的过滤内容
+        Break;
+      end;
+    end;
+
+  for nIdx := FFilterPanel.ControlCount-1 downto 0 do
+   if ((not Assigned(nFirst)) or (FFilterPanel.Controls[nIdx] <> nFirst)) and
+       (FFilterPanel.Controls[nIdx] is TUniEdit) then
+    ParseSQLWhere(FFilterPanel.Controls[nIdx] as TUniEdit, Result);
+  //解析数据过滤条件
 end;
 
 //------------------------------------------------------------------------------
@@ -967,6 +1146,20 @@ begin
         JSInterface.JSCall('getView().getFeature("grouping").collapseAll', []);
       //xxxxx
     end;
+   cMenu_ForQuery: //查询说明
+    begin
+      nStr := '命令格式: 连接符,条件1,...,条件n<ul>' +
+        '<li>连接符: and, or, not</li>' +
+        '<li>条件: 字符串(lucy),数值(123),比较符(<,=,>)</li></ul>例如: <ul>' +
+        '<li>lucy,lily: 查询lucy和lily</li>' +
+        '<li>lucy,or lily: 查询lucy或lily</li>' +
+        '<li>not,lucy: 查询不包含lucy</li>' +
+        '<li>not,lucy,lily: 查询不包含lucy和lily</li>' +
+        '<li>>10,<20: 查询大于10,小于20</li></ul>';
+      //xxxxx
+
+      UniMainModule.ShowDlg(nStr, False, nil, nil, '查询说明');
+    end;
   end;
 end;
 
@@ -977,12 +1170,11 @@ var nBind: PBindData;
 begin
   SyncLock;
   try
-    if not (FBindData.TryGetValue(Sender, nBind) and
-      Assigned(nBind.FFilterEvent) and Assigned(nBind.FFilterPanel)) then Exit;
-    //no bind datadict,no dataset
-
-    nBind.FFilterWhere := '';
-    nBind.FFilterEvent(nBind); //do event
+    if FBindData.TryGetValue(Sender,nBind) and Assigned(nBind.FFilterEvent) then
+    begin
+      nBind.FFilterEvent(nBind);
+      //do event
+    end;
   finally
     SyncUnlock;
   end;
@@ -996,12 +1188,11 @@ var nBind: PBindData;
 begin
   SyncLock;
   try
-    if not (FBindData.TryGetValue(Sender, nBind) and
-      Assigned(nBind.FFilterEvent) and Assigned(nBind.FFilterPanel)) then Exit;
-    //no bind datadict
-
-    nBind.FFilterWhere := nValue;
-    nBind.FFilterEvent(nBind); //do event
+    if FBindData.TryGetValue(Sender,nBind) and Assigned(nBind.FFilterEvent) then
+    begin
+      nBind.FFilterEvent(nBind);
+      //do event
+    end;
   finally
     SyncUnlock;
   end;
