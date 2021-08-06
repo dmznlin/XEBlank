@@ -20,6 +20,8 @@ const
   cCmd_EditData         = $1005;                     //修改数据
   cCmd_ViewData         = $1006;                     //查看数据
   cCmd_GetData          = $1007;                     //选择数据
+  cCmd_EditFile         = $1008;                     //编辑文件
+  cCmd_ViewFile         = $1009;                     //查看文件
 
 type
   TImagePosition = (ipDefault, ipTL, ipTM, ipTR,

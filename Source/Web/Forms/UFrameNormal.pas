@@ -56,7 +56,8 @@ type
     function InitFormDataSQL(const nWhere: string): string; virtual;
     procedure AfterInitFormData; virtual;
     {*载入数据*}
-    procedure OnFilterData(const nData: PBindData); virtual;
+    procedure OnFilterData(const nColumn: TUniDBGridColumn;
+      const nData: PBindData); virtual;
     {*数据查询*}
   public
     { Public declarations }
@@ -148,6 +149,9 @@ end;
 function TfFrameNormal.InitFormDataSQL(const nWhere: string): string;
 begin
   Result := 'Select * From ' + DescMe.FDataDict.FTables;
+  if nWhere <> '' then
+    Result := Result + ' Where ' + nWhere;
+  //xxxxx
 end;
 
 //Date: 2021-06-30
@@ -171,6 +175,9 @@ begin
     if Assigned(nQuery) then
          nC := nQuery
     else nC := gDBManager.LockDBQuery(DescMe.FDBConn);
+
+    TGridHelper.BindData(DBGridMain).FFilterWhere := nWhere;
+    //记录查询条件
 
     nBool := False;
     OnInitFormData(nWhere, nC, nBool);
@@ -204,9 +211,13 @@ end;
 //Date: 2021-08-02
 //Parm: 表格绑定数据
 //Desc: 知行表格的查询操作
-procedure TfFrameNormal.OnFilterData(const nData: PBindData);
+procedure TfFrameNormal.OnFilterData(const nColumn: TUniDBGridColumn;
+  const nData: PBindData);
 begin
-  
+  if Assigned(nColumn) then
+       FWhere := nData.FilterString
+  else FWhere := '';
+  InitFormData(FWhere);
 end;
 
 //------------------------------------------------------------------------------

@@ -28,7 +28,7 @@ uses
   uniGUIAbstractClasses, uniGUITypes, uniGUIClasses, uniDBGrid, uniStringGrid,
   MainModule, uniMainMenu, uniImageList, uniPanel, uniEdit,
   //----------------------------------------------------------------------------
-  UManagerGroup, UMgrDataDict, ULibFun, USysBusiness;
+  UManagerGroup, UMgrDataDict, ULibFun, USysBusiness, USysConst;
 
 const
   cMenu_GridAdjust           = $01;
@@ -38,7 +38,8 @@ const
   cMenu_GroupCloseAuto       = $05;
   cMenu_ExpandAll            = $06;
   cMenu_CollapseAll          = $07;
-  cMenu_ForQuery             = $08;
+  cMenu_QueryFor             = $08;
+  cMenu_QueryData            = $09;
   {*菜单定义*}
 
   sEvent_DBGridHeaderPopmenu = 'DBGridHeaderPopmenu';
@@ -49,7 +50,8 @@ type
   TOnBuildMenu = reference to procedure (const nItem: TUniMenuItem);
   //自定义菜单
   PBindData = ^TBindData;
-  TOnFilterData = procedure (const nData: PBindData) of object;
+  TOnFilterData = procedure (const nColumn: TUniDBGridColumn;
+    const nData: PBindData) of object;
   //表格过滤数据
 
   TBindData = record
@@ -63,6 +65,7 @@ type
     FGroupCloseAuto : Boolean;                        //自动取消分组
 
     FFilterPanel    : TUniHiddenPanel;                //数据筛选面板
+    FFilterWhere    : string;                         //过滤条件
     FFilterEvent    : TOnFilterData;                  //过滤数据事件
   public
     procedure Init();
@@ -276,10 +279,27 @@ begin
   nMenu := TUniMenuItem.Create(FColumnMenu);
   with nMenu do
   begin
-    Caption := '查询说明';
+    Caption := '查询数据';
     ImageIndex := 38;
-    Tag := cMenu_ForQuery;
     FColumnMenu.Items.Add(nMenu);
+  end;
+
+  nSub := TUniMenuItem.Create(FColumnMenu);
+  with nSub do
+  begin
+    Caption := '查询说明';
+    Tag := cMenu_QueryFor;
+    ImageIndex := 4;
+    nMenu.Add(nSub);
+  end;
+
+  nSub := TUniMenuItem.Create(FColumnMenu);
+  with nSub do
+  begin
+    Caption := '当前查询';
+    Tag := cMenu_QueryData;
+    ImageIndex := 32;
+    nMenu.Add(nSub);
   end;
 
   UserDefine(FColumnMenu.Items);
@@ -508,7 +528,9 @@ begin
    if FFilterPanel.Controls[nIdx] is TUniEdit then
     with FFilterPanel.Controls[nIdx] as TUniEdit, TStringHelper do
     begin
+      if Trim(Text) = '' then Continue;
       nPos := Pos(',', Text);
+
       if nPos > 1 then
       begin
         nStr := LowerCase(Trim(CopyLeft(Text, nPos - 1)));
@@ -1146,8 +1168,16 @@ begin
         JSInterface.JSCall('getView().getFeature("grouping").collapseAll', []);
       //xxxxx
     end;
-   cMenu_ForQuery: //查询说明
+   cMenu_QueryFor: //查询说明
     begin
+      nStr := gPath + 'QueryFor.' + UniMainModule.FUser.FLangID;
+      if FileExists(nStr) then
+      begin
+        nP.Init(cCmd_ViewFile).AddS([nStr, '查询说明']);
+        TWebSystem.ShowModalForm('TfFormMemo', @nP);
+        Exit;
+      end;
+
       nStr := '命令格式: 连接符,条件1,...,条件n<ul>' +
         '<li>连接符: and, or, not</li>' +
         '<li>条件: 字符串(lucy),数值(123),比较符(<,=,>)</li></ul>例如: <ul>' +
@@ -1158,7 +1188,14 @@ begin
         '<li>>10,<20: 查询大于10,小于20</li></ul>';
       //xxxxx
 
-      UniMainModule.ShowDlg(nStr, False, nil, nil, '查询说明');
+      nP.Init(cCmd_ViewData).AddS([nStr, '查询说明']);
+      TWebSystem.ShowModalForm('TfFormMemo', @nP);
+    end;
+   cMenu_QueryData: //当前查询条件
+    begin
+      nP.Init(cCmd_ViewData).AddS([TStringHelper.StrIF(['无', nBind.FFilterWhere],
+        nBind.FFilterWhere = ''), '查询条件']);
+      TWebSystem.ShowModalForm('TfFormMemo', @nP);
     end;
   end;
 end;
@@ -1172,7 +1209,7 @@ begin
   try
     if FBindData.TryGetValue(Sender,nBind) and Assigned(nBind.FFilterEvent) then
     begin
-      nBind.FFilterEvent(nBind);
+      nBind.FFilterEvent(nil, nBind);
       //do event
     end;
   finally
@@ -1190,7 +1227,7 @@ begin
   try
     if FBindData.TryGetValue(Sender,nBind) and Assigned(nBind.FFilterEvent) then
     begin
-      nBind.FFilterEvent(nBind);
+      nBind.FFilterEvent(nColumn, nBind);
       //do event
     end;
   finally
