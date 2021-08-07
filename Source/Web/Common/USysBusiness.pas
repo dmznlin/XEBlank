@@ -73,6 +73,11 @@ type
     class procedure SetImageData(const nParent: TUniContainer;
       const nImage: TUniImage; const nData: PImageData); static;
     {*设置图片数据*}
+    class procedure InitDateRange(const nForm,nCtrl: string; var nS,nE: TDateTime;
+      nIni: TIniFile = nil); static;
+    class procedure SaveDateRange(const nForm,nCtrl: string; const nS,nE: TDateTime;
+      nIni: TIniFile = nil); static;
+    {**}
   end;
 
 implementation
@@ -373,6 +378,69 @@ begin
      ipTM, ipMM, ipBM: nParent.LayoutAttribs.Pack := 'center';
      ipTR, ipMR, ipBR: nParent.LayoutAttribs.Pack := 'end';
     end;
+  end;
+end;
+
+//Date: 2021-08-07
+//Parm: 窗体;组件;开始结束日期
+//Desc: 依据nForm.nCtrl初始化nS,nE日期
+class procedure TWebSystem.InitDateRange(const nForm, nCtrl: string;
+  var nS, nE: TDateTime; nIni: TIniFile);
+var nStr: string;
+    nBool: Boolean;
+begin
+  nBool := Assigned(nIni);
+  if not nBool then
+    nIni := UserConfigFile();
+  //xxxxx
+
+  with TDateTimeHelper do
+  try
+    nStr := nIni.ReadString(nForm, nCtrl + '_DateRange_Last', '');
+    if nStr = Date2Str(Now) then
+    begin
+      nStr := nIni.ReadString(nForm, nCtrl + '_DateRange_S', Date2Str(Now));
+      nS := Str2Date(nStr);
+
+      nStr := nIni.ReadString(nForm, nCtrl + '_DateRange_E', Date2Str(Now));
+      nE := Str2Date(nStr);
+
+      if nE = nS then
+        nE := nS + 1;
+      //xxxxx
+    end else
+    begin
+      nS := Date();
+      nE := nS + 1;
+    end;
+  finally
+    if not nBool then
+      nIni.Free;
+    //xxxxx
+  end;
+end;
+
+//Date: 2021-08-07
+//Parm: 窗体;组件;开始结束日期
+//Desc: 保存nForm.nCtrl的日期区间
+class procedure TWebSystem.SaveDateRange(const nForm, nCtrl: string;
+  const nS,nE: TDateTime; nIni: TIniFile);
+var nBool: Boolean;
+begin
+  nBool := Assigned(nIni);
+  if not nBool then
+    nIni := UserConfigFile();
+  //xxxxx
+
+  with TDateTimeHelper do
+  try
+    nIni.WriteString(nForm, nCtrl + '_DateRange_S', Date2Str(nS));
+    nIni.WriteString(nForm, nCtrl + '_DateRange_E', Date2Str(nE));
+    nIni.WriteString(nForm, nCtrl + '_DateRange_Last', Date2Str(Now));
+  finally
+    if not nBool then
+      nIni.Free;
+    //xxxxx
   end;
 end;
 

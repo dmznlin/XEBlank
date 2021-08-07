@@ -89,6 +89,7 @@ ResourceString
   sLogField           = #9;                          //记录分隔符
 
   sImageDir           = 'Images\';                   //图片目录
+  sLocalDir           = 'Local\';                    //区域语言
   sReportDir          = 'Report\';                   //报表目录
   sBackupDir          = 'Backup\';                   //备份目录
   sCameraDir          = 'Camera\';                   //抓拍目录

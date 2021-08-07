@@ -56,6 +56,7 @@ type
     EditLock: TUniComboBox;
     EditMulti: TUniComboBox;
     EditQuery: TUniComboBox;
+    EditQDefault: TUniComboBox;
     procedure BtnUpClick(Sender: TObject);
     procedure BtnAddClick(Sender: TObject);
     procedure BtnDelClick(Sender: TObject);
@@ -175,6 +176,16 @@ begin
   end;
 
   with EditQuery do
+  try
+    Items.BeginUpdate;
+    Items.Clear;
+    Items.Add('0.·ñ');
+    Items.Add('1.ÊÇ');
+  finally
+    Items.EndUpdate;
+  end;
+
+  with EditQDefault do
   try
     Items.BeginUpdate;
     Items.Clear;
@@ -362,6 +373,10 @@ begin
     if FQuery then
          EditQuery.ItemIndex := 1
     else EditQuery.ItemIndex := 0;
+
+    if FQDefault then
+         EditQDefault.ItemIndex := 1
+    else EditQDefault.ItemIndex := 0;
 
     EditTable.Text      := FDBItem.FTable;
     EditField.Text      := FDBItem.FField;
@@ -565,6 +580,7 @@ begin
     FLocked := EditLock.ItemIndex = 1;
     FMSelect := EditMulti.ItemIndex = 1;
     FQuery := EditQuery.ItemIndex = 1;
+    FQDefault := EditQDefault.ItemIndex = 1;
 
     FDBItem.FTable := EditTable.Text;
     FDBItem.FField := EditField.Text;

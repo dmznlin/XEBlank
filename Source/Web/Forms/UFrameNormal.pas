@@ -43,6 +43,7 @@ type
     {*数据字典*}
     FActiveColumn: TUniBaseDBGridColumn;
     {*当前活动列*}
+    procedure OnShowFrame(Sender: TObject); override;
     procedure DoFrameConfig(nIni: TIniFile; const nLoad: Boolean); override;
     {*创建释放*}
     function FilterColumnField: string; virtual;
@@ -56,8 +57,8 @@ type
     function InitFormDataSQL(const nWhere: string): string; virtual;
     procedure AfterInitFormData; virtual;
     {*载入数据*}
-    procedure OnFilterData(const nColumn: TUniDBGridColumn;
-      const nData: PBindData); virtual;
+    procedure OnFilterData(const nData: PBindData;
+      const nClearFilter: Boolean); virtual;
     {*数据查询*}
   public
     { Public declarations }
@@ -94,8 +95,6 @@ begin
 
     OnLoadGridConfig(nIni);
     //载入用户配置
-    InitFormData;
-    //初始化数据
   end else
   begin
     OnSaveGridConfig(nIni);
@@ -104,6 +103,21 @@ begin
       MTable1.Close;
     //清空数据集
   end;
+end;
+
+//Desc: 延迟加载数据
+procedure TfFrameNormal.OnShowFrame(Sender: TObject);
+var nBind: PBindData;
+begin
+  nBind := TGridHelper.GetBindData(DBGridMain);
+  if Assigned(nBind) then
+  begin
+    nBind.SetAllFilterDefaultText();
+    FWhere := nBind.FilterString();
+  end;
+
+  InitFormData(FWhere);
+  //初始化数据
 end;
 
 //Desc: 过滤不显示字段
@@ -176,7 +190,7 @@ begin
          nC := nQuery
     else nC := gDBManager.LockDBQuery(DescMe.FDBConn);
 
-    TGridHelper.BindData(DBGridMain).FFilterWhere := nWhere;
+    TGridHelper.SetBindFilterWhere(DBGridMain, nWhere);
     //记录查询条件
 
     nBool := False;
@@ -211,12 +225,10 @@ end;
 //Date: 2021-08-02
 //Parm: 表格绑定数据
 //Desc: 知行表格的查询操作
-procedure TfFrameNormal.OnFilterData(const nColumn: TUniDBGridColumn;
-  const nData: PBindData);
+procedure TfFrameNormal.OnFilterData(const nData: PBindData;
+  const nClearFilter: Boolean);
 begin
-  if Assigned(nColumn) then
-       FWhere := nData.FilterString
-  else FWhere := '';
+  FWhere := nData.FilterString;
   InitFormData(FWhere);
 end;
 
@@ -231,8 +243,12 @@ end;
 
 //Desc: 刷新
 procedure TfFrameNormal.BtnRefreshClick(Sender: TObject);
+var nBind: PBindData;
 begin
-  FWhere := '';
+  nBind := TGridHelper.GetBindData(DBGridMain);
+  if Assigned(nBind) then
+       FWhere := nBind.FilterString
+  else FWhere := '';
   InitFormData(FWhere);
 end;
 

@@ -11,7 +11,7 @@ interface
 uses
   USysDB, USysMenu, UFormEncrypt, UFormInitDB, UFormInitMenus, UFormEditSysMenu,
   UFormMemStatus, UFormRunLog, UFormSwitchLang, UFormChangePwd, UFormDynPwd,
-  UFormInitDataDict, UFormEditDataDict, UFrameSyslog, UFormMemo;
+  UFormInitDataDict, UFormEditDataDict, UFrameSyslog, UFormMemo, UFormDateFilter;
 
 implementation
 

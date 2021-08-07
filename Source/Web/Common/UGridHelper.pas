@@ -47,25 +47,37 @@ const
   {*常量定义*}
 
 type
+  PDateRange = ^TDateRange;
+  TDateRange = record
+    FBegin  : TDateTime;                              //开始时间
+    FEnd    : TDateTime;                              //结束时间
+    FTag    : Integer;                                //标识
+    FDefult : Boolean;                                //默认使用
+    FUseMe  : Boolean;                                //启用区间
+  end;
+  TDateRanges = TArray<TDateRange>;
+
   TOnBuildMenu = reference to procedure (const nItem: TUniMenuItem);
   //自定义菜单
   PBindData = ^TBindData;
-  TOnFilterData = procedure (const nColumn: TUniDBGridColumn;
-    const nData: PBindData) of object;
+  TOnFilterData = procedure (const nData: PBindData;
+    const nClearFilter: Boolean) of object;
   //表格过滤数据
 
   TBindData = record
+  private
+    FColumnMenu     : TUniPopupMenu;                  //表头快捷菜单
+    FGroupField     : string;                         //用于分组的字段
+    FGroupCloseAuto : Boolean;                        //自动取消分组
+    FActiveColumn   : TUniBaseDBGridColumn;           //当前活动列
+    FFilterPanel    : TUniHiddenPanel;                //数据筛选面板
+    FFilterWhere    : string;                         //过滤条件
+    FFilterDate     : TDateRanges;                    //过滤日期时间
+  public
     FParentControl  : TWinControl;                    //所在控件
     FEntity         : PDictEntity;                    //字典实体数据
     FMemTable       : TkbmMemTable;                   //表格数据集
-    FColumnMenu     : TUniPopupMenu;                  //表头快捷菜单
     FDBGrid         : TUniDBGrid;                     //数据表格
-    FActiveColumn   : TUniBaseDBGridColumn;           //当前活动列
-    FGroupField     : string;                         //用于分组的字段
-    FGroupCloseAuto : Boolean;                        //自动取消分组
-
-    FFilterPanel    : TUniHiddenPanel;                //数据筛选面板
-    FFilterWhere    : string;                         //过滤条件
     FFilterEvent    : TOnFilterData;                  //过滤数据事件
   public
     procedure Init();
@@ -74,11 +86,16 @@ type
       const nOnBind: TOnBuildMenu = nil);
     {*构建菜单*}
     function GetMenu(const nTag: Integer): TUniMenuItem;
-    {*检索菜单*}
+    function GetDateRange(const nTag: Integer): PDateRange;
+    {*检索数据*}
     function FilterString(): string;
     function FindFilterCtrl(const nIdx: Integer): TControl;
     function AddFilterCtrl(const nIdx: Integer): TControl;
+    function GetFilterCtrl(const nField: string): TControl;
     {*数据过滤*}
+    procedure SetAllFilterDefaultText();
+    procedure SetFilterDefaultText(const nEdit: TUniEdit);
+    {*设置文本*}
   end;
 
   TGridHelper = class
@@ -104,7 +121,11 @@ type
     {*全局同步*}
     class function BindData(const nObj: TObject): PBindData; static;
     class procedure UnbindData(const nObj: TObject); static;
-    class function GetBindData(const nMenu: TMenu): PBindData; static;
+    class function GetBindData(const nObj: TObject): PBindData; static;
+    class function GetBindByMenu(const nMenu: TMenu): PBindData; static;
+    class function GetBindByFilter(const nCtrl: TControl): PBindData; static;
+    class function SetBindFilterWhere(const nObj: TObject;
+      const nWhere: string): Boolean; static;
     {*绑定数据*}
     class procedure BuildDBGridColumn(const nEntity: PDictEntity;
       const nGrid: TUniDBGrid; const nFilter: string = ''); static;
@@ -126,6 +147,7 @@ type
     class function GridExportExcel(const nGrid: TUniDBGrid;
       const nFile: string): string; static;
     {*导出数据*}
+    procedure DoGridFilterCtrlDbClick(Sender: TObject);
     procedure DoGridClearFilters(Sender: TObject);
     procedure DoGridColumnFilter(Sender: TUniDBGrid;
       const nColumn: TUniDBGridColumn; const nValue: Variant);
@@ -279,7 +301,7 @@ begin
   nMenu := TUniMenuItem.Create(FColumnMenu);
   with nMenu do
   begin
-    Caption := '查询数据';
+    Caption := '数据查询';
     ImageIndex := 38;
     FColumnMenu.Items.Add(nMenu);
   end;
@@ -336,6 +358,41 @@ begin
   Result := FindMenu(FColumnMenu.Items);
 end;
 
+//Date: 2021-08-07
+//Parm: FEntity.FItems索引
+//Desc: 检索索引为nIdx的日期区间
+function TBindData.GetDateRange(const nTag: Integer): PDateRange;
+var i: Integer;
+begin
+  for i := Low(FFilterDate) to High(FFilterDate) do
+   if FFilterDate[i].FTag = nTag then
+   begin
+     Result := @FFilterDate[i];
+     Exit;
+   end;
+
+  Result := nil;
+end;
+
+//Date: 2021-08-07
+//Parm: 字段名称
+//Desc: 检索字段为nField的过滤组件
+function TBindData.GetFilterCtrl(const nField: string): TControl;
+var i,nIdx: Integer;
+begin
+  for i := FFilterPanel.ControlCount-1 downto 0 do
+  begin
+    nIdx := FFilterPanel.Controls[i].Tag;
+    if CompareText(nField, FEntity.FItems[nIdx].FDBItem.FField) = 0 then
+    begin
+      Result := FFilterPanel.Controls[i];
+      Exit;
+    end;
+  end;
+
+  Result := nil;
+end;
+
 //Date: 2021-08-01
 //Parm: FEntity.FItems索引
 //Desc: 检索索引为nIdx的过滤组件
@@ -356,7 +413,8 @@ end;
 //Parm: FEntity.FItems索引
 //Desc: 依据nIdx字典项,创建过滤组件
 function TBindData.AddFilterCtrl(const nIdx: Integer): TControl;
-var nEdit: TUniEdit;
+var nInt: Integer;
+    nEdit: TUniEdit;
 begin
   if not Assigned(FFilterPanel) then
   begin
@@ -382,6 +440,78 @@ begin
   end;
 
   Result := nEdit;
+  with FEntity.FItems[nIdx] do
+  begin
+    if FDBItem.FType in [ftDate, ftTime, ftDateTime] then //for datetime
+    begin
+      nInt := Length(FFilterDate);
+      SetLength(FFilterDate, nInt + 1);
+      with FFilterDate[nInt] do
+      begin
+        FTag     := nIdx;
+        FDefult  := FQDefault;
+        FUseMe   := FQDefault;
+
+        if FDBItem.FType = ftDate then
+        begin
+          FBegin := Date();
+          FEnd   := FBegin + 1;
+        end else
+        begin
+          FBegin := Now();
+          FEnd   := Now() + 1/(24 * 3600);
+        end;
+      end;
+
+      with nEdit do
+      begin
+        Hint := '双击查询框';
+        ShowHint := True;
+        ReadOnly := True;
+        OnDblClick := TGridHelper.GetHelper.DoGridFilterCtrlDbClick;
+      end;
+    end;
+  end;
+end;
+
+//Date: 2021-08-07
+//Parm: 过滤组件
+//Desc: 使用nEdit的时间区间设置文本内容
+procedure TBindData.SetFilterDefaultText(const nEdit: TUniEdit);
+var nRange: PDateRange;
+begin
+  nEdit.Text := '';
+  //clear filter string
+  nRange := GetDateRange(nEdit.Tag);
+
+  if Assigned(nRange) and nRange.FUseMe then
+  begin
+    with TDateTimeHelper do
+    begin
+      case FEntity.FItems[nEdit.Tag].FDBItem.FType of
+       ftDate:
+        nEdit.Text := '≥' + Date2Str(nRange.FBegin) +
+                      ',<' + Date2Str(nRange.FEnd);
+       ftTime:
+        nEdit.Text := '≥' + Time2Str(nRange.FBegin) +
+                      ',<' + Time2Str(nRange.FEnd);
+       ftDateTime:
+        nEdit.Text := '≥' + DateTime2Str(nRange.FBegin) +
+                      ',<' + DateTime2Str(nRange.FEnd);
+      end;
+    end;
+  end;
+end;
+
+//Date: 2021-08-07
+//Desc: 设置所有过滤组件的默认文本
+procedure TBindData.SetAllFilterDefaultText;
+var nIdx: Integer;
+begin
+  for nIdx := FFilterPanel.ControlCount-1 downto 0 do
+   if FFilterPanel.Controls[nIdx] is TUniEdit then
+    SetFilterDefaultText(FFilterPanel.Controls[nIdx] as TUniEdit);
+  //set default text
 end;
 
 //Date: 2021-08-02
@@ -397,17 +527,19 @@ const
 var nStr,nTmp: string;
     nLike: Boolean;
     nFirst: TObject;
+    nActiveEdit: TUniEdit;
+    nActiveDate: PDateRange;
     nIdx,nL,nH,nPos: Integer;
     nArray: TStringHelper.TStringArray;
 
-    function MakeSQLWhere(const nDict: Integer): string;
-    var i,j: Integer;
+    function MakeSQLWhere: string;
+    var i: Integer;
     begin
       Result := '';
       nH := High(nArray);
 
       for i := nL to nH do
-      with FEntity.FItems[nDict], TStringHelper, TDateTimeHelper do
+      with FEntity.FItems[nActiveEdit.Tag], TStringHelper, TDateTimeHelper do
       begin
         if nArray[i] = '' then Continue;
         //empty
@@ -442,57 +574,62 @@ var nStr,nTmp: string;
           //xxxxx
         end;
 
-        case FDBItem.FType of
-         ftSmallint, ftInteger, ftWord:
+        if FDBItem.FType in [ftSmallint, ftInteger, ftWord] then
+        begin
+          nTmp := CopyLeft(nArray[i], 1);
+          if StrArrayIndex(nTmp, [sEqual, sGreater, sSmaller]) < 0 then
+               Result := Result + FDBItem.FField + '=' + nArray[i]
+          else Result := Result + FDBItem.FField + nArray[i];
+        end else
+        begin
+          nTmp := CopyLeft(nArray[i], 1);
+          nLike := nTmp = '%';
+
+          if nLike or (nTmp = '=') then
           begin
-            nTmp := CopyLeft(nArray[i], 1);
-            if StrArrayIndex(nTmp, [sEqual, sGreater, sSmaller]) < 0 then
-                 Result := Result + FDBItem.FField + '=' + nArray[i]
-            else Result := Result + FDBItem.FField + nArray[i];
+            nArray[i] := TrimLeft(CopyNoLeft(nArray[i], 1));
+            if nArray[i] = '' then Exit;
           end;
-         ftDate, ftTime, ftDateTime:
-          begin
-            nTmp := CopyLeft(nArray[i], 1);
-            if StrArrayIndex(nTmp, [sEqual, sGreater, sSmaller]) < 0 then
-            begin
-              Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
-            end else
-            begin
-              nPos := Length(nArray[i]);
-              //total length
 
-              for j := 2 to nPos do
-              begin
-                if not CharInSet(nArray[i][j], ['0'..'9']) then Continue;
-                nStr := CopyLeft(nArray[i], j - 1);    //比较符号
-                nTmp := CopyNoLeft(nArray[i], j - 1);  //数据
-
-                Result := Result + FDBItem.FField + nStr + '''' + nTmp + '''';
-                Break;
-              end;
-            end;
-          end else
-          begin
-            nTmp := CopyLeft(nArray[i], 1);
-            nLike := nTmp = '%';
-
-            if nLike or (nTmp = '=') then
-            begin
-              nArray[i] := TrimLeft(CopyNoLeft(nArray[i], 1));
-              if nArray[i] = '' then Exit;
-            end;
-
-            if nLike then
-                 Result := Result + FDBItem.FField + ' Like ''%' + nArray[i] + '%'''
-            else Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
-          end;
+          if nLike then
+               Result := Result + FDBItem.FField + ' Like ''%' + nArray[i] + '%'''
+          else Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
         end;
       end;
     end;
 
-    procedure ParseSQLWhere(const nEdit: TUniEdit; var nWhere: string);
+    procedure ParseSQLWhere(var nWhere: string);
     begin
-      nStr := Trim(nEdit.Text);
+      if Assigned(nActiveDate) then //datetime field
+      begin
+        if not nActiveDate.FUseMe then Exit;
+        //invalid filter
+
+        if nWhere = '' then
+             nStr := '('
+        else nStr := ' and (';
+
+        with FEntity.FItems[nActiveEdit.Tag].FDBItem, TDateTimeHelper do
+        begin
+          nTmp := FField + '>=''%s'' and ' + FField + '<''%s''';
+          case FType of
+           ftDate:
+            nTmp := Format(nTmp, [Date2Str(nActiveDate.FBegin),
+                                  Date2Str(nActiveDate.FEnd)]);
+           ftTime:
+            nTmp := Format(nTmp, [Time2Str(nActiveDate.FBegin),
+                                  Time2Str(nActiveDate.FEnd)]);
+           ftDateTime:
+            nTmp := Format(nTmp, [DateTime2Str(nActiveDate.FBegin),
+                                  DateTime2Str(nActiveDate.FEnd)]);
+          end;
+        end;
+
+        nWhere := nWhere + nStr + nTmp + ')';
+        Exit;
+      end;
+
+      nStr := Trim(nActiveEdit.Text);
       if nStr = '' then Exit;
       //no data to parse
 
@@ -517,7 +654,7 @@ var nStr,nTmp: string;
 
       if TStringHelper.StrArrayIndex(nTmp, [sAnd, sOR, sNot]) >= 0 then
         Inc(nL);
-      nWhere := nWhere + nStr + MakeSQLWhere(nEdit.Tag) + ')';
+      nWhere := nWhere + nStr + MakeSQLWhere + ')';
     end;
 begin
   Result := '';
@@ -528,34 +665,47 @@ begin
    if FFilterPanel.Controls[nIdx] is TUniEdit then
     with FFilterPanel.Controls[nIdx] as TUniEdit, TStringHelper do
     begin
-      if Trim(Text) = '' then Continue;
-      nPos := Pos(',', Text);
-
-      if nPos > 1 then
+      nActiveDate := GetDateRange(Tag);
+      if Assigned(nActiveDate) then
       begin
-        nStr := LowerCase(Trim(CopyLeft(Text, nPos - 1)));
-        if StrArrayIndex(nStr, [sOR, sNot]) < 0 then
+        if nActiveDate.FUseMe then
           nFirst := FFilterPanel.Controls[nIdx];
-        //连接符不是 or 和 not
+        //时间区间,默认为 and
       end else
       begin
-        nFirst := FFilterPanel.Controls[nIdx];
-        //没有连接符,默认为 and
+        if Trim(Text) = '' then Continue;
+        nPos := Pos(',', Text);
+
+        if nPos > 1 then
+        begin
+          nStr := LowerCase(Trim(CopyLeft(Text, nPos - 1)));
+          if StrArrayIndex(nStr, [sOR, sNot]) < 0 then
+            nFirst := FFilterPanel.Controls[nIdx];
+          //连接符不是 or 和 not
+        end else
+        begin
+          nFirst := FFilterPanel.Controls[nIdx];
+          //没有连接符,默认为 and
+        end;
       end;
 
       if Assigned(nFirst) then
       begin
-        ParseSQLWhere(FFilterPanel.Controls[nIdx] as TUniEdit, Result);
+        nActiveEdit := FFilterPanel.Controls[nIdx] as TUniEdit;
+        ParseSQLWhere(Result);
         //先处理连接符为 and 的过滤内容
         Break;
       end;
     end;
 
   for nIdx := FFilterPanel.ControlCount-1 downto 0 do
-   if ((not Assigned(nFirst)) or (FFilterPanel.Controls[nIdx] <> nFirst)) and
-       (FFilterPanel.Controls[nIdx] is TUniEdit) then
-    ParseSQLWhere(FFilterPanel.Controls[nIdx] as TUniEdit, Result);
-  //解析数据过滤条件
+  if ((not Assigned(nFirst)) or (FFilterPanel.Controls[nIdx] <> nFirst)) and
+      (FFilterPanel.Controls[nIdx] is TUniEdit) then
+  begin
+    nActiveDate := GetDateRange(FFilterPanel.Controls[nIdx].Tag);
+    nActiveEdit := FFilterPanel.Controls[nIdx] as TUniEdit;
+    ParseSQLWhere(Result);
+  end; //解析数据过滤条件
 end;
 
 //------------------------------------------------------------------------------
@@ -655,21 +805,61 @@ begin
   end;
 end;
 
+class function TGridHelper.GetBindData(const nObj: TObject): PBindData;
+begin
+  SyncLock;
+  try
+    if not FBindData.TryGetValue(nObj, Result) then
+      Result := nil;
+    //xxxxx
+  finally
+    SyncUnlock;
+  end;
+end;
+
 //Date: 2021-07-19
 //Parm: 菜单
 //Desc: 检索包含nMenu的数据
-class function TGridHelper.GetBindData(const nMenu: TMenu): PBindData;
-var nData: PBindData;
+class function TGridHelper.GetBindByMenu(const nMenu: TMenu): PBindData;
 begin
-  Result := nil;
-  //default
-
-  for nData in FBindData.Values do
-  if nData.FColumnMenu = nMenu then
-  begin
-    Result := nData;
-    Break;
+  SyncLock;
+  try
+    for Result in FBindData.Values do
+      if Result.FColumnMenu = nMenu then Exit;
+    Result := nil;
+  finally
+    SyncUnlock;
   end;
+end;
+
+//Date: 2021-08-07
+//Parm: 过滤组件
+//Desc: 检索包含nCtrl过滤组件的数据
+class function TGridHelper.GetBindByFilter(const nCtrl: TControl):PBindData;
+begin
+  SyncLock;
+  try
+    for Result in FBindData.Values do
+      if Result.FFilterPanel = nCtrl.Parent then Exit;
+    Result := nil;
+  finally
+    SyncUnlock;
+  end;
+end;
+
+//Date: 2021-08-07
+//Parm: 对象;过滤条件
+//Desc: 设置nObj.BindData.FFilterWhere
+class function TGridHelper.SetBindFilterWhere(const nObj: TObject;
+  const nWhere: string): Boolean;
+var nBind: PBindData;
+begin
+  nBind := GetBindData(nObj);
+  Result := Assigned(nBind);
+
+  if Result then
+    nBind.FFilterWhere := nWhere;
+  //xxxxx
 end;
 
 //Date: 2021-06-25
@@ -683,8 +873,9 @@ var nStr: string;
     nBind: PBindData;
     nColumn: TUniBaseDBGridColumn;
 begin
-  if not (FBindData.TryGetValue(nGrid, nBind) and 
-     Assigned(nBind.FParentControl) and Assigned(nBind.FEntity)) then
+  nBind := GetBindData(nGrid);
+  if not (Assigned(nBind) and Assigned(nBind.FParentControl) and
+    Assigned(nBind.FEntity)) then
   begin
     nStr := 'UGridHelper.BuildDBGridColumn: Grid "%s" Need BindData First.';
     nStr := Format(nStr, [nGrid.Name]);
@@ -805,9 +996,11 @@ class procedure TGridHelper.UserDefineGrid(const nForm: string;
   const nGrid: TUniDBGrid; const nLoad: Boolean; nIni: TIniFile);
 var nStr: string;
     i,j,nCount: Integer;
+    nS,nE: TDateTime;
     nBool: Boolean;
     nList: TStrings;
     nBind: PBindData;
+    nDateR: PDateRange;
 begin
   nBool := Assigned(nIni);
   nList := nil;
@@ -819,10 +1012,7 @@ begin
     nCount := nGrid.Columns.Count - 1;
     //column count
 
-    if not FBindData.TryGetValue(nGrid, nBind) then
-      nBind := nil;
-    //xxxxx
-
+    nBind := GetBindData(nGrid);
     if not nBool then
       nIni := TWebSystem.UserConfigFile;
     //xxxxx
@@ -889,6 +1079,28 @@ begin
             nBind.FGroupField := nStr;
           //xxxxx
         end;
+
+
+        for i := 0 to nCount do
+        begin
+          j := nGrid.Columns[i].Tag;
+          with nBind.FEntity.FItems[j] do
+          begin
+            if FDBItem.FType <> ftDate then Continue;
+            //only init date field
+
+            nDateR := nBind.GetDateRange(j);
+            if Assigned(nDateR) then
+            begin
+              TWebSystem.InitDateRange(nForm, nGrid.Name + IntToStr(j),
+                nS, nE, nIni);
+              //加载默认时间区间
+
+              nDateR.FBegin := nS;
+              nDateR.FEnd := nE;
+            end;
+          end;
+        end;
       end;
     end else
     begin
@@ -929,11 +1141,30 @@ begin
 
         nIni.WriteString(nForm, 'GridGroupAutoClose_' + nGrid.Name, nStr);
         nIni.WriteString(nForm, 'GridGroupField_' + nGrid.Name, nBind.FGroupField);
+
+        for i := 0 to nCount do
+        begin
+          j := nGrid.Columns[i].Tag;
+          with nBind.FEntity.FItems[j] do
+          begin
+            if FDBItem.FType <> ftDate then Continue;
+            //only init date field
+
+            nDateR := nBind.GetDateRange(j);
+            if Assigned(nDateR) then
+            begin
+              TWebSystem.SaveDateRange(nForm, nGrid.Name + IntToStr(j),
+                nDateR.FBegin, nDateR.FEnd, nIni);
+              //保存时间区间
+            end;
+          end;
+        end;
       end;
     end;
   finally
     nGrid.EndUpdate;
     gMG.FObjectPool.Release(nList);
+
     if not nBool then
       nIni.Free;
     //xxxxx
@@ -1071,10 +1302,11 @@ begin
 
   if nEventName = sEvent_DBGridHeaderPopmenu then
   begin
-    if not FBindData.TryGetValue(Sender, nBind) then Exit;
+    nBind := GetBindData(Sender);
+    if not Assigned(nBind) then Exit;
     nBind.FActiveColumn := nil;
-    nStr := nParams.Values['col'];
 
+    nStr := nParams.Values['col'];
     if TStringHelper.IsNumber(nStr) then
     begin
       nInt := StrToInt(nStr);
@@ -1112,7 +1344,7 @@ var nStr: string;
     nBind: PBindData;
     nP: TCommandParam;
 begin
-  nBind := GetBindData((Sender as TUniMenuItem).GetParentMenu);
+  nBind := GetBindByMenu((Sender as TUniMenuItem).GetParentMenu);
   if not Assigned(nBind) then Exit;
   //no bind data
 
@@ -1170,7 +1402,7 @@ begin
     end;
    cMenu_QueryFor: //查询说明
     begin
-      nStr := gPath + 'QueryFor.' + UniMainModule.FUser.FLangID;
+      nStr := gPath + sLocalDir + 'QueryFor.' + UniMainModule.FUser.FLangID;
       if FileExists(nStr) then
       begin
         nP.Init(cCmd_ViewFile).AddS([nStr, '查询说明']);
@@ -1200,20 +1432,52 @@ begin
   end;
 end;
 
+//Date: 2021-08-07
+//Desc: 过滤日期组件双击
+procedure TGridHelper.DoGridFilterCtrlDbClick(Sender: TObject);
+var nIdx: Integer;
+    nBind: PBindData;
+    nDateR: PDateRange;
+    nP: TCommandParam;
+begin
+  nBind := GetBindByFilter(Sender as TControl);
+  if not (Assigned(nBind) and Assigned(nBind.FFilterEvent)) then Exit;
+
+  nIdx := (Sender as TComponent).Tag;
+  with nBind.FEntity.FItems[nIdx] do
+  begin
+    nDateR := nBind.GetDateRange(nIdx);
+    if not Assigned(nDateR) then Exit;
+
+    nP.Init(cCmd_EditData).AddI(Ord(FDBItem.FType)).
+      AddP([@nDateR.FBegin, @nDateR.FEnd, @nDateR.FUseMe]);
+    //init param
+
+    TWebSystem.ShowModalForm('TfFormDateFilter', @nP,
+      procedure(const nResult: Integer; const nParam: PCommandParam)
+      begin
+        if nResult = mrOk then
+        begin
+          nBind.SetFilterDefaultText(Sender as TUniEdit);
+          //nBind.FFilterEvent(nBind, False);
+        end;
+      end);
+  end;
+end;
+
 //Date: 2021-08-01
 //Desc: 清理所有查询内容
 procedure TGridHelper.DoGridClearFilters(Sender: TObject);
 var nBind: PBindData;
 begin
-  SyncLock;
-  try
-    if FBindData.TryGetValue(Sender,nBind) and Assigned(nBind.FFilterEvent) then
-    begin
-      nBind.FFilterEvent(nil, nBind);
-      //do event
-    end;
-  finally
-    SyncUnlock;
+  nBind := GetBindData(Sender);
+  if Assigned(nBind) and Assigned(nBind.FFilterEvent) then
+  begin
+    nBind.SetAllFilterDefaultText();
+    //set default text
+
+    nBind.FFilterEvent(nBind, True);
+    //do event
   end;
 end;
 
@@ -1223,15 +1487,11 @@ procedure TGridHelper.DoGridColumnFilter(Sender: TUniDBGrid;
   const nColumn: TUniDBGridColumn; const nValue: Variant);
 var nBind: PBindData;
 begin
-  SyncLock;
-  try
-    if FBindData.TryGetValue(Sender,nBind) and Assigned(nBind.FFilterEvent) then
-    begin
-      nBind.FFilterEvent(nColumn, nBind);
-      //do event
-    end;
-  finally
-    SyncUnlock;
+  nBind := GetBindData(Sender);
+  if Assigned(nBind) and Assigned(nBind.FFilterEvent) then
+  begin
+    nBind.FFilterEvent(nBind, False);
+    //do event
   end;
 end;
 

@@ -7,10 +7,9 @@ unit UFormMemo;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, UFormNormal, UFormBase,
-  System.IniFiles, ULibFun, uniGUIClasses, uniMemo, uniHTMLMemo, uniPanel,
-  System.Classes, Vcl.Controls, Vcl.Forms, uniGUIBaseClasses, uniButton,
-  uniBitBtn, UniFSButton;
+  System.SysUtils, UFormNormal, UFormBase, System.IniFiles, ULibFun,
+  uniGUIClasses, uniMemo, uniHTMLMemo, uniPanel, System.Classes, Vcl.Controls,
+  Vcl.Forms, uniGUIBaseClasses, uniButton, uniBitBtn, UniFSButton;
 
 type
   TfFormMemo = class(TfFormNormal)

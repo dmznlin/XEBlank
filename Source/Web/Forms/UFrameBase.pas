@@ -19,7 +19,7 @@ interface
 uses
   SysUtils, Classes, Graphics, Controls, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIFrame, Vcl.Forms, System.IniFiles, uniGUIBaseClasses,
-  uniPanel, ULibFun;
+  uniPanel, ULibFun, uniTimer;
 
 type
   TfFrameBase = class;
@@ -47,11 +47,15 @@ type
     procedure UniFrameDestroy(Sender: TObject);
   private
     { Private declarations }
+    FTimerShow: TUniTimer;
+    {*延迟事件*}
+    procedure OnShowTimer(Sender: TObject);
   protected
     { Protected declarations }
     FParam: TCommandParam;
     {*命令参数*}
     procedure OnCreateFrame(Sender: TObject); virtual;
+    procedure OnShowFrame(Sender: TObject); virtual;
     procedure OnDestroyFrame(Sender: TObject); virtual;
     procedure DoFrameConfig(nIni: TIniFile; const nLoad: Boolean); virtual;
     {*基类函数*}
@@ -74,6 +78,14 @@ procedure TfFrameBase.UniFrameCreate(Sender: TObject);
 var nIni: TIniFile;
 begin
   FParam.Init;
+  FTimerShow := TUniTimer.Create(Self);
+  with FTimerShow do
+  begin
+    RunOnce := True;
+    Interval := 100;
+    OnTimer := OnShowTimer;
+  end;
+
   OnCreateFrame(Sender);
   nIni := nil;
   try
@@ -99,7 +111,19 @@ begin
   end;
 end;
 
+//Date: 2021-08-07
+//Desc: 延迟执行事件
+procedure TfFrameBase.OnShowTimer(Sender: TObject);
+begin
+  OnShowFrame(Self);
+end;
+
 procedure TfFrameBase.OnCreateFrame(Sender: TObject);
+begin
+  //null
+end;
+
+procedure TfFrameBase.OnShowFrame(Sender: TObject);
 begin
   //null
 end;
