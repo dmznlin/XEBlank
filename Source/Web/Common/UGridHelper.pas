@@ -28,7 +28,7 @@ uses
   uniGUIAbstractClasses, uniGUITypes, uniGUIClasses, uniDBGrid, uniStringGrid,
   MainModule, uniMainMenu, uniImageList, uniPanel, uniEdit,
   //----------------------------------------------------------------------------
-  UManagerGroup, UMgrDataDict, ULibFun, USysBusiness, USysConst;
+  UManagerGroup, UMgrDataDict, ULibFun, UDBFun, USysBusiness, USysConst;
 
 const
   cMenu_GridAdjust           = $01;
@@ -465,7 +465,7 @@ begin
 
       with nEdit do
       begin
-        Hint := 'Ë«»÷²éÑ¯¿ò';
+        Hint := 'Ë«»÷ÐÞ¸Ä' + TDBCommand.Field2Str(FDBItem.FType);
         ShowHint := True;
         ReadOnly := True;
         OnDblClick := TGridHelper.GetHelper.DoGridFilterCtrlDbClick;
@@ -480,10 +480,7 @@ end;
 procedure TBindData.SetFilterDefaultText(const nEdit: TUniEdit);
 var nRange: PDateRange;
 begin
-  nEdit.Text := '';
-  //clear filter string
   nRange := GetDateRange(nEdit.Tag);
-
   if Assigned(nRange) and nRange.FUseMe then
   begin
     with TDateTimeHelper do
@@ -499,7 +496,19 @@ begin
         nEdit.Text := '¡Ý' + DateTime2Str(nRange.FBegin) +
                       ',<' + DateTime2Str(nRange.FEnd);
       end;
+
+      if nEdit.Color <> $EEEED1 then
+        nEdit.Color := $EEEED1;
+      //background color
     end;
+  end else
+  begin
+    nEdit.Text := '';
+    //clear filter string
+
+    if nEdit.Color <> clWindow then
+      nEdit.Color := clWindow;
+    //reset color
   end;
 end;
 
@@ -539,7 +548,7 @@ var nStr,nTmp: string;
       nH := High(nArray);
 
       for i := nL to nH do
-      with FEntity.FItems[nActiveEdit.Tag], TStringHelper, TDateTimeHelper do
+      with FEntity.FItems[nActiveEdit.Tag], TStringHelper do
       begin
         if nArray[i] = '' then Continue;
         //empty
@@ -583,8 +592,19 @@ var nStr,nTmp: string;
         end else
         begin
           nTmp := CopyLeft(nArray[i], 1);
-          nLike := nTmp = '%';
+          if nTmp = sSmaller then //±È½Ï·ûºÅ: <>
+          begin
+            nPos := Pos(sGreater, nArray[i]);
+            if nPos > 1 then
+            begin
+              nArray[i] := TrimLeft(CopyNoLeft(nArray[i], nPos));
+              Result := Result + FDBItem.FField + '<>''' + nArray[i] + '''';
+            end;
 
+            Continue;
+          end;
+
+          nLike := nTmp = '%';
           if nLike or (nTmp = '=') then
           begin
             nArray[i] := TrimLeft(CopyNoLeft(nArray[i], 1));
