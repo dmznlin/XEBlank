@@ -517,6 +517,9 @@ end;
 procedure TBindData.SetAllFilterDefaultText;
 var nIdx: Integer;
 begin
+  if not Assigned(FFilterPanel) then Exit;
+  //no filter
+
   for nIdx := FFilterPanel.ControlCount-1 downto 0 do
    if FFilterPanel.Controls[nIdx] is TUniEdit then
     SetFilterDefaultText(FFilterPanel.Controls[nIdx] as TUniEdit);
@@ -527,19 +530,21 @@ end;
 //Desc: 依据过滤组件构建SQL Where
 function TBindData.FilterString: string;
 const
-  sAnd = 'and';
-  sOR  = 'or';
-  sNot = 'not';
-  sEqual = '=';
-  sGreater = '>';
-  sSmaller = '<';
+  sAnd         = 'and';
+  sOR          = 'or';
+  sNot         = 'not';
+  sEqual       = '=';
+  sGreater     = '>';
+  sSmaller     = '<';
+  sCharMulti   = '%';
+  sCharSingle  = '_';
+  sCharArray   = '[]';
 var nStr,nTmp: string;
-    nLike: Boolean;
-    nFirst: TObject;
     nActiveEdit: TUniEdit;
     nActiveDate: PDateRange;
     nIdx,nL,nH,nPos: Integer;
     nArray: TStringHelper.TStringArray;
+    nFirst,nFirstDate,nDefaultDate: TObject;
 
     function MakeSQLWhere: string;
     var i: Integer;
@@ -583,7 +588,7 @@ var nStr,nTmp: string;
           //xxxxx
         end;
 
-        if FDBItem.FType in [ftSmallint, ftInteger, ftWord] then
+        if FDBItem.FType in [ftSmallint, ftInteger, ftWord] then //数值
         begin
           nTmp := CopyLeft(nArray[i], 1);
           if StrArrayIndex(nTmp, [sEqual, sGreater, sSmaller]) < 0 then
@@ -600,20 +605,25 @@ var nStr,nTmp: string;
               nArray[i] := TrimLeft(CopyNoLeft(nArray[i], nPos));
               Result := Result + FDBItem.FField + '<>''' + nArray[i] + '''';
             end;
+          end else
 
-            Continue;
-          end;
-
-          nLike := nTmp = '%';
-          if nLike or (nTmp = '=') then
+          if nTmp = sEqual then //比较符号: =
           begin
             nArray[i] := TrimLeft(CopyNoLeft(nArray[i], 1));
             if nArray[i] = '' then Exit;
-          end;
+            Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
+          end else
 
-          if nLike then
-               Result := Result + FDBItem.FField + ' Like ''%' + nArray[i] + '%'''
-          else Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
+          if (Pos(sCharMulti, nArray[i]) > 0) or
+             (Pos(sCharSingle, nArray[i]) > 0) or
+             (Pos(sCharArray[2], nArray[i]) > Pos(sCharArray[1], nArray[i])) then
+          begin
+            Result := Result + FDBItem.FField + ' Like ''' + nArray[i] + '''';
+          end else
+          begin
+            Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
+            //default
+          end;
         end;
       end;
     end;
@@ -678,20 +688,46 @@ var nStr,nTmp: string;
     end;
 begin
   Result := '';
-  if not Assigned(FFilterPanel) then Exit; //no filter control
+  if not Assigned(FFilterPanel) then Exit;
+  //no filter control
+
   nFirst := nil;
+  nFirstDate := nil;
+  nDefaultDate := nil;
 
   for nIdx := FFilterPanel.ControlCount-1 downto 0 do
-   if FFilterPanel.Controls[nIdx] is TUniEdit then
-    with FFilterPanel.Controls[nIdx] as TUniEdit, TStringHelper do
+  if FFilterPanel.Controls[nIdx] is TUniEdit then
+  begin
+    nActiveDate := GetDateRange(FFilterPanel.Controls[nIdx].Tag);
+    if Assigned(nActiveDate) and nActiveDate.FUseMe then
     begin
-      nActiveDate := GetDateRange(Tag);
-      if Assigned(nActiveDate) then
+      if nActiveDate.FDefult and (not Assigned(nDefaultDate)) then
       begin
-        if nActiveDate.FUseMe then
-          nFirst := FFilterPanel.Controls[nIdx];
-        //时间区间,默认为 and
-      end else
+        nDefaultDate := FFilterPanel.Controls[nIdx];
+        //第一个默认时间过滤组件
+        Break;
+      end;
+
+      if not Assigned(nFirstDate) then
+        nFirstDate := FFilterPanel.Controls[nIdx];
+      //第一个时间过滤组件
+    end;
+  end;
+
+  if Assigned(nDefaultDate) then
+  begin
+    nFirst := nDefaultDate;
+    //默认日期一般是索引,优先使用
+  end else
+  if Assigned(nFirstDate) then
+  begin
+    nFirst := nFirstDate;
+    //日期时间便于数据检索
+  end else
+  begin
+    for nIdx := FFilterPanel.ControlCount-1 downto 0 do
+     if FFilterPanel.Controls[nIdx] is TUniEdit then
+      with FFilterPanel.Controls[nIdx] as TUniEdit, TStringHelper do
       begin
         if Trim(Text) = '' then Continue;
         nPos := Pos(',', Text);
@@ -700,30 +736,33 @@ begin
         begin
           nStr := LowerCase(Trim(CopyLeft(Text, nPos - 1)));
           if StrArrayIndex(nStr, [sOR, sNot]) < 0 then
+          begin
             nFirst := FFilterPanel.Controls[nIdx];
-          //连接符不是 or 和 not
+            //连接符不是 or 和 not
+            Break;
+          end;
         end else
         begin
           nFirst := FFilterPanel.Controls[nIdx];
           //没有连接符,默认为 and
+          Break;
         end;
       end;
+  end;
 
-      if Assigned(nFirst) then
-      begin
-        nActiveEdit := FFilterPanel.Controls[nIdx] as TUniEdit;
-        ParseSQLWhere(Result);
-        //先处理连接符为 and 的过滤内容
-        Break;
-      end;
-    end;
+  if Assigned(nFirst) then //先处理连接符为 and 的过滤内容
+  begin
+    nActiveEdit := nFirst as TUniEdit;
+    nActiveDate := GetDateRange(nActiveEdit.Tag);
+    ParseSQLWhere(Result);
+  end;
 
   for nIdx := FFilterPanel.ControlCount-1 downto 0 do
   if ((not Assigned(nFirst)) or (FFilterPanel.Controls[nIdx] <> nFirst)) and
       (FFilterPanel.Controls[nIdx] is TUniEdit) then
   begin
-    nActiveDate := GetDateRange(FFilterPanel.Controls[nIdx].Tag);
     nActiveEdit := FFilterPanel.Controls[nIdx] as TUniEdit;
+    nActiveDate := GetDateRange(nActiveEdit.Tag);
     ParseSQLWhere(Result);
   end; //解析数据过滤条件
 end;

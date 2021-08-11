@@ -566,7 +566,7 @@ begin
   begin
     Pagecontrol := nParent;
     Caption := nMenu.FTitle;
-    Closable := True;
+    Closable := False;
 
     if nMenu.FImgIndex >= 0 then
       ImageIndex := nMenu.FImgIndex;
