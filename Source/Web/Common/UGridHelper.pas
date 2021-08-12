@@ -539,232 +539,353 @@ const
   sCharMulti   = '%';
   sCharSingle  = '_';
   sCharArray   = '[]';
-var nStr,nTmp: string;
+
+  cTagBase     = 2021;
+  sInvalidKeys : array[0..7] of string = ('''', '"', 'insert ', 'update ',
+    'delete ', 'create ', 'drop ','alter ');
+  //无效关键字,避免SQL注入
+var nSQLW,nDateW: string;
     nActiveEdit: TUniEdit;
     nActiveDate: PDateRange;
-    nIdx,nL,nH,nPos: Integer;
+    nIdx,nLow,nHigh,nPos,nMatchNum: Integer;
     nArray: TStringHelper.TStringArray;
-    nFirst,nFirstDate,nDefaultDate: TObject;
 
-    function MakeSQLWhere: string;
-    var i: Integer;
+  //Date: 2021-08-12
+  //Parm: 连接符(and,or,not)
+  //Desc: 依据nSymbol构建where连接字符串
+  function MakeLinkSymbol(const nSymbol: string): string;
+  begin
+    if nSymbol = sAnd then Result := ' and ' else
+    if nSymbol = sOR then Result := ' or ' else
+    if nSymbol = sNot then Result :=' and not ' else Result := '';
+  end;
+
+  //Date: 2021-08-12
+  //Parm: 默认连接符
+  //Desc: 构建当前选中组件的Where条件
+  function MakeSQLWhere(const nDefaultSymbol: string): string;
+  var i: Integer;
+      nTmp: string;
+  begin
+    Result := '';
+    //init default
+
+    for i := nLow to nHigh do
+    with FEntity.FItems[nActiveEdit.Tag], TStringHelper do
     begin
-      Result := '';
-      nH := High(nArray);
+      if nArray[i] = '' then Continue;
+      //empty
+      Inc(nMatchNum); //过滤条件计数
 
-      for i := nL to nH do
-      with FEntity.FItems[nActiveEdit.Tag], TStringHelper do
+      //examp: not,lucy,or %lily
+      nPos := Pos(' ', nArray[i]);
+      if nPos > 1 then
       begin
-        if nArray[i] = '' then Continue;
-        //empty
+        nTmp := CopyLeft(nArray[i], nPos - 1);
+        //连接符
 
-        //examp: not,lucy,or %lily
-        nPos := Pos(' ', nArray[i]);
-        if nPos > 1 then
+        if StrArrayIndex(nTmp, [sAnd, sOR, sNot]) >= 0 then
         begin
-          nTmp := LowerCase(CopyLeft(nArray[i], nPos - 1));
-          //连接符
-
-          if (nTmp = sAnd) or (nTmp = sOR) or (nTmp = sNot) then
-          begin
-            nArray[i] := TrimLeft(CopyNoLeft(nArray[i], nPos));
-            if nArray[i] = '' then Exit;
-          end;
-
-          if i > nL then
-          begin
-            if nTmp = sOR then
-              Result := Result + ' or '
-            else
-            if nTmp = sNot then
-              Result := Result + ' and not '
-            else
-              Result := Result + ' and ';
-          end;
-        end else
-        begin
-          if i > nL then
-            Result := Result + ' and ';
-          //xxxxx
+          nArray[i] := TrimLeft(CopyNoLeft(nArray[i], nPos));
+          if nArray[i] = '' then Exit;
         end;
 
-        if FDBItem.FType in [ftSmallint, ftInteger, ftWord] then //数值
+        if i > nLow then
         begin
-          nTmp := CopyLeft(nArray[i], 1);
-          if StrArrayIndex(nTmp, [sEqual, sGreater, sSmaller]) < 0 then
-               Result := Result + FDBItem.FField + '=' + nArray[i]
-          else Result := Result + FDBItem.FField + nArray[i];
-        end else
-        begin
-          nTmp := CopyLeft(nArray[i], 1);
-          if nTmp = sSmaller then //比较符号: <>
-          begin
-            nPos := Pos(sGreater, nArray[i]);
-            if nPos > 1 then
-            begin
-              nArray[i] := TrimLeft(CopyNoLeft(nArray[i], nPos));
-              Result := Result + FDBItem.FField + '<>''' + nArray[i] + '''';
-            end;
-          end else
-
-          if nTmp = sEqual then //比较符号: =
-          begin
-            nArray[i] := TrimLeft(CopyNoLeft(nArray[i], 1));
-            if nArray[i] = '' then Exit;
-            Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
-          end else
-
-          if (Pos(sCharMulti, nArray[i]) > 0) or
-             (Pos(sCharSingle, nArray[i]) > 0) or
-             (Pos(sCharArray[2], nArray[i]) > Pos(sCharArray[1], nArray[i])) then
-          begin
-            Result := Result + FDBItem.FField + ' Like ''' + nArray[i] + '''';
-          end else
-          begin
-            Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
-            //default
-          end;
+          nTmp := MakeLinkSymbol(nTmp);
+          if nTmp = '' then
+               Result := Result + MakeLinkSymbol(nDefaultSymbol)
+          else Result := Result + nTmp;
         end;
-      end;
-    end;
-
-    procedure ParseSQLWhere(var nWhere: string);
-    begin
-      if Assigned(nActiveDate) then //datetime field
-      begin
-        if not nActiveDate.FUseMe then Exit;
-        //invalid filter
-
-        if nWhere = '' then
-             nStr := '('
-        else nStr := ' and (';
-
-        with FEntity.FItems[nActiveEdit.Tag].FDBItem, TDateTimeHelper do
-        begin
-          nTmp := FField + '>=''%s'' and ' + FField + '<''%s''';
-          case FType of
-           ftDate:
-            nTmp := Format(nTmp, [Date2Str(nActiveDate.FBegin),
-                                  Date2Str(nActiveDate.FEnd)]);
-           ftTime:
-            nTmp := Format(nTmp, [Time2Str(nActiveDate.FBegin),
-                                  Time2Str(nActiveDate.FEnd)]);
-           ftDateTime:
-            nTmp := Format(nTmp, [DateTime2Str(nActiveDate.FBegin),
-                                  DateTime2Str(nActiveDate.FEnd)]);
-          end;
-        end;
-
-        nWhere := nWhere + nStr + nTmp + ')';
-        Exit;
-      end;
-
-      nStr := Trim(nActiveEdit.Text);
-      if nStr = '' then Exit;
-      //no data to parse
-
-      TStringHelper.SplitArray(nStr, nArray, ',', tpTrim);
-      nL := Low(nArray);
-      if nL < 0 then Exit; //empty filter string
-
-      nTmp := LowerCase(nArray[nL]);
-      if nWhere = '' then
-      begin
-        nStr := '(';
       end else
       begin
-        if nTmp = sOR then
-          nStr := ' or ('
-        else
-        if nTmp = sNot then
-          nStr := ' and not ('
-        else
-          nStr := ' and (';
+        if i > nLow then
+          Result := Result + MakeLinkSymbol(nDefaultSymbol);
+        //xxxxx
       end;
 
-      if TStringHelper.StrArrayIndex(nTmp, [sAnd, sOR, sNot]) >= 0 then
-        Inc(nL);
-      nWhere := nWhere + nStr + MakeSQLWhere + ')';
-    end;
-begin
-  Result := '';
-  if not Assigned(FFilterPanel) then Exit;
-  //no filter control
-
-  nFirst := nil;
-  nFirstDate := nil;
-  nDefaultDate := nil;
-
-  for nIdx := FFilterPanel.ControlCount-1 downto 0 do
-  if FFilterPanel.Controls[nIdx] is TUniEdit then
-  begin
-    nActiveDate := GetDateRange(FFilterPanel.Controls[nIdx].Tag);
-    if Assigned(nActiveDate) and nActiveDate.FUseMe then
-    begin
-      if nActiveDate.FDefult and (not Assigned(nDefaultDate)) then
+      if FDBItem.FType in [ftSmallint, ftInteger, ftWord] then //数值
       begin
-        nDefaultDate := FFilterPanel.Controls[nIdx];
-        //第一个默认时间过滤组件
-        Break;
-      end;
-
-      if not Assigned(nFirstDate) then
-        nFirstDate := FFilterPanel.Controls[nIdx];
-      //第一个时间过滤组件
-    end;
-  end;
-
-  if Assigned(nDefaultDate) then
-  begin
-    nFirst := nDefaultDate;
-    //默认日期一般是索引,优先使用
-  end else
-  if Assigned(nFirstDate) then
-  begin
-    nFirst := nFirstDate;
-    //日期时间便于数据检索
-  end else
-  begin
-    for nIdx := FFilterPanel.ControlCount-1 downto 0 do
-     if FFilterPanel.Controls[nIdx] is TUniEdit then
-      with FFilterPanel.Controls[nIdx] as TUniEdit, TStringHelper do
+        nTmp := CopyLeft(nArray[i], 1);
+        if StrArrayIndex(nTmp, [sEqual, sGreater, sSmaller]) < 0 then
+             Result := Result + FDBItem.FField + '=' + nArray[i]
+        else Result := Result + FDBItem.FField + nArray[i];
+      end else
       begin
-        if Trim(Text) = '' then Continue;
-        nPos := Pos(',', Text);
-
-        if nPos > 1 then
+        nTmp := CopyLeft(nArray[i], 1);
+        if nTmp = sSmaller then //比较符号: <>
         begin
-          nStr := LowerCase(Trim(CopyLeft(Text, nPos - 1)));
-          if StrArrayIndex(nStr, [sOR, sNot]) < 0 then
+          nPos := Pos(sGreater, nArray[i]);
+          if nPos > 1 then
           begin
-            nFirst := FFilterPanel.Controls[nIdx];
-            //连接符不是 or 和 not
-            Break;
+            nArray[i] := TrimLeft(CopyNoLeft(nArray[i], nPos));
+            Result := Result + FDBItem.FField + '<>''' + nArray[i] + '''';
           end;
         end else
+
+        if nTmp = sEqual then //比较符号: =
         begin
-          nFirst := FFilterPanel.Controls[nIdx];
-          //没有连接符,默认为 and
-          Break;
+          nArray[i] := TrimLeft(CopyNoLeft(nArray[i], 1));
+          if nArray[i] = '' then Exit;
+          Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
+        end else
+
+        if (Pos(sCharMulti, nArray[i]) > 0) or
+           (Pos(sCharSingle, nArray[i]) > 0) or
+           (Pos(sCharArray[2], nArray[i]) > Pos(sCharArray[1], nArray[i])) then
+        begin
+          Result := Result + FDBItem.FField + ' Like ''' + nArray[i] + '''';
+        end else
+        begin
+          Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
+          //default
         end;
       end;
+    end;
   end;
 
-  if Assigned(nFirst) then //先处理连接符为 and 的过滤内容
+  //Date: 2021-08-12
+  //Desc: 解析当前选中的过滤组件
+  procedure ParseSQLWhere(var nWhere: string);
+  var nStr,nTmp: string;
   begin
-    nActiveEdit := nFirst as TUniEdit;
-    nActiveDate := GetDateRange(nActiveEdit.Tag);
-    ParseSQLWhere(Result);
+    if Assigned(nActiveDate) then //datetime field
+    begin
+      if not nActiveDate.FUseMe then Exit;
+      //invalid filter
+
+      if nWhere = '' then
+           nStr := ''
+      else nStr := ' and ';
+
+      with FEntity.FItems[nActiveEdit.Tag].FDBItem, TDateTimeHelper do
+      begin
+        nTmp := FField + '>=''%s'' and ' + FField + '<''%s''';
+        case FType of
+         ftDate:
+          nTmp := Format(nTmp, [Date2Str(nActiveDate.FBegin),
+                                Date2Str(nActiveDate.FEnd)]);
+         ftTime:
+          nTmp := Format(nTmp, [Time2Str(nActiveDate.FBegin),
+                                Time2Str(nActiveDate.FEnd)]);
+         ftDateTime:
+          nTmp := Format(nTmp, [DateTime2Str(nActiveDate.FBegin),
+                                DateTime2Str(nActiveDate.FEnd)]);
+        end;
+      end;
+
+      nWhere := nWhere + nStr + nTmp;
+      Inc(nMatchNum, 2); //累计2个条件
+      Exit;
+    end;
+
+    nStr := LowerCase(Trim(nActiveEdit.Text));
+    if nStr = '' then Exit;
+    //no data to parse
+
+    TStringHelper.SplitArray(nStr, nArray, ',', tpTrim);
+    if Length(nArray) < 1 then Exit;
+    //empty filter string
+
+    nHigh := High(nArray);
+    nLow := Low(nArray);
+    nTmp := nArray[nLow];
+
+    if nWhere = '' then
+    begin
+      if nTmp = sNot then
+           nStr := ' not '
+      else nStr := '';
+    end else
+    begin
+      nStr := MakeLinkSymbol(nTmp);
+      if nStr = '' then
+        nStr := ' and ';
+      //default
+    end;
+
+    if TStringHelper.StrArrayIndex(nTmp, [sAnd, sOR, sNot]) >= 0 then
+    begin
+      Inc(nLow);
+      if nLow > nHigh then
+        Exit;
+      //没有过滤条件
+    end else
+    begin
+      nTmp := sAnd;
+      //默认连接符
+    end;
+
+    nWhere := nWhere + nStr + MakeSQLWhere(nTmp);
   end;
 
-  for nIdx := FFilterPanel.ControlCount-1 downto 0 do
-  if ((not Assigned(nFirst)) or (FFilterPanel.Controls[nIdx] <> nFirst)) and
-      (FFilterPanel.Controls[nIdx] is TUniEdit) then
+  //Date: 2021-08-12
+  //Parm: 逻辑运算符;解析结果
+  //Desc: 检索与nSymbol匹配的组件并解析
+  procedure ParseFilter(const nSymbol: string; var nWhere: string);
+  var i,j: Integer;
+      nStr: string;
+      nInvalid: Boolean;
   begin
-    nActiveEdit := FFilterPanel.Controls[nIdx] as TUniEdit;
-    nActiveDate := GetDateRange(nActiveEdit.Tag);
-    ParseSQLWhere(Result);
-  end; //解析数据过滤条件
+    for i := FFilterPanel.ControlCount-1 downto 0 do
+    if FFilterPanel.Controls[i].Tag < cTagBase then //未解析的组件
+    begin
+      if not (FFilterPanel.Controls[i] is TUniEdit) then Continue;
+      //invalid filter
+
+      with FFilterPanel.Controls[i] as TUniEdit, TStringHelper do
+      begin
+        nStr := LowerCase(Trim(Text));
+        if nStr = '' then Continue;
+        nInvalid := False;
+
+        for j := Low(sInvalidKeys) to High(sInvalidKeys) do
+         if Pos(sInvalidKeys[j], nStr) > 0 then
+         begin
+           nInvalid := True;
+           Break;
+         end;
+
+        if nInvalid then
+          Continue;
+        //含有无效字符串
+
+        nActiveEdit := nil;
+        nPos := Pos(',', nStr);
+        if nPos <= 1 then //没有连接符,默认为 and
+        begin
+          if nSymbol = sAnd then
+            nActiveEdit := FFilterPanel.Controls[i] as TUniEdit;
+          //xxxxx
+        end else
+        begin
+          nStr := Trim(CopyLeft(nStr, nPos - 1));
+          if nStr = nSymbol then
+          begin
+            nActiveEdit := FFilterPanel.Controls[i] as TUniEdit;
+            //match symbol
+          end else
+
+          if (nSymbol = sAnd) and (StrArrayIndex(nStr, [sOR, sNot]) < 0) then
+          begin
+            nActiveEdit := FFilterPanel.Controls[i] as TUniEdit;
+            //default is and
+          end;
+        end;
+
+        if Assigned(nActiveEdit) then //处理匹配的过滤组件
+        begin
+          nActiveDate := nil;
+          ParseSQLWhere(nWhere);
+          nActiveEdit.Tag := nActiveEdit.Tag + cTagBase;
+        end;
+      end;
+    end;
+  end;
+
+  //Date: 2021-08-12
+  //Desc: 恢复组件解析标记
+  procedure RestoreFilter();
+  var i: Integer;
+  begin
+    for i := FFilterPanel.ControlCount-1 downto 0 do
+     if FFilterPanel.Controls[i] is TUniEdit then
+      with FFilterPanel.Controls[i] do
+      begin
+       if Tag >= cTagBase then
+         Tag := Tag - cTagBase;
+       //xxxxx
+      end;
+    //restore filter's Tag
+  end;
+begin
+  Result := '';
+  if Assigned(FFilterPanel) then
+  try
+    nDateW := '';
+    nMatchNum := 0;
+    //init data
+
+    for nIdx := FFilterPanel.ControlCount-1 downto 0 do
+    if FFilterPanel.Controls[nIdx] is TUniEdit then
+    begin
+      nActiveDate := GetDateRange(FFilterPanel.Controls[nIdx].Tag);
+      if not Assigned(nActiveDate) then Continue;
+      //not date filter
+
+      if nActiveDate.FUseMe and nActiveDate.FDefult then
+      begin
+        nActiveEdit := FFilterPanel.Controls[nIdx] as TUniEdit;
+        ParseSQLWhere(nDateW); //0.默认日期一般是索引,优先使用
+        nActiveEdit.Tag := nActiveEdit.Tag + cTagBase;
+      end;
+    end;
+
+    for nIdx := FFilterPanel.ControlCount-1 downto 0 do
+    if (FFilterPanel.Controls[nIdx].tag < cTagBase) and //
+       (FFilterPanel.Controls[nIdx] is TUniEdit) then
+    begin
+      nActiveDate := GetDateRange(FFilterPanel.Controls[nIdx].Tag);
+      if not Assigned(nActiveDate) then Continue;
+      //not date filter
+
+      if nActiveDate.FUseMe then
+      begin
+        nActiveEdit := FFilterPanel.Controls[nIdx] as TUniEdit;
+        ParseSQLWhere(nDateW); //1.日期时间便于检索数据,优先使用
+        nActiveEdit.Tag := nActiveEdit.Tag + cTagBase;
+      end;
+    end;
+
+    if nMatchNum > 1 then
+      nDateW := '(' + nDateW + ')';
+    //优先构建日期时间过滤条件
+
+    nMatchNum := 0;
+    ParseFilter(sAnd, Result); //2.处理逻辑运算: and
+    if nMatchNum > 1 then
+      Result := '(' + Result + ')';
+    //xxxxx
+
+    nMatchNum := 0;
+    nSQLW := '';
+    ParseFilter(sOR, nSQLW); //3.处理逻辑运算: or
+
+    if nSQLW <> '' then
+    begin
+      if nMatchNum > 1 then
+        nSQLW := '(' + nSQLW + ')';
+      //xxxxx
+
+      if Result = '' then
+           Result := nSQLW
+      else Result := Result + ' or ' + nSQLW;
+    end;
+
+    nMatchNum := 0;
+    nSQLW := '';
+    ParseFilter(sNot, nSQLW); //4.处理逻辑运算: not
+
+    if nSQLW <> '' then
+    begin
+      if nMatchNum > 1 then
+        nSQLW := '(' + nSQLW + ')';
+      //xxxxx
+
+      if Result = '' then
+           Result := nSQLW
+      else Result := Result + ' and ' + nSQLW;
+    end;
+
+    if nDateW <> '' then
+    begin
+      if Result = '' then
+           Result := nDateW
+      else Result := nDateW + ' and (' + Result + ')'; //优先过滤日期时间
+    end;
+  finally
+    RestoreFilter();
+  end;
 end;
 
 //------------------------------------------------------------------------------
@@ -1742,5 +1863,3 @@ initialization
 finalization
   TGridHelper.Release;
 end.
-
-
