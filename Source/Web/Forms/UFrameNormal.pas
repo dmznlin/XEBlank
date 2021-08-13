@@ -57,7 +57,7 @@ type
     function InitFormDataSQL(const nWhere: string): string; virtual;
     procedure AfterInitFormData; virtual;
     {*载入数据*}
-    procedure OnFilterData(const nData: PBindData;
+    procedure OnFilterData(const nData: PBindData; const nFilterString: string;
       const nClearFilter: Boolean); virtual;
     {*数据查询*}
   public
@@ -223,12 +223,14 @@ begin
 end;
 
 //Date: 2021-08-02
-//Parm: 表格绑定数据
-//Desc: 知行表格的查询操作
+//Parm: 表格绑定数据;查询条件;是否清空
+//Desc: 执行表格的查询操作
 procedure TfFrameNormal.OnFilterData(const nData: PBindData;
-  const nClearFilter: Boolean);
+  const nFilterString: string; const nClearFilter: Boolean);
 begin
-  FWhere := nData.FilterString;
+  if nFilterString = '' then
+       FWhere := nData.FilterString
+  else FWhere := nFilterString;
   InitFormData(FWhere);
 end;
 

@@ -1,0 +1,2 @@
+inherited fFrameUsers: TfFrameUsers
+end

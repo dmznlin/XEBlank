@@ -40,6 +40,8 @@ const
   cMenu_CollapseAll          = $07;
   cMenu_QueryFor             = $08;
   cMenu_QueryData            = $09;
+  cMenu_QuerySave            = $10;
+  cMenu_QueryLoad            = $11;
   {*菜单定义*}
 
   sEvent_DBGridHeaderPopmenu = 'DBGridHeaderPopmenu';
@@ -60,7 +62,7 @@ type
   TOnBuildMenu = reference to procedure (const nItem: TUniMenuItem);
   //自定义菜单
   PBindData = ^TBindData;
-  TOnFilterData = procedure (const nData: PBindData;
+  TOnFilterData = procedure (const nData: PBindData; const nFilterString: string;
     const nClearFilter: Boolean) of object;
   //表格过滤数据
 
@@ -95,7 +97,10 @@ type
     {*数据过滤*}
     procedure SetAllFilterDefaultText();
     procedure SetFilterDefaultText(const nEdit: TUniEdit);
-    {*设置文本*}
+    {*默认文本*}
+    function GetFilterHistoryText(): string;
+    procedure SetFilterHistoryText(const nText: string);
+    {*历史记录*}
   end;
 
   TGridHelper = class
@@ -309,7 +314,7 @@ begin
   nSub := TUniMenuItem.Create(FColumnMenu);
   with nSub do
   begin
-    Caption := '查询说明';
+    Caption := '查询方法说明';
     Tag := cMenu_QueryFor;
     ImageIndex := 4;
     nMenu.Add(nSub);
@@ -318,9 +323,34 @@ begin
   nSub := TUniMenuItem.Create(FColumnMenu);
   with nSub do
   begin
-    Caption := '当前查询';
+    Caption := '当前查询条件';
     Tag := cMenu_QueryData;
     ImageIndex := 32;
+    nMenu.Add(nSub);
+  end;
+
+  nSub := TUniMenuItem.Create(FColumnMenu);
+  with nSub do
+  begin
+    Caption := '-';
+    nMenu.Add(nSub);
+  end;
+
+  nSub := TUniMenuItem.Create(FColumnMenu);
+  with nSub do
+  begin
+    Caption := '保存查询条件';
+    Tag := cMenu_QuerySave;
+    ImageIndex := 9;
+    nMenu.Add(nSub);
+  end;
+
+  nSub := TUniMenuItem.Create(FColumnMenu);
+  with nSub do
+  begin
+    Caption := '加载查询条件';
+    Tag := cMenu_QueryLoad;
+    ImageIndex := 7;
     nMenu.Add(nSub);
   end;
 
@@ -888,6 +918,126 @@ begin
   end;
 end;
 
+//Date: 2021-08-13
+//Desc: 获取所有过滤组件的文本
+function TBindData.GetFilterHistoryText: string;
+var nStr: string;
+    nIdx: Integer;
+    nList: TStrings;
+    nDateR: PDateRange;
+begin
+  Result := '';
+  if not Assigned(FFilterPanel) then Exit;
+  //no filter control
+
+  nList := nil;
+  try
+    nList := gMG.FObjectPool.Lock(TStrings) as TStrings;
+    nList.Clear;
+
+    for nIdx:=0 to FFilterPanel.ControlCount-1 do
+     if FFilterPanel.Controls[nIdx] is TUniEdit then
+      with FFilterPanel.Controls[nIdx] as TUniEdit, TDateTimeHelper do
+      begin
+        if FEntity.FItems[Tag].FDBItem.FType in [ftDate,ftTime,ftDateTime] then
+        begin
+          nDateR := GetDateRange(Tag);
+          if Assigned(nDateR) and nDateR.FUseMe then
+          begin
+            nList.AddPair(IntToStr(Tag), FEntity.FItems[Tag].FTitle + #9 +
+              DateTime2Str(nDateR.FBegin) + #9 + DateTime2Str(nDateR.FEnd));
+            //datetime filter
+          end;
+
+          Continue;
+        end;
+
+        nStr := Trim(Text);
+        if nStr <> '' then
+          nList.AddPair(IntToStr(Tag), FEntity.FItems[Tag].FTitle + #9 + nStr);
+        //xxxxx
+      end;
+
+    if nList.Count > 0 then
+      Result := nList.Text;
+    //combine text
+  finally
+    gMG.FObjectPool.Release(nList);
+  end;
+end;
+
+//Date: 2021-08-13
+//Parm: 过滤组件文本
+//Desc: 使用nText设置过滤组件
+procedure TBindData.SetFilterHistoryText(const nText: string);
+var nStr,nTmp: string;
+    nList: TStrings;
+    nDateR: PDateRange;
+    nIdx,nPos: Integer;
+
+  //Date: 2021-08-13
+  //Parm: 标识
+  //Desc: 检索nTag的文本
+  function GetText(const nTag: string): string;
+  begin
+    Result := '';
+    nStr := nList.Values[nTag];
+    //title #9 text
+
+    if nStr <> '' then
+    begin
+      nPos := Pos(#9, nStr);
+      if nPos > 1 then
+        Result := TStringHelper.CopyNoLeft(nStr, nPos);
+      //xxxxx
+    end;
+  end;
+begin
+  if nText = '' then Exit;
+  //not filter text
+  if not Assigned(FFilterPanel) then Exit;
+  //no filter control
+
+  nList := nil;
+  try
+    nList := gMG.FObjectPool.Lock(TStrings) as TStrings;
+    nList.Text := nText;
+    //get filter data
+
+    for nIdx:=0 to FFilterPanel.ControlCount-1 do
+     if FFilterPanel.Controls[nIdx] is TUniEdit then
+      with FFilterPanel.Controls[nIdx] as TUniEdit, TDateTimeHelper do
+      begin
+        if FEntity.FItems[Tag].FDBItem.FType in [ftDate,ftTime,ftDateTime] then
+        begin
+          nDateR := GetDateRange(Tag);
+          if Assigned(nDateR) then
+          begin
+            nStr := GetText(IntToStr(Tag));
+            nPos := Pos(#9, nStr);
+            nDateR.FUseMe := (nStr <> '') and (nPos > 1);
+
+            if nDateR.FUseMe then
+            begin
+              nTmp := TStringHelper.CopyLeft(nStr, nPos - 1);
+              nDateR.FBegin := TDateTimeHelper.Str2DateTime(nTmp);
+
+              nTmp := TStringHelper.CopyNoLeft(nStr, nPos);
+              nDateR.FEnd := TDateTimeHelper.Str2DateTime(nTmp);
+              SetFilterDefaultText(FFilterPanel.Controls[nIdx] as TUniEdit);
+            end;
+          end;
+        end else
+        begin
+          Text := GetText(IntToStr(Tag));
+          //xxxxx
+        end;
+      end;
+  finally
+    gMG.FObjectPool.Release(nList);
+  end;
+end;
+
 //------------------------------------------------------------------------------
 class procedure TGridHelper.Init(const nForce: Boolean);
 begin
@@ -1260,7 +1410,6 @@ begin
           //xxxxx
         end;
 
-
         for i := 0 to nCount do
         begin
           j := nGrid.Columns[i].Tag;
@@ -1609,6 +1758,31 @@ begin
         nBind.FFilterWhere = ''), '查询条件']);
       TWebSystem.ShowModalForm('TfFormMemo', @nP);
     end;
+   cMenu_QuerySave: //保存查询条件
+    begin
+      nP.Init(cCmd_AddData).AddS([nBind.FParentControl.ClassName,
+        nBind.FDBGrid.Name, nBind.GetFilterHistoryText()]);
+      TWebSystem.ShowModalForm('TfFormFilterHistory', @nP);
+    end;
+   cMenu_QueryLoad: //载入历史查询
+    begin
+      if not Assigned(nBind.FFilterEvent) then Exit;
+      //no filter function
+
+      nP.Init(cCmd_GetData).AddS([nBind.FParentControl.ClassName,
+        nBind.FDBGrid.Name]);
+      //init param
+
+      TWebSystem.ShowModalForm('TfFormFilterHistory', @nP,
+      procedure(const nResult: Integer; const nParam: PCommandParam)
+      begin
+        if (nResult = mrOk) and nParam.IsValid(ptStr) then
+        begin
+          nBind.SetFilterHistoryText(nParam.Str[0]);
+          //apply filter data
+        end;
+      end);
+    end;
   end;
 end;
 
@@ -1656,7 +1830,7 @@ begin
     nBind.SetAllFilterDefaultText();
     //set default text
 
-    nBind.FFilterEvent(nBind, True);
+    nBind.FFilterEvent(nBind, '', True);
     //do event
   end;
 end;
@@ -1670,7 +1844,7 @@ begin
   nBind := GetBindData(Sender);
   if Assigned(nBind) and Assigned(nBind.FFilterEvent) then
   begin
-    nBind.FFilterEvent(nBind, False);
+    nBind.FFilterEvent(nBind, '', False);
     //do event
   end;
 end;

@@ -527,10 +527,9 @@ begin
 
     ShowModal(
       procedure(Sender: TComponent; nModalResult:Integer)
-      var nData: TCommandParam;
       begin
-        if Assigned(nResult) and GetData(nData) then
-          nResult(nModalResult, @nData);
+        if Assigned(nResult) then
+          nResult(nModalResult, GetData());
         //xxxxx
       end);
   end;

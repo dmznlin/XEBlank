@@ -50,7 +50,7 @@ type
     class function DescMe: TfFormDesc; virtual;
     {*窗体描述*}
     function SetData(const nData: PCommandParam): Boolean; virtual;
-    function GetData(var nData: TCommandParam): Boolean; virtual;
+    function GetData(): PCommandParam; virtual;
     {*读写参数*}
   end;
 
@@ -128,11 +128,10 @@ begin
 end;
 
 //Date: 2021-04-27
-//Parm: 参数
 //Desc: 读取窗体的数据,存入nData中
-function TfFormBase.GetData(var nData: TCommandParam): Boolean;
+function TfFormBase.GetData(): PCommandParam;
 begin
-  Result := True;
+  Result := @FParam;
 end;
 
 //Desc: 验证Sender的数据是否正确,返回提示内容
