@@ -166,6 +166,15 @@ object fFormLogin: TfFormLogin
         OnClick = MenuLogClick
       end
     end
+    object N4: TUniMenuItem
+      Caption = #24320#21457#24037#20855#31665
+      ImageIndex = 13
+      object MenuFmtTxt: TUniMenuItem
+        Caption = #25991#26412#26684#24335#21270
+        ImageIndex = 32
+        OnClick = MenuFmtTxtClick
+      end
+    end
   end
   object FSToast1: TUniFSToast
     TitleSize = 13

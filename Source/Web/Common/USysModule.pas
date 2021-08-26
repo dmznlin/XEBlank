@@ -12,7 +12,7 @@ uses
   USysDB, USysMenu, UFormEncrypt, UFormInitDB, UFormInitMenus, UFormEditSysMenu,
   UFormMemStatus, UFormRunLog, UFormSwitchLang, UFormChangePwd, UFormDynPwd,
   UFormInitDataDict, UFormEditDataDict, UFrameSyslog, UFormMemo, UFormDateFilter,
-  UFrameUsers, UFormFilterHistory;
+  UFrameUsers, UFormFilterHistory, UFormFormatText, UFrameOrganization;
 
 implementation
 

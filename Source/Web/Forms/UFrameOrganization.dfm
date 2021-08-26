@@ -1,0 +1,2 @@
+inherited fFrameOrganization: TfFrameOrganization
+end

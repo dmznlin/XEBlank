@@ -36,6 +36,8 @@ type
     MenuSatus: TUniMenuItem;
     MenuLog: TUniMenuItem;
     MenuInitDD: TUniMenuItem;
+    N4: TUniMenuItem;
+    MenuFmtTxt: TUniMenuItem;
     procedure UniLoginFormCreate(Sender: TObject);
     procedure BtnOKClick(Sender: TObject);
     procedure MenuDESClick(Sender: TObject);
@@ -45,6 +47,7 @@ type
     procedure MenuSatusClick(Sender: TObject);
     procedure MenuLogClick(Sender: TObject);
     procedure MenuInitDDClick(Sender: TObject);
+    procedure MenuFmtTxtClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -149,6 +152,12 @@ begin
         TWebSystem.ShowModalForm('TfFormRunLog');
       //xxxxx
     end, Self);
+end;
+
+//Desc: 格式化开发文本
+procedure TfFormLogin.MenuFmtTxtClick(Sender: TObject);
+begin
+  TWebSystem.ShowModalForm('TfFormFormatTxt');
 end;
 
 //Desc: 退出
