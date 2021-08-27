@@ -590,6 +590,16 @@ var nSQLW,nDateW: string;
     if nSymbol = sNot then Result :=' and not ' else Result := '';
   end;
 
+  //Date: 2021-08-27
+  //Parm: 字典的数据库配置
+  //Desc: 依据nDBItem构建查询字段
+  function MakeField(const nDBItem: PDictDBItem): string;
+  begin
+    if nDBItem.FFieldQry = '' then
+         Result := nDBItem.FField
+    else Result := nDBItem.FFieldQry;
+  end;
+
   //Date: 2021-08-12
   //Parm: 默认连接符
   //Desc: 构建当前选中组件的Where条件
@@ -638,8 +648,8 @@ var nSQLW,nDateW: string;
       begin
         nTmp := CopyLeft(nArray[i], 1);
         if StrArrayIndex(nTmp, [sEqual, sGreater, sSmaller]) < 0 then
-             Result := Result + FDBItem.FField + '=' + nArray[i]
-        else Result := Result + FDBItem.FField + nArray[i];
+             Result := Result + MakeField(@FDBItem) + '=' + nArray[i]
+        else Result := Result + MakeField(@FDBItem) + nArray[i];
       end else
       begin
         nTmp := CopyLeft(nArray[i], 1);
@@ -649,7 +659,7 @@ var nSQLW,nDateW: string;
           if nPos > 1 then
           begin
             nArray[i] := TrimLeft(CopyNoLeft(nArray[i], nPos));
-            Result := Result + FDBItem.FField + '<>''' + nArray[i] + '''';
+            Result := Result + MakeField(@FDBItem) + '<>''' + nArray[i] + '''';
           end;
         end else
 
@@ -657,17 +667,17 @@ var nSQLW,nDateW: string;
         begin
           nArray[i] := TrimLeft(CopyNoLeft(nArray[i], 1));
           if nArray[i] = '' then Exit;
-          Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
+          Result := Result + MakeField(@FDBItem) + '=''' + nArray[i] + '''';
         end else
 
         if (Pos(sCharMulti, nArray[i]) > 0) or
            (Pos(sCharSingle, nArray[i]) > 0) or
            (Pos(sCharArray[2], nArray[i]) > Pos(sCharArray[1], nArray[i])) then
         begin
-          Result := Result + FDBItem.FField + ' Like ''' + nArray[i] + '''';
+          Result := Result + MakeField(@FDBItem) + ' Like ''' + nArray[i] + '''';
         end else
         begin
-          Result := Result + FDBItem.FField + '=''' + nArray[i] + '''';
+          Result := Result + MakeField(@FDBItem) + '=''' + nArray[i] + '''';
           //default
         end;
       end;
@@ -688,10 +698,13 @@ var nSQLW,nDateW: string;
            nStr := ''
       else nStr := ' and ';
 
-      with FEntity.FItems[nActiveEdit.Tag].FDBItem, TDateTimeHelper do
+      with FEntity.FItems[nActiveEdit.Tag], TDateTimeHelper do
       begin
-        nTmp := FField + '>=''%s'' and ' + FField + '<''%s''';
-        case FType of
+        nTmp := MakeField(@FDBItem) + '>=''%s'' and ' +
+                MakeField(@FDBItem) + '<''%s''';
+        //xxxxx
+
+        case FDBItem.FType of
          ftDate:
           nTmp := Format(nTmp, [Date2Str(nActiveDate.FBegin),
                                 Date2Str(nActiveDate.FEnd)]);

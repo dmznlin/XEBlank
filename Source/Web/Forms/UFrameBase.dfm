@@ -15,9 +15,5 @@ object fFrameBase: TfFrameBase
     ParentColor = False
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 200
-    ExplicitTop = 128
-    ExplicitWidth = 256
-    ExplicitHeight = 128
   end
 end

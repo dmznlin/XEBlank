@@ -18,6 +18,7 @@ type
   public
     { Public declarations }
     class function DescMe: TfFrameDesc; override;
+    function InitFormDataSQL(const nWhere: string): string; override;
   end;
 
 implementation
@@ -44,8 +45,24 @@ end;
 class function TfFrameOrganization.DescMe: TfFrameDesc;
 begin
   Result := inherited DescMe;
-  Result.FDesc := '系统操作日志';
-  Result.FDataDict.FTables := sTable_SysLog;
+  Result.FDesc := '单位组织架构';
+  Result.FDataDict.FTables := sTable_Organization;
+
+  Result.FDataDict.
+    AddMemo('所有查询字段需添加"t."前缀').
+    AddMemo('字段 O_PName 内部名称为 a.O_Name');
+  //添加备注
+end;
+
+function TfFrameOrganization.InitFormDataSQL(const nWhere: string): string;
+begin
+  Result := 'Select t.*,a.O_Name as O_PName From %s t ' +
+            'Left Join %s a On t.O_Parent=a.O_ID';
+  Result := Format(Result, [sTable_Organization, sTable_Organization]);
+
+  if nWhere <> '' then
+    Result := Result + ' Where ' + nWhere;
+  //xxxxx
 end;
 
 initialization

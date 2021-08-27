@@ -102,7 +102,9 @@ inherited fFormEditDataDict: TfFormEditDataDict
             Left = 250
             Top = 35
             Width = 220
-            Hint = ''
+            Hint = #38145#23450#30340#21015#22266#23450#22312#34920#26684#24038#20391','#19981#21463#27700#24179#28378#21160#26465#24433#21709
+            ShowHint = True
+            ParentShowHint = False
             Text = ''
             TabOrder = 5
             FieldLabel = #26159#21542#38145#23450
@@ -113,7 +115,9 @@ inherited fFormEditDataDict: TfFormEditDataDict
             Left = 250
             Top = 5
             Width = 220
-            Hint = ''
+            Hint = #20351#29992#22797#36873#26694','#25110#25353'Ctrl'#38190#36873#25321#22810#26465#35760#24405
+            ShowHint = True
+            ParentShowHint = False
             Text = ''
             TabOrder = 4
             FieldLabel = #26159#21542#22810#36873
@@ -175,21 +179,26 @@ inherited fFormEditDataDict: TfFormEditDataDict
             FieldLabel = #23383#27573#23485#24230
             FieldLabelWidth = 58
           end
-          object EditPre: TUniEdit
+          object EditFieldQry: TUniEdit
             Left = 250
             Top = 35
             Width = 220
-            Hint = ''
+            Hint = #29992#20110'SQL'#26597#35810#30340#20869#37096#25968#25454#24211#23383#27573','#21487#29992#20110#26500#24314'where'#35821#21477
+            ShowHint = True
+            ParentShowHint = False
+            MaxLength = 32
             Text = ''
             TabOrder = 5
-            FieldLabel = #23567#25968#20301
+            FieldLabel = #26597#35810#23383#27573
             FieldLabelWidth = 58
           end
           object EditField: TUniComboBox
             Left = 5
             Top = 35
             Width = 220
-            Hint = ''
+            Hint = #29992#20110#21069#31471#26174#31034#30340#25968#25454#38598'(dataset)'#23383#27573
+            ShowHint = True
+            ParentShowHint = False
             MaxLength = 32
             Text = ''
             TabOrder = 2
@@ -509,6 +518,19 @@ inherited fFormEditDataDict: TfFormEditDataDict
         Images = UniMainModule.SmallImages
         ImageIndex = 12
         OnClick = BtnLoadClick
+      end
+      object BtnMemo: TUniButton
+        Left = 651
+        Top = 5
+        Width = 75
+        Height = 25
+        Hint = ''
+        Caption = #23383#20856#35828#26126
+        Anchors = [akTop, akRight]
+        TabOrder = 4
+        Images = UniMainModule.SmallImages
+        ImageIndex = 21
+        OnClick = BtnMemoClick
       end
     end
   end

@@ -38,7 +38,7 @@ type
     EditGType: TUniComboBox;
     EditGPos: TUniComboBox;
     EditFWidth: TUniEdit;
-    EditPre: TUniEdit;
+    EditFieldQry: TUniEdit;
     EditMemo: TUniEdit;
     EditField: TUniComboBox;
     PanelDBottom: TUniSimplePanel;
@@ -57,6 +57,7 @@ type
     EditMulti: TUniComboBox;
     EditQuery: TUniComboBox;
     EditQDefault: TUniComboBox;
+    BtnMemo: TUniButton;
     procedure BtnUpClick(Sender: TObject);
     procedure BtnAddClick(Sender: TObject);
     procedure BtnDelClick(Sender: TObject);
@@ -65,6 +66,7 @@ type
     procedure BtnReloeadClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
     procedure BtnLoadClick(Sender: TObject);
+    procedure BtnMemoClick(Sender: TObject);
   private
     { Private declarations }
     FEntity: TDictEntity;
@@ -92,7 +94,8 @@ implementation
 
 {$R *.dfm}
 uses
-  Vcl.StdCtrls, Data.DB, kbmMemTable, UManagerGroup, UGridHelper, USysBusiness;
+  Vcl.StdCtrls, Data.DB, kbmMemTable, UManagerGroup, UGridHelper,
+  USysBusiness, USysConst;
 
 const
   cDel = #9;
@@ -263,8 +266,9 @@ begin
   begin
     BtnLoad.Enabled := False;
     EditEntity.ReadOnly := True;
-
     FEntity := PDictEntity(nData.Ptr[0])^;
+
+    BtnMemo.Visible := FEntity.FMemo <> '';
     SetLength(FEntity.FItems, Length(FEntity.FItems)); //申请新空间
     LoadEntityItems();
   end;
@@ -286,6 +290,15 @@ begin
       Items.EndUpdate;
     end;
   end;
+end;
+
+//Date: 2021-08-27
+//Desc: 显示字典说明
+procedure TfFormEditDataDict.BtnMemoClick(Sender: TObject);
+var nP: TCommandParam;
+begin
+  nP.Init(cCmd_ViewData).AddS([FEntity.FMemo, '字典说明']);
+  TWebSystem.ShowModalForm('TfFormMemo', @nP);
 end;
 
 //Date: 2021-07-16
@@ -382,7 +395,7 @@ begin
     EditField.Text      := FDBItem.FField;
     EditFType.ItemIndex := Ord(FDBItem.FType);
     EditFWidth.Text     := IntToStr(FDBItem.FWidth);
-    EditPre.Text        := IntToStr(FDBItem.FDecimal);
+    EditFieldQry.Text   := FDBItem.FFieldQry;
 
     if FDBItem.FIsKey then
          EditKey.ItemIndex := 1
@@ -586,7 +599,7 @@ begin
     FDBItem.FField := EditField.Text;
     FDBItem.FType := TFieldType(EditFType.ItemIndex);
     FDBItem.FWidth := StrToInt(EditFWidth.Text);
-    FDBItem.FDecimal := StrToInt(EditPre.Text);
+    FDBItem.FFieldQry := EditFieldQry.Text;
     FDBItem.FIsKey := EditKey.ItemIndex = 1;
 
     FFormat.FStyle := TDictFormatStyle(EditStype.ItemIndex);

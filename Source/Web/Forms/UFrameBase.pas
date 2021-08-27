@@ -25,11 +25,19 @@ type
   TfFrameBase = class;
   TfFrameClass = class of TfFrameBase;
 
+  PfFrameDict = ^TfFrameDict;
   TfFrameDict = record
     FEntity        : string;                         //字典实体标识
     FTables        : string;                         //涉及的表名称
     FFields        : string;                         //涉及的字段名称
     FExclude       : Boolean;                        //字段的使用方法(排除or仅包含)
+    FMemo          : TArray<string>;                 //字典备注信息
+  public
+    function AddMemo(const nMemo: string): PfFrameDict;
+    {*新增备注*}
+    function MemoToText(const nTag: string = #13#10): string;
+    function MemoToHTML: string;
+    {*备注内容*}
   end;
 
   TfFrameDesc = record
@@ -74,6 +82,57 @@ implementation
 uses
   UManagerGroup, USysBusiness;
 
+//Date: 2021-08-27
+//Parm: 备注
+//Desc: 新增备注
+function TfFrameDict.AddMemo(const nMemo: string): PfFrameDict;
+var nIdx: Integer;
+begin
+  Result := @Self;
+  //return self address
+
+  nIdx := Length(FMemo);
+  SetLength(FMemo, nIdx + 1);
+  FMemo[nIdx] := nMemo;
+end;
+
+//Date: 2021-08-27
+//Parm: 分隔符
+//Desc: 拼接备注字符串
+function TfFrameDict.MemoToText(const nTag: string): string;
+var nIdx: Integer;
+begin
+  Result := '';
+  for nIdx := Low(FMemo) to High(FMemo) do
+  begin
+    if Result = '' then
+         Result := FMemo[nIdx]
+    else Result := Result + nTag + FMemo[nIdx];
+  end;
+end;
+
+//Date: 2021-08-27
+//Desc: 备注转html代码
+function TfFrameDict.MemoToHTML: string;
+var nIdx,nH: Integer;
+begin
+  Result := '';
+  nH := High(FMemo);
+
+  for nIdx := Low(FMemo) to nH do
+  begin
+    if Result = '' then
+         Result := '<ol><font size="3" face="courier new"><li>' + FMemo[nIdx] +
+                   '</li>' //项目符号: 1 2 3...
+    else Result := Result + '<li>' + FMemo[nIdx] + '</li>';
+
+    if nIdx >= nH then
+      Result := Result + '</font></ol>';
+    //xxxxx
+  end;
+end;
+
+//------------------------------------------------------------------------------
 procedure TfFrameBase.UniFrameCreate(Sender: TObject);
 var nIni: TIniFile;
 begin

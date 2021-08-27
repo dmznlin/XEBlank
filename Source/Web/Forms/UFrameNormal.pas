@@ -131,6 +131,8 @@ procedure TfFrameNormal.OnLoadGridConfig(const nIni: TIniFile);
 begin
   if FDataDict.FEntity = '' then Exit;
   //没有字典数据
+  FDataDict.FMemo := DescMe.FDataDict.MemoToHTML();
+  //字典描述信息,用于辅助编辑字典数据
 
   with TGridHelper.BindData(DBGridMain)^ do
   begin
