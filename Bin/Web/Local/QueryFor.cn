@@ -1,0 +1,22 @@
+<h2>命令格式: 连接符,条件1,...,条件n</h2>
+<h3>1.格式说明:</h3>
+<h4>
+	<ul>
+		<li>连接符: and, or, not</li>
+		<li>分隔符: 英文(半角)逗号</li>
+		<li>条件: 字符串(Lucy),数值(123),比较符(<,=,>,<>),模糊查询(%)</li>
+		<li>通配符: 任意多个字符(%),仅单个字符(_),字符组([ABZ])</li>
+	</ul>
+</h4>
+<h3>2.查询举例:</h3>
+<h4>
+	<ul>
+		<li>Lucy,Lily: 查询Lucy和Lily</li>
+		<li>Lucy,or Lily: 查询Lucy或Lily</li>
+		<li>not,Lucy: 查询不包含Lucy</li>
+		<li>not,Lucy,Lily: 查询不包含Lucy和Lily</li>
+		<li>L%y: 以L开头y结尾的数据
+		<li>L_ly: 以L开头ly结尾的4字符数据
+		<li>>10,<20: 查询大于10,小于20</li>
+	</ul>
+</h4>

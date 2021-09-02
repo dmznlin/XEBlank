@@ -65,6 +65,10 @@ begin
     if FileExists(FActive.FFavicon) then
       Favicon.LoadFromFile(FActive.FFavicon);
     //收藏夹图标
+
+    if FileExists(gPath + sLocalDir + 'userCSS.css') then
+      CustomFiles.Add(sLocalDir + 'userCSS.css');
+    //自定义样式
   end;
 
   AutoCoInitialize := True;

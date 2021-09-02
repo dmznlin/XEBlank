@@ -28,6 +28,7 @@ inherited fFrameNormal: TfFrameNormal
       Border = True
       Align = alTop
       TabOrder = 2
+      LayoutConfig.BodyCls = 'x-panel-border-topbottom'
     end
     object ToolBarMain: TUniToolBar
       Left = 0

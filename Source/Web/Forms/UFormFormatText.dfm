@@ -10,43 +10,24 @@ inherited fFormFormatTxt: TfFormFormatTxt
   inherited PanelWork: TUniSimplePanel
     Width = 522
     Height = 258
+    Border = True
     ExplicitWidth = 522
     ExplicitHeight = 258
-    object EditFormat: TUniMemo
-      Left = 0
-      Top = 143
-      Width = 522
-      Height = 115
-      Hint = ''
-      ScrollBars = ssBoth
-      Align = alClient
-      TabOrder = 1
-      EmptyText = #26684#24335#21270#25991#26412
-    end
-    object EditNormal: TUniMemo
-      Left = 0
-      Top = 0
-      Width = 522
-      Height = 105
-      Hint = ''
-      ScrollBars = ssBoth
-      Align = alTop
-      TabOrder = 2
-      EmptyText = #21407#22987#25991#26412
-    end
     object PanelT: TUniSimplePanel
       Left = 0
-      Top = 111
+      Top = 114
       Width = 522
       Height = 32
       Hint = ''
       ParentColor = False
+      Border = True
       Align = alTop
       AlignmentControl = uniAlignmentClient
       ParentAlignmentControl = False
       TabOrder = 3
       Layout = 'hbox'
       LayoutAttribs.Pack = 'center'
+      LayoutConfig.BodyCls = 'x-panel-border-bottom'
       object EditBlank: TUniNumberEdit
         Left = 2
         Top = 5
@@ -104,9 +85,9 @@ inherited fFormFormatTxt: TfFormFormatTxt
         OnClick = BtnFormatClick
       end
     end
-    object UniSplitter1: TUniSplitter
+    object Splitter1: TUniSplitter
       Left = 0
-      Top = 105
+      Top = 108
       Width = 522
       Height = 6
       Cursor = crVSplit
@@ -114,6 +95,31 @@ inherited fFormFormatTxt: TfFormFormatTxt
       Align = alTop
       ParentColor = False
       Color = clBtnFace
+    end
+    object EditNormal: TUniSyntaxEdit
+      Left = 0
+      Top = 0
+      Width = 522
+      Height = 108
+      Hint = ''
+      Lines.Strings = (
+        #21407#22987#25991#26412)
+      Language = 'SQL'
+      Font.Charset = GB2312_CHARSET
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Align = alTop
+    end
+    object EditFormat: TUniSyntaxEdit
+      Left = 0
+      Top = 146
+      Width = 522
+      Height = 112
+      Hint = ''
+      Font.Charset = GB2312_CHARSET
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Align = alClient
     end
   end
 end

@@ -8,20 +8,20 @@ interface
 
 uses
   System.SysUtils, System.Classes, Vcl.Controls, Vcl.Forms, System.IniFiles,
-  UFormBase, uniGUIBaseClasses, uniGUIClasses, uniButton, uniMemo, uniPanel,
-  uniSplitter, uniCheckBox, uniEdit;
+  UFormBase, uniGUIBaseClasses, uniGUIClasses, uniSyntaxEditorBase,
+  uniSyntaxEditor, uniSplitter, uniButton, uniCheckBox, uniEdit, uniPanel;
 
 type
   TfFormFormatTxt = class(TfFormBase)
-    EditFormat: TUniMemo;
-    EditNormal: TUniMemo;
     PanelT: TUniSimplePanel;
-    UniSplitter1: TUniSplitter;
+    Splitter1: TUniSplitter;
     BtnFormat: TUniButton;
     EditBlank: TUniNumberEdit;
     BtnNormal: TUniButton;
     Check2: TUniCheckBox;
     EditEnt: TUniEdit;
+    EditNormal: TUniSyntaxEdit;
+    EditFormat: TUniSyntaxEdit;
     procedure BtnFormatClick(Sender: TObject);
     procedure BtnNormalClick(Sender: TObject);
   private
@@ -56,9 +56,16 @@ var nInt: Integer;
 begin
   if nLoad then
   begin
-    EditNormal.Clear;
-    EditFormat.Clear;
-    //init first
+    with Splitter1.JSInterface do
+    begin
+      JSConfig('border', [true]);
+      JSConfig('bodyBorder', [True]);
+      //enable border
+
+      JSCall('addCls', ['x-panel-border-topbottom']);
+      JSCall('setStyle', ['border-style', 'solid none dashed none']);
+      //border style
+    end;
 
     nInt := nIni.ReadInteger(Name, 'NormalHeight', 0);
     if nInt > 100 then

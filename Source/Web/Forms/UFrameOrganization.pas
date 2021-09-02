@@ -16,7 +16,6 @@ type
   TfFrameOrganization = class(TfFrameNormal)
     TreeUnits: TUniTreeView;
     Splitter1: TUniSplitter;
-    PanelLine: TUniSimplePanel;
   private
     { Private declarations }
   public
@@ -69,8 +68,16 @@ begin
   if nLoad then
   begin
     TreeUnits.BorderStyle := ubsNone;
-    //DBGridMain.BorderStyle := ubsDefault;
-    //reset border
+    with Splitter1.JSInterface do
+    begin
+      JSConfig('border', [true]);
+      JSConfig('bodyBorder', [True]);
+      //enable border
+
+      JSCall('addCls', ['x-panel-border-leftright']);
+      JSCall('setStyle', ['border-style', 'none solid none dashed']);
+      //border style
+    end;
 
     nInt := nIni.ReadInteger(Name, 'TreeWidth', 0);
     if nInt > 135 then
