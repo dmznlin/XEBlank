@@ -7,18 +7,23 @@ unit UFrameOrganization;
 interface
 
 uses
-  System.SysUtils, System.Variants, System.Classes, UFrameNormal, UFrameBase,
-  Datasnap.DBClient, uniToolBar, uniPanel, uniGUIClasses, uniBasicGrid,
-  uniDBGrid, Vcl.Controls, Vcl.Forms, uniGUIBaseClasses, Data.DB, kbmMemTable;
+  System.SysUtils, System.Variants, System.Classes, System.IniFiles,
+  UFrameNormal, UFrameBase, uniGUITypes, uniSplitter, uniTreeView, Data.DB,
+  kbmMemTable, uniToolBar, uniPanel, uniGUIClasses, uniBasicGrid, uniDBGrid,
+  Vcl.Controls, Vcl.Forms, uniGUIBaseClasses;
 
 type
   TfFrameOrganization = class(TfFrameNormal)
+    TreeUnits: TUniTreeView;
+    Splitter1: TUniSplitter;
+    PanelLine: TUniSimplePanel;
   private
     { Private declarations }
   public
     { Public declarations }
     class function DescMe: TfFrameDesc; override;
     function InitFormDataSQL(const nWhere: string): string; override;
+    procedure DoFrameConfig(nIni: TIniFile; const nLoad: Boolean); override;
   end;
 
 implementation
@@ -52,6 +57,29 @@ begin
     AddMemo('所有查询字段需添加"t."前缀').
     AddMemo('字段 O_PName 内部名称为 a.O_Name');
   //添加备注
+end;
+
+procedure TfFrameOrganization.DoFrameConfig(nIni: TIniFile;
+  const nLoad: Boolean);
+var nInt: Integer;
+begin
+  inherited DoFrameConfig(nIni, nLoad);
+  //do parent
+
+  if nLoad then
+  begin
+    TreeUnits.BorderStyle := ubsNone;
+    //DBGridMain.BorderStyle := ubsDefault;
+    //reset border
+
+    nInt := nIni.ReadInteger(Name, 'TreeWidth', 0);
+    if nInt > 135 then
+      TreeUnits.Width := nInt;
+    //xxxxx
+  end else
+  begin
+    nIni.WriteInteger(Name, 'TreeWidth', TreeUnits.Width);
+  end;
 end;
 
 function TfFrameOrganization.InitFormDataSQL(const nWhere: string): string;

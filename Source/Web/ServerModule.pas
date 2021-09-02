@@ -52,9 +52,16 @@ begin
   begin
     Title := FActive.FTitleApp;
     //程序标题
+
+    if FActive.FExtRoot <> '' then
+      ExtRoot := FActive.FExtRoot;
+    //前端脚本路径
+    if FActive.FUniRoot <> '' then
+      UniRoot := FActive.FUniRoot;
+    //框架脚本路径
+
     Port := FActive.FPort;
     //服务端口
-
     if FileExists(FActive.FFavicon) then
       Favicon.LoadFromFile(FActive.FFavicon);
     //收藏夹图标
@@ -69,8 +76,15 @@ begin
   gMG.FLogManager.StartService();
   //启动日志服务
 
-  gMG.FMenuManager.LoadLanguage();
-  //载入多语言列表
+  try
+    gMG.FMenuManager.LoadLanguage();
+    //载入多语言列表
+  except
+    on nErr: Exception do
+    begin
+      gMG.FLogManager.AddLog(TUniServerModule, 'ServerModule', nErr.Message);
+    end;
+  end;
 end;
 
 procedure TUniServerModule.UniGUIServerModuleBeforeShutdown(Sender: TObject);

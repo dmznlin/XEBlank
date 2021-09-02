@@ -1,20 +1,16 @@
 inherited fFrameNormal: TfFrameNormal
-  Width = 772
-  Height = 495
-  ExplicitWidth = 772
-  ExplicitHeight = 495
+  Width = 570
+  Height = 353
+  ExplicitWidth = 570
+  ExplicitHeight = 353
   inherited PanelWork: TUniContainerPanel
-    Width = 772
-    Height = 495
-    ExplicitLeft = 0
-    ExplicitTop = 0
-    ExplicitWidth = 772
-    ExplicitHeight = 495
+    Width = 570
+    Height = 353
     object DBGridMain: TUniDBGrid
       Left = 0
-      Top = 45
-      Width = 772
-      Height = 450
+      Top = 41
+      Width = 570
+      Height = 312
       Hint = ''
       DataSource = DataSource1
       Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgRowSelect, dgConfirmDelete, dgAutoRefreshRow]
@@ -24,8 +20,8 @@ inherited fFrameNormal: TfFrameNormal
     end
     object PanelQuick: TUniSimplePanel
       Left = 0
-      Top = 42
-      Width = 772
+      Top = 38
+      Width = 570
       Height = 3
       Hint = ''
       ParentColor = False
@@ -33,14 +29,14 @@ inherited fFrameNormal: TfFrameNormal
       Align = alTop
       TabOrder = 2
     end
-    object UniToolBar1: TUniToolBar
+    object ToolBarMain: TUniToolBar
       Left = 0
       Top = 0
-      Width = 772
-      Height = 42
+      Width = 570
+      Height = 38
       Hint = ''
-      ButtonHeight = 40
-      ButtonWidth = 82
+      ButtonHeight = 36
+      ButtonWidth = 67
       Images = UniMainModule.SmallImages
       ShowCaptions = True
       TabOrder = 3
@@ -55,7 +51,7 @@ inherited fFrameNormal: TfFrameNormal
         TabOrder = 1
       end
       object BtnEdit: TUniToolButton
-        Left = 82
+        Left = 67
         Top = 0
         Hint = ''
         ImageIndex = 2
@@ -63,7 +59,7 @@ inherited fFrameNormal: TfFrameNormal
         TabOrder = 2
       end
       object BtnDel: TUniToolButton
-        Left = 164
+        Left = 134
         Top = 0
         Hint = ''
         ImageIndex = 3
@@ -71,7 +67,7 @@ inherited fFrameNormal: TfFrameNormal
         TabOrder = 3
       end
       object BtnS1: TUniToolButton
-        Left = 246
+        Left = 201
         Top = 0
         Width = 8
         Hint = ''
@@ -80,7 +76,7 @@ inherited fFrameNormal: TfFrameNormal
         TabOrder = 4
       end
       object BtnRefresh: TUniToolButton
-        Left = 254
+        Left = 209
         Top = 0
         Hint = ''
         ImageIndex = 20
@@ -90,7 +86,7 @@ inherited fFrameNormal: TfFrameNormal
         OnClick = BtnRefreshClick
       end
       object BtnS2: TUniToolButton
-        Left = 336
+        Left = 276
         Top = 0
         Width = 8
         Hint = ''
@@ -99,7 +95,7 @@ inherited fFrameNormal: TfFrameNormal
         TabOrder = 9
       end
       object BtnPrint: TUniToolButton
-        Left = 344
+        Left = 284
         Top = 0
         Hint = ''
         ImageIndex = 10
@@ -107,7 +103,7 @@ inherited fFrameNormal: TfFrameNormal
         TabOrder = 6
       end
       object BtnPreview: TUniToolButton
-        Left = 426
+        Left = 351
         Top = 0
         Hint = ''
         ImageIndex = 4
@@ -115,7 +111,7 @@ inherited fFrameNormal: TfFrameNormal
         TabOrder = 7
       end
       object BtnExport: TUniToolButton
-        Left = 508
+        Left = 418
         Top = 0
         Hint = ''
         ImageIndex = 9
@@ -124,7 +120,7 @@ inherited fFrameNormal: TfFrameNormal
         OnClick = BtnExportClick
       end
       object BtnS3: TUniToolButton
-        Left = 590
+        Left = 485
         Top = 0
         Width = 8
         Hint = ''
@@ -133,7 +129,7 @@ inherited fFrameNormal: TfFrameNormal
         TabOrder = 10
       end
       object BtnExit: TUniToolButton
-        Left = 598
+        Left = 493
         Top = 0
         Hint = ''
         ImageIndex = 19

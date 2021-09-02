@@ -17,7 +17,7 @@ type
     DataSource1: TDataSource;
     DBGridMain: TUniDBGrid;
     PanelQuick: TUniSimplePanel;
-    UniToolBar1: TUniToolBar;
+    ToolBarMain: TUniToolBar;
     BtnAdd: TUniToolButton;
     BtnEdit: TUniToolButton;
     BtnDel: TUniToolButton;

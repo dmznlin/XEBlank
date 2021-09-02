@@ -754,4 +754,27 @@ object UniMainModule: TUniMainModule
     Left = 160
     Top = 24
   end
+  object ExporterXLS: TUniGridExcelExporter
+    FileExtention = 'xlsx'
+    MimeType = 
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.shee' +
+      't'
+    CharSet = 'UTF-8'
+    Left = 40
+    Top = 88
+  end
+  object ExporterXML: TUniGridXMLExporter
+    FileExtention = 'xml'
+    MimeType = 'text/xml'
+    CharSet = 'UTF-8'
+    Left = 112
+    Top = 88
+  end
+  object ExporterHTML: TUniGridHTMLExporter
+    FileExtention = 'html'
+    MimeType = 'text/html'
+    CharSet = 'UTF-8'
+    Left = 184
+    Top = 88
+  end
 end

@@ -9,7 +9,7 @@ interface
 uses
   SysUtils, Classes, Controls, UDBFun, uniGUITypes, uniGUIDialogs, uniGUIForm,
   uniGUIMainModule, UniFSToast, UniFSConfirm, uniImageList, System.ImageList,
-  Vcl.ImgList, uniGUIBaseClasses, uniGUIClasses;
+  Vcl.ImgList, uniGUIBaseClasses, uniGUIClasses, uniGridExporters, uniBasicGrid;
 
 type
   TButtonClickType = (ctYes, ctNo, ctCancel);
@@ -23,6 +23,9 @@ type
     MidImage: TUniNativeImageList;
     BigImages: TUniNativeImageList;
     ImagesAdapter1: TUniImageListAdapter;
+    ExporterXLS: TUniGridExcelExporter;
+    ExporterXML: TUniGridXMLExporter;
+    ExporterHTML: TUniGridHTMLExporter;
     procedure UniGUIMainModuleCreate(Sender: TObject);
   private
     { Private declarations }

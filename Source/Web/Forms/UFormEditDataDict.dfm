@@ -160,7 +160,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
           end
           object EditKey: TUniComboBox
             Left = 250
-            Top = 65
+            Top = 95
             Width = 220
             Hint = ''
             Text = ''
@@ -170,8 +170,8 @@ inherited fFormEditDataDict: TfFormEditDataDict
             IconItems = <>
           end
           object EditFWidth: TUniEdit
-            Left = 250
-            Top = 5
+            Left = 5
+            Top = 95
             Width = 220
             Hint = ''
             Text = ''
@@ -207,8 +207,8 @@ inherited fFormEditDataDict: TfFormEditDataDict
             IconItems = <>
           end
           object EditQuery: TUniComboBox
-            Left = 5
-            Top = 95
+            Left = 250
+            Top = 5
             Width = 220
             Hint = ''
             Text = ''
@@ -219,9 +219,11 @@ inherited fFormEditDataDict: TfFormEditDataDict
           end
           object EditQDefault: TUniComboBox
             Left = 250
-            Top = 95
+            Top = 65
             Width = 220
-            Hint = ''
+            Hint = #38500#38750#29992#25143#21462#28040','#26597#35810#26102#40664#35748#36807#28388#35813#23383#27573#30340#25968#25454
+            ShowHint = True
+            ParentShowHint = False
             Text = ''
             TabOrder = 8
             FieldLabel = #40664#35748#26597#35810':'
@@ -520,7 +522,7 @@ inherited fFormEditDataDict: TfFormEditDataDict
         OnClick = BtnLoadClick
       end
       object BtnMemo: TUniButton
-        Left = 651
+        Left = 657
         Top = 5
         Width = 75
         Height = 25
