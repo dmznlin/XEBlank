@@ -123,6 +123,17 @@ begin
     StatusBar1.SimpleText := nStr;
   end;
 
+  with SplitterLeft.JSInterface do
+  begin
+    JSConfig('border', [true]);
+    JSConfig('bodyBorder', [True]);
+    //enable border
+
+    JSCall('addCls', ['x-panel-border-left']);
+    JSCall('setStyle', ['border-style', 'none none none solid']);
+    //border style
+  end;
+
   with TWebSystem.UserConfigFile do
   try
     nInt := ReadInteger(Name, 'PanelLeft', 200);
@@ -203,6 +214,8 @@ begin
       begin
         Parent := nPanel;
         Align := alClient;
+        BorderStyle := ubsNone;
+
         Images := SmallImages;
         OnMouseDown := OnMenuMouseDown;
         OnDblClick := OnMenuItemDblClick;

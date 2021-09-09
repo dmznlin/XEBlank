@@ -110,16 +110,25 @@ inherited fFormFormatTxt: TfFormFormatTxt
       Font.Name = #23435#20307
       Align = alTop
     end
-    object EditFormat: TUniSyntaxEdit
+    object PanelC: TUniSimplePanel
       Left = 0
       Top = 146
       Width = 522
       Height = 112
       Hint = ''
-      Font.Charset = GB2312_CHARSET
-      Font.Height = -12
-      Font.Name = #23435#20307
+      ParentColor = False
       Align = alClient
+      object EditFormat: TUniSyntaxEdit
+        Left = 0
+        Top = 0
+        Width = 522
+        Height = 112
+        Hint = ''
+        Font.Charset = GB2312_CHARSET
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Align = alClient
+      end
     end
   end
 end

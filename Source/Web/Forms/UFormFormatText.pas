@@ -21,6 +21,7 @@ type
     Check2: TUniCheckBox;
     EditEnt: TUniEdit;
     EditNormal: TUniSyntaxEdit;
+    PanelC: TUniSimplePanel;
     EditFormat: TUniSyntaxEdit;
     procedure BtnFormatClick(Sender: TObject);
     procedure BtnNormalClick(Sender: TObject);

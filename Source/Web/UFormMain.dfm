@@ -216,26 +216,9 @@ object fFormMain: TfFormMain
         ParentAlignmentControl = False
         Caption = #27426#36814#39318#39029
         Layout = 'hbox'
+        LayoutConfig.BodyCls = 'x-panel-pagesheet'
         LayoutAttribs.Align = 'bottom'
         LayoutAttribs.Pack = 'end'
-        object LabelCopyRight: TUniLabel
-          Left = 0
-          Top = 395
-          Width = 503
-          Height = 22
-          Hint = ''
-          Alignment = taRightJustify
-          AutoSize = False
-          Caption = 'CopyRight'
-          Align = alBottom
-          ParentFont = False
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clGray
-          Font.Height = -12
-          Font.Name = #23435#20307
-          TabOrder = 0
-          LayoutConfig.Padding = '0 20 0 0'
-        end
         object ImageWelcome: TUniImage
           Left = 176
           Top = 128
@@ -243,7 +226,22 @@ object fFormMain: TfFormMain
           Height = 128
           Hint = ''
           Stretch = True
-          LayoutConfig.Padding = '0 20 0 0'
+          LayoutConfig.Padding = '0 10 3 0'
+        end
+        object LabelCopyRight: TUniLabel
+          Left = 211
+          Top = 262
+          Width = 54
+          Height = 12
+          Hint = ''
+          Caption = 'CopyRight'
+          ParentFont = False
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clGray
+          Font.Height = -12
+          Font.Name = #23435#20307
+          TabOrder = 0
+          LayoutConfig.Padding = '0 10 3 0'
         end
       end
     end

@@ -363,6 +363,9 @@ class procedure TWebSystem.SetImageData(const nParent: TUniContainer;
 begin
   with nImage do
   begin
+    Visible := FileExists(gPath + SwtichPathDelim(nData.FFile, '/', '\'));
+    if not Visible then Exit; //file invalid
+    
     Url := nData.FFile;
     if nData.FWidth > 0 then Width := nData.FWidth;
     if nData.FHeight > 0 then Height := nData.FHeight;
