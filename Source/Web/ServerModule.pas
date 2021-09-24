@@ -67,7 +67,7 @@ begin
     //收藏夹图标
 
     if FileExists(gPath + sLocalDir + 'userCSS.css') then
-      CustomFiles.Add(sLocalDir + 'userCSS.css');
+      CustomFiles.Add(TWebSystem.SwtichPathDelim(sLocalDir) + 'userCSS.css');
     //自定义样式
   end;
 

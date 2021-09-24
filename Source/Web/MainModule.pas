@@ -40,6 +40,8 @@ type
     {*消息框对象*}
     FGridColumnAdjust: Boolean;
     {*表格调整开关*}
+    procedure AddExternalImages(nDir: string);
+    {*增加图标资源*}
     procedure VerifyAdministrator(const nPwd: string;
       const nCall: TButtonClickInputEvent;
       const nButton: TButtonClickType = ctYes); overload;
@@ -91,6 +93,40 @@ begin
     FUserID   := 'default';        //用户编号
     FUserName := 'sys_dmzn';       //用户名称
     FAccount  := 'dmzn@163.com';   //用户帐户(登录名)
+  end;
+
+  AddExternalImages(gPath + sImageDir);
+  //加载外部图标资源
+end;
+
+//Date: 2021-09-24
+//Parm: 资源路径
+//Desc: 将nDir下的图标按大小标识添加到对应的列表
+procedure TUniMainModule.AddExternalImages(nDir: string);
+var nInt: Integer;
+    nRes: TSearchRec;
+begin
+  nDir := TApplicationHelper.RegularPath(nDir);
+  nInt := FindFirst(nDir + 'ico_*.*', faAnyFile, nRes);
+  try
+    while nInt = 0 do
+    begin
+      if Pos('ico_16_', nRes.Name) = 1 then
+        SmallImages.AddImageFile(nDir + nRes.Name);
+      //16 x 16
+
+      if Pos('ico_24_', nRes.Name) = 1 then
+        MidImage.AddImageFile(nDir + nRes.Name);
+      //24 x 24
+
+      if Pos('ico_32_', nRes.Name) = 1 then
+        BigImages.AddImageFile(nDir + nRes.Name);
+      //32 x 32
+
+      nInt := FindNext(nRes);
+    end;
+  finally
+    FindClose(nRes);
   end;
 end;
 

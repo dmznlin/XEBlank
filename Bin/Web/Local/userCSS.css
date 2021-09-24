@@ -30,6 +30,7 @@
 }
 /* ++++++++++++++++++++++++++++++++ 背景图片 ++++++++++++++++++++++++++++++++ */
 .x-panel-pagesheet{
-  background:url('/images/bg_welcome.jpg') no-repeat;
-  background-size:100% 100%;
+  background:url('/images/bg_main.png') repeat;
+  /*background-size:100% 100%;*/
+  opacity:0.7; 
 }
