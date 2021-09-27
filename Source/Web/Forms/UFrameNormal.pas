@@ -62,7 +62,7 @@ type
     {*数据查询*}
   public
     { Public declarations }
-    class function DescMe: TfFrameDesc; override;
+    class function ConfigMe: TfFrameConfig; override;
     {*窗体描述*}
   end;
 
@@ -72,9 +72,9 @@ implementation
 uses
   UManagerGroup, ULibFun, UDBManager, USysBusiness, USysConst;
 
-class function TfFrameNormal.DescMe: TfFrameDesc;
+class function TfFrameNormal.ConfigMe: TfFrameConfig;
 begin
-  Result := inherited DescMe;
+  Result := inherited ConfigMe;
   Result.FUserConfig := True;
 end;
 
@@ -86,7 +86,7 @@ begin
     FActiveColumn := nil;
     //init
 
-    with DescMe.FDataDict,gDataDictManager do
+    with ConfigMe.FDataDict,gDataDictManager do
     begin
       if FEntity = '' then
            FDataDict.Init(False)
@@ -131,7 +131,7 @@ procedure TfFrameNormal.OnLoadGridConfig(const nIni: TIniFile);
 begin
   if FDataDict.FEntity = '' then Exit;
   //没有字典数据
-  FDataDict.FMemo := DescMe.FDataDict.MemoToHTML();
+  FDataDict.FMemo := ConfigMe.FDataDict.MemoToHTML();
   //字典描述信息,用于辅助编辑字典数据
 
   with TGridHelper.BindData(DBGridMain)^ do
@@ -164,7 +164,7 @@ end;
 //Desc: 构建数据载入SQL语句
 function TfFrameNormal.InitFormDataSQL(const nWhere: string): string;
 begin
-  Result := 'Select * From ' + DescMe.FDataDict.FTables;
+  Result := 'Select * From ' + ConfigMe.FDataDict.FTables;
   if nWhere <> '' then
     Result := Result + ' Where ' + nWhere;
   //xxxxx
@@ -190,7 +190,7 @@ begin
   try
     if Assigned(nQuery) then
          nC := nQuery
-    else nC := gDBManager.LockDBQuery(DescMe.FDBConn);
+    else nC := gDBManager.LockDBQuery(ConfigMe.FDBConn);
 
     TGridHelper.SetBindFilterWhere(DBGridMain, nWhere);
     //记录查询条件

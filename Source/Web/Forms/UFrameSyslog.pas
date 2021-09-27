@@ -9,7 +9,7 @@ interface
 uses
   System.SysUtils, System.Variants, System.Classes, UFrameNormal, UFrameBase,
   Datasnap.DBClient, uniToolBar, uniPanel, uniGUIClasses, uniBasicGrid,
-  uniDBGrid, Vcl.Controls, Vcl.Forms, uniGUIBaseClasses, Data.DB;
+  uniDBGrid, Vcl.Controls, Vcl.Forms, uniGUIBaseClasses, Data.DB, kbmMemTable;
 
 type
   TfFrameSyslog = class(TfFrameNormal)
@@ -17,7 +17,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    class function DescMe: TfFrameDesc; override;
+    class function ConfigMe: TfFrameConfig; override;
   end;
 
 implementation
@@ -29,7 +29,7 @@ uses
 procedure DictBuilder(const nList: TList);
 var nEty: PDictEntity;
 begin
-  with TfFrameSyslog.DescMe do
+  with TfFrameSyslog.ConfigMe do
     nEty := gDataDictManager.AddEntity(FDataDict.FEntity, FDesc, nList);
   //xxxxx
 
@@ -41,9 +41,9 @@ begin
   end; //扩展字典项
 end;
 
-class function TfFrameSyslog.DescMe: TfFrameDesc;
+class function TfFrameSyslog.ConfigMe: TfFrameConfig;
 begin
-  Result := inherited DescMe;
+  Result := inherited ConfigMe;
   Result.FDesc := '系统操作日志';
   Result.FDataDict.FTables := sTable_SysLog;
 end;

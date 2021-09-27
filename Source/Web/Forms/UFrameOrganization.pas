@@ -20,7 +20,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    class function DescMe: TfFrameDesc; override;
+    class function ConfigMe: TfFrameConfig; override;
     function InitFormDataSQL(const nWhere: string): string; override;
     procedure DoFrameConfig(nIni: TIniFile; const nLoad: Boolean); override;
   end;
@@ -34,7 +34,7 @@ uses
 procedure DictBuilder(const nList: TList);
 var nEty: PDictEntity;
 begin
-  with TfFrameOrganization.DescMe do
+  with TfFrameOrganization.ConfigMe do
     nEty := gDataDictManager.AddEntity(FDataDict.FEntity, FDesc, nList);
   //xxxxx
 
@@ -46,9 +46,9 @@ begin
   end; //扩展字典项
 end;
 
-class function TfFrameOrganization.DescMe: TfFrameDesc;
+class function TfFrameOrganization.ConfigMe: TfFrameConfig;
 begin
-  Result := inherited DescMe;
+  Result := inherited ConfigMe;
   Result.FDesc := '单位组织架构';
   Result.FDataDict.FTables := sTable_Organization;
 

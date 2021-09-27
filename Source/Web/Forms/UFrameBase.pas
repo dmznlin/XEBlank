@@ -40,7 +40,7 @@ type
     {*备注内容*}
   end;
 
-  TfFrameDesc = record
+  TfFrameConfig = record
     FName          : string;                         //类名
     FDesc          : string;                         //描述
     FDBConn        : string;                         //数据库标识
@@ -69,7 +69,7 @@ type
     {*基类函数*}
   public
     { Public declarations }
-    class function DescMe: TfFrameDesc; virtual;
+    class function ConfigMe: TfFrameConfig; virtual;
     {*窗体描述*}
     function SetData(const nData: PCommandParam): Boolean; virtual;
     function GetData(var nData: TCommandParam): Boolean; virtual;
@@ -148,7 +148,7 @@ begin
   OnCreateFrame(Sender);
   nIni := nil;
   try
-    if DescMe.FUserConfig then
+    if ConfigMe.FUserConfig then
       nIni := TWebSystem.UserConfigFile;
     DoFrameConfig(nIni, True);
   finally
@@ -162,7 +162,7 @@ begin
   OnDestroyFrame(Sender);
   nIni := nil;
   try
-    if DescMe.FUserConfig then
+    if ConfigMe.FUserConfig then
       nIni := TWebSystem.UserConfigFile;
     DoFrameConfig(nIni, False);
   finally
@@ -199,10 +199,10 @@ end;
 
 //Date: 2021-06-03
 //Desc: 描述frame信息
-class function TfFrameBase.DescMe: TfFrameDesc;
-var nInit: TfFrameDesc;
+class function TfFrameBase.ConfigMe: TfFrameConfig;
+var nInit: TfFrameConfig;
 begin
-  FillChar(nInit, SizeOf(TfFrameDesc), #0);
+  FillChar(nInit, SizeOf(TfFrameConfig), #0);
   Result := nInit;
   //fill default
 

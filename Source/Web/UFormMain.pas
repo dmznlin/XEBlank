@@ -317,7 +317,7 @@ begin
         Exit;
       end;
 
-      if TfFrameClass(nCls).DescMe.FVerifyAdmin then
+      if TfFrameClass(nCls).ConfigMe.FVerifyAdmin then
       begin
         UniMainModule.VerifyAdministrator(
           procedure(const nType: TButtonClickType; const nText: string)

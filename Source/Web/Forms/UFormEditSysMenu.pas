@@ -134,7 +134,7 @@ begin
      maNewFrame: //frame
       begin
         for nIdx := Low(Frames) to High(Frames) do
-        with Frames[nIdx].DescMe do
+        with Frames[nIdx].ConfigMe do
         begin
           AddObject(Format('%d.%s', [nIdx+1, FDesc]), Pointer(nIdx));
           if Assigned(FMenuItem) and (FMenuItem.FActionData = FName) then
@@ -194,7 +194,7 @@ begin
   if (nMenu.FAction = maNewFrame) and (EditData.ItemIndex >= 0) then
   begin
     nIdx := Integer(EditData.Items.Objects[EditData.ItemIndex]);
-    nMenu.FActionData := TWebSystem.Frames[nIdx].DescMe.FName;
+    nMenu.FActionData := TWebSystem.Frames[nIdx].ConfigMe.FName;
   end else nMenu.FActionData := EditData.Text;
 
   nMenu.FExpaned := CheckExpand.Checked;

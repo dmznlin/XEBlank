@@ -17,7 +17,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    class function DescMe: TfFrameDesc; override;
+    class function ConfigMe: TfFrameConfig; override;
   end;
 
 implementation
@@ -29,7 +29,7 @@ uses
 procedure DictBuilder(const nList: TList);
 var nEty: PDictEntity;
 begin
-  with TfFrameUsers.DescMe do
+  with TfFrameUsers.ConfigMe do
     nEty := gDataDictManager.AddEntity(FDataDict.FEntity, FDesc, nList);
   //xxxxx
 
@@ -41,9 +41,9 @@ begin
   end; //扩展字典项
 end;
 
-class function TfFrameUsers.DescMe: TfFrameDesc;
+class function TfFrameUsers.ConfigMe: TfFrameConfig;
 begin
-  Result := inherited DescMe;
+  Result := inherited ConfigMe;
   Result.FDesc := '系统用户管理';
   Result.FDataDict.FTables := TDBCommand.sTable_Users;
 end;

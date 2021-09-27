@@ -56,7 +56,7 @@ begin
     //get tables
     
     for nIdx := Low(TWebSystem.Frames) to High(TWebSystem.Frames) do
-    with TWebSystem.Frames[nIdx].DescMe do
+    with TWebSystem.Frames[nIdx].ConfigMe do
     begin
       if (FDataDict.FEntity = '') or (FDataDict.FTables = '') then Continue;
       //no entity or tables
