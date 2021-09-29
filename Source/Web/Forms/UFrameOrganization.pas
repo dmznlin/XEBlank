@@ -7,20 +7,37 @@ unit UFrameOrganization;
 interface
 
 uses
-  System.SysUtils, System.Variants, System.Classes, System.IniFiles,
-  UFrameNormal, UFrameBase, uniGUITypes, uniSplitter, uniTreeView, Data.DB,
-  kbmMemTable, uniToolBar, uniPanel, uniGUIClasses, uniBasicGrid, uniDBGrid,
-  Vcl.Controls, Vcl.Forms, uniGUIBaseClasses;
+  System.SysUtils, System.Variants, System.Classes, System.IniFiles, ULibFun,
+  MainModule, UFrameBase, uniGUITypes, uniGUIAbstractClasses, UFrameNormal,
+  uniSplitter, uniTreeView, Data.DB, kbmMemTable, uniToolBar, uniPanel,
+  uniGUIClasses, uniBasicGrid, uniDBGrid, Vcl.Controls, Vcl.Forms,
+  uniGUIBaseClasses;
 
 type
+  POrganizationItem = ^TOrganizationItem;
+  TOrganizationItem = record
+    FRecord : string;                                    //标识
+    FName   : string;                                    //名称
+    FParent : string;                                    //上级
+    FType   : TApplicationHelper.TOrganizationStructure; //类型
+  end;
+
   TfFrameOrganization = class(TfFrameNormal)
     TreeUnits: TUniTreeView;
     Splitter1: TUniSplitter;
+    procedure BtnAddClick(Sender: TObject);
+    procedure BtnEditClick(Sender: TObject);
+    procedure BtnDelClick(Sender: TObject);
   private
     { Private declarations }
+    FItems: TArray<TOrganizationItem>;
+    function FindNode(const nID: string): TUniTreeNode;
+    //检索节点
   public
     { Public declarations }
     class function ConfigMe: TfFrameConfig; override;
+    procedure OnInitFormData(const nWhere: string; const nQuery: TDataset;
+      var nHasDone: Boolean); override;
     function InitFormDataSQL(const nWhere: string): string; override;
     procedure DoFrameConfig(nIni: TIniFile; const nLoad: Boolean); override;
   end;
@@ -29,7 +46,7 @@ implementation
 
 {$R *.dfm}
 uses
-  UManagerGroup, UMgrDataDict, USysBusiness, USysDB;
+  UManagerGroup, UMgrDataDict, USysBusiness, USysDB, USysConst;
 
 procedure DictBuilder(const nList: TList);
 var nEty: PDictEntity;
@@ -67,7 +84,9 @@ begin
 
   if nLoad then
   begin
+    TreeUnits.Images := UniMainModule.SmallImages;
     TreeUnits.BorderStyle := ubsNone;
+
     with Splitter1.JSInterface do
     begin
       JSConfig('border', [true]);
@@ -89,6 +108,90 @@ begin
   end;
 end;
 
+//Date: 2021-09-29
+//Parm: 节点标识
+//Desc: 检索标识为nID的节点
+function TfFrameOrganization.FindNode(const nID: string): TUniTreeNode;
+begin
+  Result := nil;
+
+end;
+
+//Desc: 加载组织结构树
+procedure TfFrameOrganization.OnInitFormData(const nWhere: string;
+  const nQuery: TDataset; var nHasDone: Boolean);
+var nStr,nLast: string;
+    nIdx: Integer;
+begin
+  with TreeUnits,nQuery,TApplicationHelper do
+  try
+    Items.BeginUpdate;
+    if Assigned(Selected) then
+         nLast := POrganizationItem(Selected.Data).FRecord
+    else nLast := '';
+
+    Items.Clear;
+    //clear first
+
+    nStr := 'Select O_ID,O_Name,O_Parent,O_Type From %s';
+    nStr := Format(nStr, [sTable_Organization]);
+    gMG.FDBManager.DBQuery(nStr, nQuery);
+
+    if RecordCount > 0 then
+    begin
+      SetLength(FItems, RecordCount);
+      nIdx := 0;
+      First;
+
+      while not Eof do
+      begin
+        with FItems[nIdx] do
+        begin
+          FRecord := FieldByName('O_ID').AsString;
+          FName   := FieldByName('O_Name').AsString;
+          FParent := FieldByName('O_Parent').AsString;
+
+          nStr    := FieldByName('O_Type').AsString;
+          FType   := TStringHelper.Str2Enum<TOrganizationStructure>(nStr);
+        end;
+
+        Inc(nIdx);
+        Next;
+      end;
+    end;
+
+    for nIdx := Low(FItems) to High(FItems) do
+     if FItems[nIdx].FType = osGroup then
+      with TreeUnits.Items.AddChild(nil, FItems[nIdx].FName) do
+      begin
+        ImageIndex := 22;
+        Data := @FItems[nIdx];
+      end;
+    //new group
+
+    for nIdx := Low(FItems) to High(FItems) do
+     if FItems[nIdx].FType = osArea then
+      with TreeUnits.Items.AddChild(nil, FItems[nIdx].FName) do
+      begin
+        ImageIndex := 21;
+        Data := @FItems[nIdx];
+      end;
+    //new area
+
+    for nIdx := Low(FItems) to High(FItems) do
+     if FItems[nIdx].FType = osFactory then
+      with TreeUnits.Items.AddChild(nil, FItems[nIdx].FName) do
+      begin
+        ImageIndex := 23;
+        Data := @FItems[nIdx];
+      end;
+    //new area
+  finally
+    Items.EndUpdate;
+  end;
+end;
+
+//Desc: 加载组织结构数据
 function TfFrameOrganization.InitFormDataSQL(const nWhere: string): string;
 begin
   Result := 'Select t.*,a.O_Name as O_PName From %s t ' +
@@ -98,6 +201,35 @@ begin
   if nWhere <> '' then
     Result := Result + ' Where ' + nWhere;
   //xxxxx
+end;
+
+procedure TfFrameOrganization.BtnAddClick(Sender: TObject);
+var nP: TCommandParam;
+    nPrt: POrganizationItem;
+begin
+  if Assigned(TreeUnits.Selected) then
+  begin
+    nPrt := TreeUnits.Selected.Data;
+    nP.Init(cCmd_AddData).AddS(nPrt.FRecord).AddS(nPrt.FName);
+  end else nP.Init(cCmd_AddData);
+
+  TWebSystem.ShowModalForm('TfFormOrganization', @nP,
+    procedure(const nResult: Integer; const nParam: PCommandParam)
+    begin
+      if nResult = mrOK then
+        InitFormData()
+    end);
+  //call add unit form
+end;
+
+procedure TfFrameOrganization.BtnEditClick(Sender: TObject);
+begin
+  //
+end;
+
+procedure TfFrameOrganization.BtnDelClick(Sender: TObject);
+begin
+  //
 end;
 
 initialization

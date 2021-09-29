@@ -173,7 +173,7 @@ begin
     AddF('O_ValidOn',   'DateTime',                  '授权时间').
     AddI('idx_id',      'O_ID ASC').
     AddI('idx_parent',  'O_Parent ASC');
-  //group
+  //organization
 
   gDBManager.AddTable(sTable_OrgAddress, nList).
     AddF('R_ID',        sField_SQLServer_AutoInc,    '记录编号').
@@ -184,7 +184,7 @@ begin
     AddF('A_Owner',     'varChar(32)',               '所属单位').
     AddI('idx_id',      'A_ID ASC').
     AddI('idx_owner',   'A_Owner ASC');
-  //area
+  //address
 
   gDBManager.AddTable(sTable_OrgContact, nList).
     AddF('R_ID',        sField_SQLServer_AutoInc,    '记录编号').
@@ -195,7 +195,7 @@ begin
     AddF('C_Owner',     'varChar(32)',               '所属单位').
     AddI('idx_id',      'C_ID ASC').
     AddI('idx_owner',   'C_Owner ASC');
-  //area
+  //contact
 
   gDBManager.AddTable(sTable_Null, nList).
     AddF('R_ID',        sField_SQLServer_AutoInc,    '记录编号').

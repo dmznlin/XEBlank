@@ -4,6 +4,17 @@ inherited fFrameOrganization: TfFrameOrganization
       Left = 159
       Width = 411
     end
+    inherited ToolBarMain: TUniToolBar
+      inherited BtnAdd: TUniToolButton
+        OnClick = BtnAddClick
+      end
+      inherited BtnEdit: TUniToolButton
+        OnClick = BtnEditClick
+      end
+      inherited BtnDel: TUniToolButton
+        OnClick = BtnDelClick
+      end
+    end
     object TreeUnits: TUniTreeView
       Left = 0
       Top = 41
