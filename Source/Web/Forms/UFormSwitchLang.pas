@@ -19,7 +19,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
     procedure OnCreateForm(Sender: TObject); override;
   end;
 
@@ -30,9 +30,9 @@ implementation
 uses
   UManagerGroup, UDBFun, MainModule, USysBusiness;
 
-class function TfFormSwitchLang.DescMe: TfFormDesc;
+class function TfFormSwitchLang.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FDesc := '切换系统语言标识';
 end;
 

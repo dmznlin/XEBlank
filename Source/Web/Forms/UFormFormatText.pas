@@ -29,7 +29,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
     procedure DoFormConfig(nIni: TIniFile; const nLoad: Boolean); override;
   end;
 
@@ -45,9 +45,9 @@ const
   sTags  = '''''';     //两个单引号
   sBlank = ' ';        //空格
 
-class function TfFormFormatTxt.DescMe: TfFormDesc;
+class function TfFormFormatTxt.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FUserConfig := True;
   Result.FDesc := '文本转化为代码';
 end;

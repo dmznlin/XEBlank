@@ -45,7 +45,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
   end;
 
 implementation
@@ -55,9 +55,9 @@ implementation
 uses
  uniGUIVars, MainModule, ULibFun, UDBManager, USysBusiness;
 
-class function TfFormEncrypt.DescMe: TfFormDesc;
+class function TfFormEncrypt.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FVerifyAdmin := True;
   Result.FDesc := 'Êý¾Ý±àÂë';
 end;

@@ -19,7 +19,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
   end;
 
 implementation
@@ -29,9 +29,9 @@ implementation
 uses
   uniGUIVars, UManagerGroup, USysBusiness;
 
-class function TfFormInitMenus.DescMe: TfFormDesc;
+class function TfFormInitMenus.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FVerifyAdmin := True;
   Result.FDesc := '初始化系统菜单';
 end;

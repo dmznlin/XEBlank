@@ -37,7 +37,7 @@ type
     {*刷新界面*}
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
     function SetData(const nData: PCommandParam): Boolean; override;
     procedure DoFormConfig(nIni: TIniFile; const nLoad: Boolean); override;
   end;
@@ -49,9 +49,9 @@ implementation
 uses
   UManagerGroup, MainModule, USysBusiness, USysConst;
 
-class function TfFormFilterHistory.DescMe: TfFormDesc;
+class function TfFormFilterHistory.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FUserConfig := True;
   Result.FDesc := '查询条件历史记录';
 end;

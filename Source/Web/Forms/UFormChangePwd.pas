@@ -22,7 +22,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
     function OnVerifyCtrl(Sender: TObject; var nHint: string): Boolean; override;
   end;
 
@@ -33,9 +33,9 @@ implementation
 uses
   UManagerGroup, UDBFun, ULibFun, MainModule, USysBusiness;
 
-class function TfFormChangePwd.DescMe: TfFormDesc;
+class function TfFormChangePwd.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FDesc := 'ÐÞ¸ÄÓÃ»§µÇÂ¼ÃÜÂë';
 end;
 

@@ -14,7 +14,7 @@ type
   TfFormBase = class;
   TfFormClass = class of TfFormBase;
 
-  TfFormDesc = record
+  TfFormConfig = record
     FName          : string;                         //类名
     FDesc          : string;                         //描述
     FVerifyAdmin   : Boolean;                        //验证管理员
@@ -47,7 +47,7 @@ type
     {*验证数据*}
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; virtual;
+    class function ConfigMe: TfFormConfig; virtual;
     {*窗体描述*}
     function SetData(const nData: PCommandParam): Boolean; virtual;
     function GetData(): PCommandParam; virtual;
@@ -67,7 +67,7 @@ begin
   OnCreateForm(Sender);
   nIni := nil;
   try
-    if DescMe.FUserConfig then
+    if ConfigMe.FUserConfig then
       nIni := TWebSystem.UserConfigFile;
     DoFormConfig(nIni, True);
   finally
@@ -81,7 +81,7 @@ begin
   OnDestroyForm(Sender);
   nIni := nil;
   try
-    if DescMe.FUserConfig then
+    if ConfigMe.FUserConfig then
       nIni := TWebSystem.UserConfigFile;
     DoFormConfig(nIni, False);
   finally
@@ -106,10 +106,10 @@ end;
 
 //Date: 2021-05-06
 //Desc: 描述窗体信息
-class function TfFormBase.DescMe: TfFormDesc;
-var nInit: TfFormDesc;
+class function TfFormBase.ConfigMe: TfFormConfig;
+var nInit: TfFormConfig;
 begin
-  FillChar(nInit, SizeOf(TfFormDesc), #0);
+  FillChar(nInit, SizeOf(TfFormConfig), #0);
   Result := nInit;
   //fill default
 

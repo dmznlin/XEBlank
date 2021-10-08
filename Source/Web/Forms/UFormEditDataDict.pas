@@ -84,7 +84,7 @@ type
     {*行号转换*}
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
     function SetData(const nData: PCommandParam): Boolean; override;
     procedure DoFormConfig(nIni: TIniFile; const nLoad: Boolean); override;
     function OnVerifyCtrl(Sender: TObject; var nHint: string): Boolean; override;
@@ -100,9 +100,9 @@ uses
 const
   cDel = #9;
 
-class function TfFormEditDataDict.DescMe: TfFormDesc;
+class function TfFormEditDataDict.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FUserConfig := True;
   Result.FDesc := '编辑表格字典';
 end;

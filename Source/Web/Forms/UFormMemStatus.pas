@@ -19,7 +19,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
     procedure OnCreateForm(Sender: TObject); override;
     procedure OnDestroyForm(Sender: TObject); override;
   end;
@@ -31,9 +31,9 @@ implementation
 uses
   uniGUIVars, UManagerGroup, USysBusiness;
 
-class function TfFormMemStatus.DescMe: TfFormDesc;
+class function TfFormMemStatus.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FVerifyAdmin := True;
   Result.FDesc := '查看内存对象状态';
 end;

@@ -27,7 +27,7 @@ type
     {*动态密钥*}
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
     procedure OnCreateForm(Sender: TObject); override;
     procedure OnDestroyForm(Sender: TObject); override;
     function OnVerifyCtrl(Sender: TObject; var nHint: string): Boolean; override;
@@ -41,9 +41,9 @@ uses
   DelphiZXIngQRCode, UGoogleOTP, UManagerGroup, UDBManager, UDBFun, ULibFun,
   MainModule, USysBusiness, USysConst;
 
-class function TfFormDynPwd.DescMe: TfFormDesc;
+class function TfFormDynPwd.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FDesc := '设置用户动态口令';
 end;
 

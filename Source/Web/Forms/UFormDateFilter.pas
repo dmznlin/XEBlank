@@ -25,7 +25,7 @@ type
     {*初始化属性*}
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
     function SetData(const nData: PCommandParam): Boolean; override;
   end;
 
@@ -36,9 +36,9 @@ implementation
 uses
   UManagerGroup, MainModule, USysBusiness, USysConst;
 
-class function TfFormDateFilter.DescMe: TfFormDesc;
+class function TfFormDateFilter.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FDesc := '日期时间设置';
 end;
 

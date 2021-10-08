@@ -8,20 +8,12 @@ interface
 
 uses
   System.SysUtils, System.Variants, System.Classes, System.IniFiles, ULibFun,
-  MainModule, UFrameBase, uniGUITypes, uniGUIAbstractClasses, UFrameNormal,
+  UGlobalConst, MainModule, UFrameBase, uniGUITypes, uniGUIAbstractClasses,
   uniSplitter, uniTreeView, Data.DB, kbmMemTable, uniToolBar, uniPanel,
   uniGUIClasses, uniBasicGrid, uniDBGrid, Vcl.Controls, Vcl.Forms,
-  uniGUIBaseClasses;
+  uniGUIBaseClasses, UFrameNormal;
 
 type
-  POrganizationItem = ^TOrganizationItem;
-  TOrganizationItem = record
-    FRecord : string;                                    //标识
-    FName   : string;                                    //名称
-    FParent : string;                                    //上级
-    FType   : TApplicationHelper.TOrganizationStructure; //类型
-  end;
-
   TfFrameOrganization = class(TfFrameNormal)
     TreeUnits: TUniTreeView;
     Splitter1: TUniSplitter;
@@ -30,7 +22,7 @@ type
     procedure BtnDelClick(Sender: TObject);
   private
     { Private declarations }
-    FItems: TArray<TOrganizationItem>;
+    FItems: TOrganizationItems;
     function FindNode(const nID: string): TUniTreeNode;
     //检索节点
   public
@@ -122,12 +114,25 @@ procedure TfFrameOrganization.OnInitFormData(const nWhere: string;
   const nQuery: TDataset; var nHasDone: Boolean);
 var nStr,nLast: string;
     nIdx: Integer;
+    nExpand: TStrings;
+    nRoot: TUniTreeNode;
+
+    //Desc: 展开节点
+    procedure ExpandNode(const nPNode: TUniTreeNode; const nExpand: Boolean);
+    var i: Integer;
+    begin
+
+    end;
 begin
+  nExpand := nil;
   with TreeUnits,nQuery,TApplicationHelper do
   try
     Items.BeginUpdate;
+    nExpand := gMG.FObjectPool.Lock(TStrings) as TStrings;
+    nExpand.Clear;
+
     if Assigned(Selected) then
-         nLast := POrganizationItem(Selected.Data).FRecord
+         nLast := POrganizationItem(Selected.Data).FID
     else nLast := '';
 
     Items.Clear;
@@ -147,7 +152,7 @@ begin
       begin
         with FItems[nIdx] do
         begin
-          FRecord := FieldByName('O_ID').AsString;
+          FID     := FieldByName('O_ID').AsString;
           FName   := FieldByName('O_Name').AsString;
           FParent := FieldByName('O_Parent').AsString;
 
@@ -160,9 +165,16 @@ begin
       end;
     end;
 
+    nRoot := TreeUnits.Items.AddChild(nil, sOrganizationNames[osGroup]+'列表');
+    with nRoot do
+    begin
+      ImageIndex := 31;
+      Data := nil;
+    end;
+
     for nIdx := Low(FItems) to High(FItems) do
      if FItems[nIdx].FType = osGroup then
-      with TreeUnits.Items.AddChild(nil, FItems[nIdx].FName) do
+      with TreeUnits.Items.AddChild(nRoot, FItems[nIdx].FName) do
       begin
         ImageIndex := 22;
         Data := @FItems[nIdx];
@@ -170,23 +182,26 @@ begin
     //new group
 
     for nIdx := Low(FItems) to High(FItems) do
-     if FItems[nIdx].FType = osArea then
-      with TreeUnits.Items.AddChild(nil, FItems[nIdx].FName) do
-      begin
-        ImageIndex := 21;
-        Data := @FItems[nIdx];
-      end;
+     with FItems[nIdx] do
+      if FType = osArea then
+       with TreeUnits.Items.AddChild(FindNode(FParent), FName) do
+        begin
+          ImageIndex := 21;
+          Data := @FItems[nIdx];
+        end;
     //new area
 
     for nIdx := Low(FItems) to High(FItems) do
-     if FItems[nIdx].FType = osFactory then
-      with TreeUnits.Items.AddChild(nil, FItems[nIdx].FName) do
-      begin
-        ImageIndex := 23;
-        Data := @FItems[nIdx];
-      end;
+     with FItems[nIdx] do
+      if FType = osFactory then
+       with TreeUnits.Items.AddChild(FindNode(FParent), FName) do
+        begin
+          ImageIndex := 23;
+          Data := @FItems[nIdx];
+        end;
     //new area
   finally
+    gMG.FObjectPool.Release(nExpand);
     Items.EndUpdate;
   end;
 end;
@@ -205,13 +220,10 @@ end;
 
 procedure TfFrameOrganization.BtnAddClick(Sender: TObject);
 var nP: TCommandParam;
-    nPrt: POrganizationItem;
 begin
   if Assigned(TreeUnits.Selected) then
-  begin
-    nPrt := TreeUnits.Selected.Data;
-    nP.Init(cCmd_AddData).AddS(nPrt.FRecord).AddS(nPrt.FName);
-  end else nP.Init(cCmd_AddData);
+       nP.Init(cCmd_AddData).AddP(TreeUnits.Selected.Data)
+  else nP.Init(cCmd_AddData).AddP(nil);
 
   TWebSystem.ShowModalForm('TfFormOrganization', @nP,
     procedure(const nResult: Integer; const nParam: PCommandParam)

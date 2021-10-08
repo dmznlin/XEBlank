@@ -26,7 +26,7 @@ type
     {*记录日志*}
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
     procedure OnCreateForm(Sender: TObject); override;
     procedure OnDestroyForm(Sender: TObject); override;
   end;
@@ -38,9 +38,9 @@ implementation
 uses
   uniGUIVars, MainModule, UManagerGroup, USysBusiness;
 
-class function TfFormRunLog.DescMe: TfFormDesc;
+class function TfFormRunLog.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FVerifyAdmin := True;
   Result.FDesc := '查看实时运行日志';
 end;

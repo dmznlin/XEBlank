@@ -22,7 +22,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
   end;
 
 implementation
@@ -35,9 +35,9 @@ uses
 const
   sTag = ' ::: ';
 
-class function TfFormInitDB.DescMe: TfFormDesc;
+class function TfFormInitDB.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FVerifyAdmin := True;
   Result.FDesc := '初始化数据库';
 end;

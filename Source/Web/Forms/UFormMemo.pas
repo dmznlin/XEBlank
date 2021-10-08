@@ -18,7 +18,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
     function SetData(const nData: PCommandParam): Boolean; override;
     procedure DoFormConfig(nIni: TIniFile; const nLoad: Boolean); override;
   end;
@@ -30,9 +30,9 @@ implementation
 uses
   UManagerGroup, MainModule, USysBusiness, USysConst;
 
-class function TfFormMemo.DescMe: TfFormDesc;
+class function TfFormMemo.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FUserConfig := True;
   Result.FDesc := 'ÎÄ±¾±à¼­Æ÷';
 end;

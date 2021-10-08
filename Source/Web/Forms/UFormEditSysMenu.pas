@@ -35,7 +35,7 @@ type
     {*设置生效*}
   public
     { Public declarations }
-    class function DescMe: TfFormDesc; override;
+    class function ConfigMe: TfFormConfig; override;
     procedure OnCreateForm(Sender: TObject); override;
     function SetData(const nData: PCommandParam): Boolean; override;
     function OnVerifyCtrl(Sender: TObject; var nHint: string): Boolean; override;
@@ -48,9 +48,9 @@ implementation
 uses
   uniGUIVars, UManagerGroup, USysConst, USysMenu, USysBusiness;
 
-class function TfFormEditSysMenu.DescMe: TfFormDesc;
+class function TfFormEditSysMenu.ConfigMe: TfFormConfig;
 begin
-  Result := inherited DescMe();
+  Result := inherited ConfigMe();
   Result.FVerifyAdmin := True;
   Result.FDesc := '编辑系统菜单项';
 end;
@@ -123,7 +123,7 @@ begin
      maNewForm: //form
       begin
         for nIdx := Low(Forms) to High(Forms) do
-        with Forms[nIdx].DescMe do
+        with Forms[nIdx].ConfigMe do
         begin
           AddObject(Format('%d.%s', [nIdx+1, FDesc]), Pointer(nIdx));
           if Assigned(FMenuItem) and (FMenuItem.FActionData = FName) then
@@ -188,7 +188,7 @@ begin
   if (nMenu.FAction = maNewForm) and (EditData.ItemIndex >= 0) then
   begin
     nIdx := Integer(EditData.Items.Objects[EditData.ItemIndex]);
-    nMenu.FActionData := TWebSystem.Forms[nIdx].DescMe.FName;
+    nMenu.FActionData := TWebSystem.Forms[nIdx].ConfigMe.FName;
   end else
 
   if (nMenu.FAction = maNewFrame) and (EditData.ItemIndex >= 0) then
