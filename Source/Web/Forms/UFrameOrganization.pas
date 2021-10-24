@@ -20,6 +20,8 @@ type
     procedure BtnAddClick(Sender: TObject);
     procedure BtnEditClick(Sender: TObject);
     procedure BtnDelClick(Sender: TObject);
+    procedure TreeUnitsNodeCollapse(Sender: TObject; Node: TUniTreeNode);
+    procedure TreeUnitsNodeExpand(Sender: TObject; Node: TUniTreeNode);
   private
     { Private declarations }
     FItems: TOrganizationItems;
@@ -38,7 +40,7 @@ implementation
 
 {$R *.dfm}
 uses
-  UManagerGroup, UMgrDataDict, USysBusiness, USysDB, USysConst;
+  UManagerGroup, UMgrDataDict, UGridHelper, USysBusiness, USysDB, USysConst;
 
 procedure DictBuilder(const nList: TList);
 var nEty: PDictEntity;
@@ -104,9 +106,21 @@ end;
 //Parm: 节点标识
 //Desc: 检索标识为nID的节点
 function TfFrameOrganization.FindNode(const nID: string): TUniTreeNode;
+var nNode: TUniTreeNode;
 begin
   Result := nil;
+  nNode := TreeUnits.Items.GetFirstNode;
 
+  while Assigned(nNode) do
+  begin
+    if Assigned(nNode.Data) and (POrganizationItem(nNode.Data).FID = nID) then
+    begin
+      Result := nNode;
+      Break;
+    end;
+
+    nNode := nNode.GetNext;
+  end;
 end;
 
 //Desc: 加载组织结构树
@@ -116,13 +130,6 @@ var nStr,nLast: string;
     nIdx: Integer;
     nExpand: TStrings;
     nRoot: TUniTreeNode;
-
-    //Desc: 展开节点
-    procedure ExpandNode(const nPNode: TUniTreeNode; const nExpand: Boolean);
-    var i: Integer;
-    begin
-
-    end;
 begin
   nExpand := nil;
   with TreeUnits,nQuery,TApplicationHelper do
@@ -134,6 +141,14 @@ begin
     if Assigned(Selected) then
          nLast := POrganizationItem(Selected.Data).FID
     else nLast := '';
+
+    nRoot := Items.GetFirstNode;
+    while Assigned(nRoot) do
+    begin
+      if nRoot.Expanded and Assigned(nRoot.Data) then
+        nExpand.Add(POrganizationItem(nRoot.Data).FID);
+      nRoot := nRoot.GetNext;
+    end;
 
     Items.Clear;
     //clear first
@@ -200,10 +215,50 @@ begin
           Data := @FItems[nIdx];
         end;
     //new area
+
+    nRoot := Items.GetFirstNode;
+    while Assigned(nRoot) do
+    begin
+      if Assigned(nRoot.Data) then
+      begin
+        nStr := POrganizationItem(nRoot.Data).FID;
+        if nExpand.IndexOf(nStr) >= 0 then
+          nRoot.Expanded := True;
+        //xxxxx
+
+        if (nLast <> '') and (nStr = nLast) then
+        begin
+          nRoot.Selected := True;
+          nRoot.MakeVisible;
+        end;
+      end else
+
+      if nRoot.HasChildren then
+      begin
+        nRoot.Expanded := True;
+        //top node
+      end;
+
+      nRoot := nRoot.GetNext;
+    end;
   finally
     gMG.FObjectPool.Release(nExpand);
     Items.EndUpdate;
   end;
+end;
+
+procedure TfFrameOrganization.TreeUnitsNodeCollapse(Sender: TObject;
+  Node: TUniTreeNode);
+begin
+  inherited;
+  //enable cllapse event
+end;
+
+procedure TfFrameOrganization.TreeUnitsNodeExpand(Sender: TObject;
+  Node: TUniTreeNode);
+begin
+  inherited;
+  //enable expand event
 end;
 
 //Desc: 加载组织结构数据
@@ -235,8 +290,26 @@ begin
 end;
 
 procedure TfFrameOrganization.BtnEditClick(Sender: TObject);
+var nP: TCommandParam;
 begin
-  //
+  if not (Assigned(TreeUnits.Selected) and Assigned(TreeUnits.Selected.Data)
+    and Assigned(TreeUnits.Selected.Parent))  then
+  begin
+    UniMainModule.ShowMsg('请选择编辑节点');
+    Exit;
+  end;
+
+  nP.Init(cCmd_EditData).AddP(TreeUnits.Selected.Parent.Data);
+  //parent data
+  nP.AddP(TreeUnits.Selected.Data);
+
+  TWebSystem.ShowModalForm('TfFormOrganization', @nP,
+    procedure(const nResult: Integer; const nParam: PCommandParam)
+    begin
+      if nResult = mrOK then
+        InitFormData()
+    end);
+  //call add unit form
 end;
 
 procedure TfFrameOrganization.BtnDelClick(Sender: TObject);

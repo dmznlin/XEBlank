@@ -25,6 +25,8 @@ inherited fFrameOrganization: TfFrameOrganization
       Align = alLeft
       TabOrder = 4
       Color = clWindow
+      OnNodeExpand = TreeUnitsNodeExpand
+      OnNodeCollapse = TreeUnitsNodeCollapse
     end
     object Splitter1: TUniSplitter
       Left = 153

@@ -1,51 +1,52 @@
 inherited fFormOrganization: TfFormOrganization
-  ClientHeight = 398
+  ClientHeight = 380
   ClientWidth = 336
   Caption = ''
   ExplicitWidth = 342
-  ExplicitHeight = 423
+  ExplicitHeight = 405
   PixelsPerInch = 96
   TextHeight = 12
   inherited BtnExit: TUniFSButton
     Left = 253
-    Top = 364
-    ExplicitLeft = 304
-    ExplicitTop = 181
+    Top = 346
+    ExplicitLeft = 253
+    ExplicitTop = 346
   end
   inherited BtnOK: TUniFSButton
     Left = 170
-    Top = 364
-    ExplicitLeft = 221
-    ExplicitTop = 181
+    Top = 346
+    Caption = #20445#23384
+    ExplicitLeft = 170
+    ExplicitTop = 346
   end
   inherited PanelWork: TUniSimplePanel
     Width = 320
-    Height = 348
-    ExplicitWidth = 371
-    ExplicitHeight = 165
+    Height = 330
+    ExplicitWidth = 320
+    ExplicitHeight = 330
     object wPage: TUniPageControl
       Left = 0
       Top = 0
       Width = 320
-      Height = 348
+      Height = 330
       Hint = ''
-      ActivePage = Sheet4
+      ActivePage = SheetAddress
       Align = alClient
       TabOrder = 1
-      ExplicitWidth = 371
-      ExplicitHeight = 165
       object Sheet1: TUniTabSheet
         Hint = ''
         Caption = #22522#26412#20449#24687
-        ExplicitWidth = 363
-        ExplicitHeight = 137
+        DesignSize = (
+          312
+          302)
         object EditType: TUniComboBox
           Left = 8
           Top = 40
-          Width = 260
+          Width = 300
           Hint = ''
           Style = csDropDownList
           Text = ''
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
           FieldLabel = #32452#32455#31867#22411
           FieldLabelWidth = 56
@@ -54,10 +55,11 @@ inherited fFormOrganization: TfFormOrganization
         object EditName: TUniEdit
           Left = 8
           Top = 70
-          Width = 260
+          Width = 300
           Hint = ''
           MaxLength = 100
           Text = ''
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
           FieldLabel = #32452#32455#21517#31216
           FieldLabelWidth = 56
@@ -65,11 +67,12 @@ inherited fFormOrganization: TfFormOrganization
         object EditValid: TUniDateTimePicker
           Left = 8
           Top = 100
-          Width = 260
+          Width = 300
           Hint = ''
           DateTime = 44468.000000000000000000
           DateFormat = 'yyyy-MM-dd'
           TimeFormat = 'HH:mm:ss'
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 2
           FieldLabel = #26377#25928#26085#26399
           FieldLabelWidth = 56
@@ -77,9 +80,10 @@ inherited fFormOrganization: TfFormOrganization
         object EditParent: TUniEdit
           Left = 8
           Top = 10
-          Width = 260
+          Width = 300
           Hint = ''
           Text = ''
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 3
           ReadOnly = True
           FieldLabel = #19978#32423#32452#32455
@@ -89,17 +93,13 @@ inherited fFormOrganization: TfFormOrganization
       object Sheet2: TUniTabSheet
         Hint = ''
         Caption = #37197#32622#21442#25968
-        ExplicitWidth = 363
-        ExplicitHeight = 137
       end
-      object Sheet3: TUniTabSheet
+      object SheetAddress: TUniTabSheet
         Hint = ''
         Caption = #36890#35759#22320#22336
-        ExplicitWidth = 363
-        ExplicitHeight = 137
         DesignSize = (
           312
-          320)
+          302)
         object EditPName: TUniEdit
           Left = 8
           Top = 10
@@ -136,7 +136,7 @@ inherited fFormOrganization: TfFormOrganization
           Left = 8
           Top = 130
           Width = 300
-          Height = 180
+          Height = 165
           Hint = ''
           FixedCols = 0
           FixedRows = 0
@@ -154,19 +154,18 @@ inherited fFormOrganization: TfFormOrganization
             item
               Title.Caption = #22320#22336
             end>
+          OnDblClick = GridPostDblClick
           OnMouseDown = GridPostMouseDown
-          Anchors = [akLeft, akTop, akRight]
+          Anchors = [akLeft, akTop, akRight, akBottom]
           TabOrder = 3
         end
       end
-      object Sheet4: TUniTabSheet
+      object SheetContact: TUniTabSheet
         Hint = ''
         Caption = #32852#31995#26041#24335
-        ExplicitWidth = 363
-        ExplicitHeight = 137
         DesignSize = (
           312
-          320)
+          302)
         object EditMName: TUniEdit
           Left = 8
           Top = 10
@@ -203,7 +202,7 @@ inherited fFormOrganization: TfFormOrganization
           Left = 8
           Top = 130
           Width = 300
-          Height = 180
+          Height = 165
           Hint = ''
           FixedCols = 0
           FixedRows = 0
@@ -222,7 +221,7 @@ inherited fFormOrganization: TfFormOrganization
               Title.Caption = #37038#31665
             end>
           OnMouseDown = GridPostMouseDown
-          Anchors = [akLeft, akTop, akRight]
+          Anchors = [akLeft, akTop, akRight, akBottom]
           TabOrder = 3
         end
       end
@@ -235,6 +234,7 @@ inherited fFormOrganization: TfFormOrganization
     object N1: TUniMenuItem
       Caption = #28155#21152
       ImageIndex = 1
+      OnClick = N1Click
     end
     object N3: TUniMenuItem
       Caption = #21024#38500

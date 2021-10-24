@@ -24,7 +24,54 @@ type
   end;
   TOrganizationItems = TArray<TOrganizationItem>;
 
+  TOrgAddress = record
+    FID       : string;                                  //记录标识
+    FName     : string;                                  //名称
+    FPost     : string;                                  //邮编
+    FAddr     : string;                                  //地址
+    FOwner    : string;                                  //拥有者
+    FValid    : Boolean;                                 //有效标识
+    FModified : Boolean;                                 //改动标识
+  end;
+  TOrgAddressItems = TArray<TOrgAddress>;
+
+  TOrgContact = record
+    FID       : string;                                  //记录标识
+    FName     : string;                                  //名称
+    FPhone    : string;                                  //电话
+    FMail     : string;                                  //邮件
+    FOwner    : string;                                  //拥有者
+    FValid    : Boolean;                                 //有效标识
+    FModified : Boolean;                                 //改动标识
+  end;
+  TOrgContactItems = TArray<TOrgContact>;
+
+  TGlobalBusiness = class
+  public
+    class function Name2Organization(const nName: string):
+      TApplicationHelper.TOrganizationStructure; static;
+    {*名称转组织结构类型*}
+  end;
+
 implementation
+
+//Date: 2021-10-15
+//Parm: 组织结构名称
+//Desc: 返回nName对应的组织结构类型
+class function TGlobalBusiness.Name2Organization(
+  const nName: string): TApplicationHelper.TOrganizationStructure;
+var nIdx: TApplicationHelper.TOrganizationStructure;
+begin
+  for nIdx := Low(sOrganizationNames) to High(sOrganizationNames) do
+   if sOrganizationNames[nIdx] = nName then
+   begin
+     Result := nIdx;
+     Exit;
+   end;
+
+  Result := osFactory;
+  //for default
+end;
 
 end.
 
