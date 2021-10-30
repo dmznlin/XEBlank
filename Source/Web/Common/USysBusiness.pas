@@ -56,7 +56,8 @@ type
     {*获取窗体*}
     class procedure ShowModalForm(const nClass: string;
       const nParams: PCommandParam = nil;
-      const nResult: TFormModalResult = nil); static;
+      const nResult: TFormModalResult = nil;
+      const nDisplayForm: Boolean = True); static;
     {*显示模式窗体*}
     class procedure ShowFrame(const nMenu: PMenuItem;
       const nParent: TUniPageControl; const nOnClose: TTabCloseEvent); static;
@@ -515,9 +516,32 @@ end;
 //Parm: 窗体类;输入参数;输出参数
 //Desc: 显示类名为nClass的模式窗体
 class procedure TWebSystem.ShowModalForm(const nClass: string;
-  const nParams: PCommandParam; const nResult: TFormModalResult);
-var nForm: TUniForm;
+  const nParams: PCommandParam; const nResult: TFormModalResult;
+  const nDisplayForm: Boolean);
+var nCls: TClass;
+    nBool: Boolean;
+    nForm: TUniForm;
 begin
+  if not nDisplayForm then //执行业务,不显示窗体
+  begin
+    if Assigned(nParams) then
+    begin
+      nCls := GetClass(nClass);
+      if Assigned(nCls) and (nCls.InheritsFrom(TfFormBase)) then
+      begin
+        nBool := TfFormClass(nCls).CallMe(nParams);
+        if Assigned(nResult) then
+        begin
+          if nBool then
+               nResult(mrOk, nParams)
+          else nResult(mrNo, nParams);
+        end;
+      end;
+    end;
+
+    Exit;
+  end;
+
   nForm := TWebSystem.GetForm(nClass);
   if (not Assigned(nForm)) or (not (nForm is TfFormBase)) then Exit;
   //invalid class

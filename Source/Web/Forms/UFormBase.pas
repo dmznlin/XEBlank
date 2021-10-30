@@ -52,6 +52,8 @@ type
     function SetData(const nData: PCommandParam): Boolean; virtual;
     function GetData(): PCommandParam; virtual;
     {*读写参数*}
+    class function CallMe(const nData: PCommandParam): Boolean; virtual;
+    {*执行业务*}
   end;
 
 implementation
@@ -102,6 +104,14 @@ end;
 procedure TfFormBase.DoFormConfig(nIni: TIniFile; const nLoad: Boolean);
 begin
   //null
+end;
+
+//Date: 2021-10-27
+//Parm: 参数
+//Desc: 执行无需窗体的操作
+class function TfFormBase.CallMe(const nData: PCommandParam): Boolean;
+begin
+  Result := True;
 end;
 
 //Date: 2021-05-06

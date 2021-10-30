@@ -18,6 +18,7 @@ const
   cCmd_FormClose        = $1002;                     //关闭窗口
   cCmd_AddData          = $1003;                     //添加数据
   cCmd_EditData         = $1005;                     //修改数据
+  cCmd_DeleteData       = $1004;                     //删除数据
   cCmd_ViewData         = $1006;                     //查看数据
   cCmd_GetData          = $1007;                     //选择数据
   cCmd_EditFile         = $1008;                     //编辑文件

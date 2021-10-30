@@ -24,25 +24,31 @@ type
   end;
   TOrganizationItems = TArray<TOrganizationItem>;
 
+  POrgAddress = ^TOrgAddress;
   TOrgAddress = record
     FID       : string;                                  //记录标识
     FName     : string;                                  //名称
     FPost     : string;                                  //邮编
     FAddr     : string;                                  //地址
     FOwner    : string;                                  //拥有者
+
     FValid    : Boolean;                                 //有效标识
     FModified : Boolean;                                 //改动标识
+    FSelected : Boolean;                                 //选中标识
   end;
   TOrgAddressItems = TArray<TOrgAddress>;
 
+  POrgContact = ^TOrgContact;
   TOrgContact = record
     FID       : string;                                  //记录标识
     FName     : string;                                  //名称
     FPhone    : string;                                  //电话
     FMail     : string;                                  //邮件
     FOwner    : string;                                  //拥有者
+
     FValid    : Boolean;                                 //有效标识
     FModified : Boolean;                                 //改动标识
+    FSelected : Boolean;                                 //选中标识
   end;
   TOrgContactItems = TArray<TOrgContact>;
 

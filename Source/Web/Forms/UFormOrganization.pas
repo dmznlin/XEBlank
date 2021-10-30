@@ -43,6 +43,8 @@ type
     procedure N4Click(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure GridPostDblClick(Sender: TObject);
+    procedure EditPNameChange(Sender: TObject);
+    procedure N3Click(Sender: TObject);
   private
     { Private declarations }
     FUnitID: string;
@@ -54,18 +56,21 @@ type
     procedure AddTypes(nTypes: TApplicationHelper.TOrganizationStructures;
       const nParent: TApplicationHelper.TOrganizationStructure);
     //添加组织类型
+    procedure LoadUnitData(const nUnit: string);
     procedure LoadExtendData(const nOwner: string);
     procedure SaveExtendData(const nList: TStrings);
     //读写扩展数据
-    procedure RefreshGrid();
+    procedure RefreshGrid(const nGrid: TUniStringGrid = nil);
     //刷新列表数据
-    function GetExtendSelected: Integer;
+    procedure SelecteExtend(const nIdx: Integer = -1);
+    function GetExtendSelected(const nUI: Boolean): Integer;
     //选中的扩展数据
   public
     { Public declarations }
     class function ConfigMe: TfFormConfig; override;
     procedure DoFormConfig(nIni: TIniFile; const nLoad: Boolean); override;
     function SetData(const nData: PCommandParam): Boolean; override;
+    class function CallMe(const nData: PCommandParam): Boolean; override;
   end;
 
 implementation
@@ -148,9 +153,21 @@ begin
     EditType.Text := sOrganizationNames[nPNode.FType];
 
     FUnitID := nPNode.FID;
+    LoadUnitData(FUnitID);
     LoadExtendData(FUnitID);
     RefreshGrid();
   end;
+end;
+
+class function TfFormOrganization.CallMe(const nData: PCommandParam): Boolean;
+var nStr: string;
+    nNode: POrganizationItem;
+begin
+  Result := False;
+  if (nData.Command <> cCmd_DeleteData) or (not nData.IsValid(ptPtr)) then Exit;
+  nNode := nData.Ptr[0];
+
+  UniMainModule.ShowMsg(nNode.FName);
 end;
 
 //Date: 2021-10-08
@@ -186,6 +203,29 @@ begin
   end;
 end;
 
+//Date: 2021-10-29
+//Parm: 组织标识
+//Desc: 载入nUnit的数据
+procedure TfFormOrganization.LoadUnitData(const nUnit: string);
+var nStr: string;
+    nQuery: TDataSet;
+begin
+  nQuery := nil;
+  try
+    nStr := 'Select * From %s Where O_ID=''%s''';
+    nStr := Format(nStr, [sTable_Organization, nUnit]);
+    nQuery := gMG.FDBManager.DBQuery(nStr);
+
+    with nQuery do
+    if RecordCount > 0 then
+    begin
+      EditValid.DateTime := FieldByName('O_ValidOn').AsDateTime;
+    end;
+  finally
+    gMG.FDBManager.ReleaseDBQuery(nQuery);
+  end;
+end;
+
 //Date: 2021-10-18
 //Parm: 拥有者标识
 //Desc: 载入nOwner的扩展数据
@@ -216,8 +256,10 @@ begin
           FPost     := FieldByName('A_PostCode').AsString;
           FAddr     := FieldByName('A_Address').AsString;
           FOwner    := FieldByName('A_Owner').AsString;
+
           FValid    := True;
           FModified := False;
+          FSelected := False;
         end;
 
         Inc(nIdx);
@@ -246,8 +288,10 @@ begin
           FPhone    := FieldByName('C_Phone').AsString;
           FMail     := FieldByName('C_Mail').AsString;
           FOwner    := FieldByName('C_Owner').AsString;
+
           FValid    := True;
           FModified := False;
+          FSelected := False;
         end;
 
         Inc(nIdx);
@@ -259,115 +303,189 @@ begin
   end;
 end;
 
-procedure TfFormOrganization.RefreshGrid;
+procedure TfFormOrganization.RefreshGrid(const nGrid: TUniStringGrid = nil);
 var nIdx,nInt: Integer;
 begin
   GridPost.BeginUpdate;
   GridMail.BeginUpdate;
   try
-    nInt := 0;
-    for nIdx := Low(FAddress) to High(FAddress) do
-     with FAddress[nIdx],GridPost do
-      if FValid then
-      begin
-        Inc(nInt);
-        RowCount := nInt;
+    if (nGrid = nil) or (nGrid = GridPost) then
+    begin
+      nInt := 0;
+      for nIdx := Low(FAddress) to High(FAddress) do
+       if FAddress[nIdx].FValid then Inc(nInt);
+      GridPost.RowCount := nInt;
 
-        Cells[0, nInt] := FName;
-        Cells[1, nInt] := FPost;
-        Cells[2, nInt] := FAddr;
-        Cells[3, nInt] := IntToStr(nIdx);
-      end;
+      nInt := 0;
+      for nIdx := Low(FAddress) to High(FAddress) do
+       with FAddress[nIdx],GridPost do
+        if FValid then
+        begin
+          Cells[0, nInt] := IntToStr(nIdx);
+          Cells[1, nInt] := FName;
+          Cells[2, nInt] := FPost;
+          Cells[3, nInt] := FAddr;
 
-    nInt := 0;
-    for nIdx := Low(FContact) to High(FContact) do
-     with FContact[nIdx],GridMail do
-      if FValid then
-      begin
-        Inc(nInt);
-        RowCount := nInt;
+          if FSelected then
+            Row := nInt;
+          Inc(nInt);
+        end;
+    end;
 
-        Cells[0, nInt] := FName;
-        Cells[1, nInt] := FPhone;
-        Cells[2, nInt] := FMail;
-        Cells[3, nInt] := IntToStr(nIdx);
-      end;
+    if (nGrid = nil) or (nGrid = GridMail) then
+    begin
+      nInt := 0;
+      for nIdx := Low(FContact) to High(FContact) do
+       if FContact[nIdx].FValid then Inc(nInt);
+      GridMail.RowCount := nInt;
+
+      nInt := 0;
+      for nIdx := Low(FContact) to High(FContact) do
+       with FContact[nIdx],GridMail do
+        if FValid then
+        begin
+          Cells[0, nInt] := IntToStr(nIdx);
+          Cells[1, nInt] := FName;
+          Cells[2, nInt] := FPhone;
+          Cells[3, nInt] := FMail;
+
+          if FSelected then
+            Row := nInt;
+          Inc(nInt);
+        end;
+    end;
   finally
     GridPost.EndUpdate;
     GridMail.EndUpdate;
   end;
 end;
 
-//Date: 2021-10-18
-//Parm: SQL列表
-//Desc: 构建保存SQL,存入nList
-procedure TfFormOrganization.SaveExtendData(const nList: TStrings);
-var nStr: string;
-    nIdx: Integer;
-    nIsNew: Boolean;
+//Date: 2021-10-26
+//Parm: 索引
+//Desc: 设置选中数据
+procedure TfFormOrganization.SelecteExtend(const nIdx: Integer);
+var i: Integer;
 begin
-  with TSQLBuilder do
+  if wPage.ActivePage = SheetAddress then
   begin
-    for nIdx := Low(FAddress) to High(FAddress) do
-     with FAddress[nIdx] do
-      if FValid and FModified then
-      begin
-        nIsNew := FID = '';
-        nStr := TSQLBuilder.MakeSQLByStr([
-          SF('A_Name', FName),
-          SF('A_PostCode', FPost),
-          SF('A_Address', FAddr),
+    for i := Low(FAddress) to High(FAddress) do
+      FAddress[i].FSelected := False;
+    //xxxxx
 
-          SF_IF([SF('A_ID', TDBCommand.SnowflakeID), ''], nIsNew),
-          SF_IF([SF('A_Owner', FUnitID), ''], nIsNew)
-          ], sTable_OrgAddress, SF('A_ID', FID), nIsNew);
-        nList.Add(nStr);
-      end;
+    if nIdx > -1  then
+      FAddress[nIdx].FSelected := True;
+    //xxxxx
+  end else
 
-    for nIdx := Low(FContact) to High(FContact) do
-    with FContact[nIdx] do
-     if FValid and FModified then
-      begin
-        nIsNew := FID = '';
-        nStr := TSQLBuilder.MakeSQLByStr([
-          SF('C_Name', FName),
-          SF('C_Phone', FPhone),
-          SF('C_Mail', FMail),
+  if wPage.ActivePage = SheetContact then
+  begin
+    for i := Low(FContact) to High(FContact) do
+      FContact[i].FSelected := False;
+    //xxxxx
 
-          SF_IF([SF('C_ID', TDBCommand.SnowflakeID), ''], nIsNew),
-          SF_IF([SF('C_Owner', FUnitID), ''], nIsNew)
-          ], sTable_OrgContact, SF('C_ID', FID), nIsNew);
-        nList.Add(nStr);
-      end;
+    if nIdx > -1  then
+      FContact[nIdx].FSelected := True;
+    //xxxxx
   end;
 end;
 
 //Date: 2021-10-23
+//Parm: 界面数据
 //Desc: 返回选中的数据索引
-function TfFormOrganization.GetExtendSelected: Integer;
+function TfFormOrganization.GetExtendSelected(const nUI: Boolean): Integer;
+var nIdx: Integer;
 begin
   Result := -1;
   if wPage.ActivePage = SheetAddress then
   begin
-    if GridPost.Row >=0 then
+    if nUI then
     begin
-      Result := StrToInt(GridPost.Cells[3, GridPost.Row]);
+      if GridPost.Row >=0 then
+      begin
+        Result := StrToInt(GridPost.Cells[0, GridPost.Row]);
+      end;
+    end else
+    begin
+      for nIdx := Low(FAddress) to High(FAddress) do
+      if FAddress[nIdx].FSelected and FAddress[nIdx].FValid then
+      begin
+        Result := nIdx;
+        Break;
+      end;
     end;
   end else
 
   if wPage.ActivePage = SheetContact then
   begin
-    if GridMail.Row >=0 then
+    if nUI then
     begin
-      Result := StrToInt(GridMail.Cells[3, GridMail.Row]);
+      if GridMail.Row >=0 then
+      begin
+        Result := StrToInt(GridMail.Cells[0, GridMail.Row]);
+      end;
+    end else
+    begin
+      for nIdx := Low(FContact) to High(FContact) do
+      if FContact[nIdx].FSelected and FContact[nIdx].FValid then
+      begin
+        Result := nIdx;
+        Break;
+      end;
     end;
   end;
 end;
 
 procedure TfFormOrganization.GridPostDblClick(Sender: TObject);
+var nIdx: Integer;
 begin
-  inherited;
-  UniMainModule.ShowMsg('done');
+  nIdx := GetExtendSelected(True);
+  if nIdx < 0 then Exit;
+  SelecteExtend(nIdx);
+
+  if wPage.ActivePage = SheetAddress then
+  with FAddress[nIdx] do
+  begin
+    EditPName.Text := FName;
+    EditCode.Text := FPost;
+    EditPAddr.Text := FAddr;
+  end else
+
+  if wPage.ActivePage = SheetContact then
+  with FContact[nIdx] do
+  begin
+    EditMName.Text := FName;
+    EditMPhone.Text := FPhone;
+    EditMMail.Text := FMail;
+  end;
+end;
+
+procedure TfFormOrganization.EditPNameChange(Sender: TObject);
+var nIdx: Integer;
+begin
+  nIdx := GetExtendSelected(False);
+  if nIdx < 0 then Exit;
+
+  if wPage.ActivePage = SheetAddress then
+  with FAddress[nIdx] do
+  begin
+    if Sender = EditPName then FName := EditPName.Text else
+    if Sender = EditCode then  FPost := EditCode.Text else
+    if Sender = EditPAddr then FAddr := EditPAddr.Text;
+
+    FModified := True;
+    RefreshGrid(GridPost);
+  end else
+
+  if wPage.ActivePage = SheetContact then
+  with FContact[nIdx] do
+  begin
+    if Sender = EditMName then  FName := EditMName.Text else
+    if Sender = EditMPhone then FPhone := EditMPhone.Text else
+    if Sender = EditMMail then  FMail := EditMMail.Text;
+
+    FModified := True;
+    RefreshGrid(GridMail);
+  end;
 end;
 
 procedure TfFormOrganization.GridPostMouseDown(Sender: TObject;
@@ -397,6 +515,11 @@ begin
     begin
       FValid := True;
       FModified := False;
+      SelecteExtend(nIdx);
+
+      RefreshGrid(GridPost);
+      N4Click(nil);
+      ActiveControl := EditPName;
     end;
   end;
 
@@ -415,11 +538,35 @@ begin
     begin
       FValid := True;
       FModified := False;
+      SelecteExtend(nIdx);
+
+      RefreshGrid(GridMail);
+      N4Click(nil);
+      ActiveControl := EditMName;
     end;
   end;
+end;
 
-  N4.Click();
-  RefreshGrid();
+//Desc: 删除
+procedure TfFormOrganization.N3Click(Sender: TObject);
+var nIdx: Integer;
+begin
+  nIdx := GetExtendSelected(True);
+  if nIdx < 0 then Exit;
+
+  if wPage.ActivePage = SheetAddress then
+  begin
+    FAddress[nIdx].FValid := False;
+    FAddress[nIdx].FSelected := False;
+    RefreshGrid(GridPost);
+  end;
+
+  if wPage.ActivePage = SheetContact then
+  begin
+    FContact[nIdx].FValid := False;
+    FAddress[nIdx].FSelected := False;
+    RefreshGrid(GridMail);
+  end;
 end;
 
 //Desc: 重置内容
@@ -437,6 +584,68 @@ begin
       if Controls[nIdx] is TUniMemo then
         (Controls[nIdx] as TUniMemo).Clear;
       //xxxxx
+    end;
+  end;
+end;
+
+//Date: 2021-10-18
+//Parm: SQL列表
+//Desc: 构建保存SQL,存入nList
+procedure TfFormOrganization.SaveExtendData(const nList: TStrings);
+var nStr: string;
+    nIdx: Integer;
+    nIsNew: Boolean;
+begin
+  with TSQLBuilder do
+  begin
+    for nIdx := Low(FAddress) to High(FAddress) do
+    with FAddress[nIdx] do
+    begin
+      if FValid and FModified then
+      begin
+        nIsNew := FID = '';
+        nStr := TSQLBuilder.MakeSQLByStr([
+          SF('A_Name', FName),
+          SF('A_PostCode', FPost),
+          SF('A_Address', FAddr),
+
+          SF_IF([SF('A_ID', TDBCommand.SnowflakeID), ''], nIsNew),
+          SF_IF([SF('A_Owner', FUnitID), ''], nIsNew)
+          ], sTable_OrgAddress, SF('A_ID', FID), nIsNew);
+        nList.Add(nStr);
+      end else
+
+      if (not FValid) and (FID <> '') then
+      begin
+        nStr := 'Delete From %s Where A_ID=''%s''';
+        nStr := Format(nStr, [sTable_OrgAddress, FID]);
+        nList.Add(nStr);
+      end;
+    end;
+
+    for nIdx := Low(FContact) to High(FContact) do
+    with FContact[nIdx] do
+    begin
+      if FValid and FModified then
+      begin
+        nIsNew := FID = '';
+        nStr := TSQLBuilder.MakeSQLByStr([
+          SF('C_Name', FName),
+          SF('C_Phone', FPhone),
+          SF('C_Mail', FMail),
+
+          SF_IF([SF('C_ID', TDBCommand.SnowflakeID), ''], nIsNew),
+          SF_IF([SF('C_Owner', FUnitID), ''], nIsNew)
+          ], sTable_OrgContact, SF('C_ID', FID), nIsNew);
+        nList.Add(nStr);
+      end else
+
+      if (not FValid) and (FID <> '') then
+      begin
+        nStr := 'Delete From %s Where C_ID=''%s''';
+        nStr := Format(nStr, [sTable_OrgContact, FID]);
+        nList.Add(nStr);
+      end;
     end;
   end;
 end;
@@ -482,8 +691,7 @@ begin
     nList.Add(nStr);
 
     SaveExtendData(nList);
-    gMG.FDBManager.DBExecute(nList);
-    //save to db
+    gMG.FDBManager.DBExecute(nList); //save to db
   finally
     gMG.FObjectPool.Release(nList);
   end;

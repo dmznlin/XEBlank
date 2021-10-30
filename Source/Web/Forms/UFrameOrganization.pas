@@ -307,14 +307,38 @@ begin
     procedure(const nResult: Integer; const nParam: PCommandParam)
     begin
       if nResult = mrOK then
-        InitFormData()
+        InitFormData(FWhere)
     end);
-  //call add unit form
+  //call edit unit form
 end;
 
 procedure TfFrameOrganization.BtnDelClick(Sender: TObject);
+var nNode: POrganizationItem;
 begin
-  //
+  if not (Assigned(TreeUnits.Selected) and
+          Assigned(TreeUnits.Selected.Data)) then
+  begin
+    UniMainModule.ShowMsg('请选择要删除的节点');
+    Exit;
+  end;
+
+  nNode := TreeUnits.Selected.Data;
+  UniMainModule.QueryDlg(Format('确定要删除[ %s ]和所有子节点吗?', [nNode.FName]),
+    procedure(const nType: TButtonClickType)
+    var nP: TCommandParam;
+    begin
+      if nType <> ctYes then Exit;
+      nP.Init(cCmd_DeleteData).AddP(nNode);
+      //item data
+
+      TWebSystem.ShowModalForm('TfFormOrganization', @nP,
+        procedure(const nResult: Integer; const nParam: PCommandParam)
+        begin
+          if nResult = mrOK then
+            InitFormData(FWhere)
+        end, False);
+      //call delete unit form
+    end);
 end;
 
 initialization
