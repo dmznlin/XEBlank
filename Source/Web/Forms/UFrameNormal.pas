@@ -53,7 +53,7 @@ type
     procedure OnInitFormData(const nWhere: string; const nQuery: TDataset;
     var nHasDone: Boolean); virtual;
     procedure InitFormData(const nWhere: string = '';
-      const nQuery: TDataset = nil); virtual;
+      const nQuery: TDataset = nil; const nUserSQL: string = ''); virtual;
     function InitFormDataSQL(const nWhere: string): string; virtual;
     procedure AfterInitFormData; virtual;
     {*载入数据*}
@@ -181,7 +181,7 @@ end;
 
 //Desc: 载入界面数据
 procedure TfFrameNormal.InitFormData(const nWhere: string;
-  const nQuery: TDataset);
+  const nQuery: TDataset; const nUserSQL: string);
 var nStr: string;
     nC: TDataset;
     nBool: Boolean;
@@ -199,8 +199,11 @@ begin
     OnInitFormData(nWhere, nC, nBool);
     if nBool then Exit;
 
-    nStr := InitFormDataSQL(nWhere);
-    if nStr = '' then Exit;
+    if nUserSQL = '' then
+    begin
+      nStr := InitFormDataSQL(nWhere);
+      if nStr = '' then Exit;
+    end else nStr := nUserSQL;
 
     gDBManager.DBQuery(nStr, nC);
     //db query

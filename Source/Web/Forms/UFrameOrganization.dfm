@@ -25,6 +25,7 @@ inherited fFrameOrganization: TfFrameOrganization
       Align = alLeft
       TabOrder = 4
       Color = clWindow
+      OnMouseDown = TreeUnitsMouseDown
       OnNodeExpand = TreeUnitsNodeExpand
       OnNodeCollapse = TreeUnitsNodeCollapse
     end
@@ -37,6 +38,48 @@ inherited fFrameOrganization: TfFrameOrganization
       Align = alLeft
       ParentColor = False
       Color = clBtnFace
+    end
+  end
+  object PMenu1: TUniPopupMenu
+    Images = UniMainModule.SmallImages
+    Left = 16
+    Top = 200
+    object MenuQuery: TUniMenuItem
+      Caption = #26597#35810#19979#32423
+      ImageIndex = 38
+      OnClick = MenuQueryClick
+    end
+    object N8: TUniMenuItem
+      Caption = '-'
+    end
+    object MenuEA: TUniMenuItem
+      Caption = #20840#37096#23637#24320
+      ImageIndex = 17
+      OnClick = MenuEAClick
+    end
+    object MenuES: TUniMenuItem
+      Caption = #23637#24320#21516#32423
+      OnClick = MenuEAClick
+    end
+    object MenuEL: TUniMenuItem
+      Caption = #23637#24320#19979#32423
+      OnClick = MenuEAClick
+    end
+    object N4: TUniMenuItem
+      Caption = '-'
+    end
+    object MenuCA: TUniMenuItem
+      Caption = #20840#37096#25910#36215
+      ImageIndex = 18
+      OnClick = MenuEAClick
+    end
+    object MenuCS: TUniMenuItem
+      Caption = #25910#36215#21516#32423
+      OnClick = MenuEAClick
+    end
+    object MenuCL: TUniMenuItem
+      Caption = #25910#36215#19979#32423
+      OnClick = MenuEAClick
     end
   end
 end

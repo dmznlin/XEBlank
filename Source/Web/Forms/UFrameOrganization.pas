@@ -11,17 +11,31 @@ uses
   UGlobalConst, MainModule, UFrameBase, uniGUITypes, uniGUIAbstractClasses,
   uniSplitter, uniTreeView, Data.DB, kbmMemTable, uniToolBar, uniPanel,
   uniGUIClasses, uniBasicGrid, uniDBGrid, Vcl.Controls, Vcl.Forms,
-  uniGUIBaseClasses, UFrameNormal;
+  uniGUIBaseClasses, UFrameNormal, Vcl.Menus, uniMainMenu;
 
 type
   TfFrameOrganization = class(TfFrameNormal)
     TreeUnits: TUniTreeView;
     Splitter1: TUniSplitter;
+    PMenu1: TUniPopupMenu;
+    MenuEA: TUniMenuItem;
+    MenuES: TUniMenuItem;
+    MenuEL: TUniMenuItem;
+    N4: TUniMenuItem;
+    MenuCA: TUniMenuItem;
+    MenuCS: TUniMenuItem;
+    MenuQuery: TUniMenuItem;
+    N8: TUniMenuItem;
+    MenuCL: TUniMenuItem;
     procedure BtnAddClick(Sender: TObject);
     procedure BtnEditClick(Sender: TObject);
     procedure BtnDelClick(Sender: TObject);
     procedure TreeUnitsNodeCollapse(Sender: TObject; Node: TUniTreeNode);
     procedure TreeUnitsNodeExpand(Sender: TObject; Node: TUniTreeNode);
+    procedure TreeUnitsMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure MenuEAClick(Sender: TObject);
+    procedure MenuQueryClick(Sender: TObject);
   private
     { Private declarations }
     FItems: TOrganizationItems;
@@ -138,7 +152,7 @@ begin
     nExpand := gMG.FObjectPool.Lock(TStrings) as TStrings;
     nExpand.Clear;
 
-    if Assigned(Selected) then
+    if Assigned(Selected) and Assigned(Selected.Data) then
          nLast := POrganizationItem(Selected.Data).FID
     else nLast := '';
 
@@ -339,6 +353,113 @@ begin
         end, False);
       //call delete unit form
     end);
+end;
+
+//------------------------------------------------------------------------------
+procedure TfFrameOrganization.TreeUnitsMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if Button = mbRight then
+    PMenu1.Popup(X, Y, TreeUnits);
+  //xxxxx
+end;
+
+procedure TfFrameOrganization.MenuEAClick(Sender: TObject);
+
+  //Desc: 展开nLevel的节点
+  procedure ExpandTree(const nLevel: Integer; const nExpand: Boolean);
+  var nNode: TUniTreeNode;
+  begin
+    nNode := TreeUnits.Items.GetFirstNode;
+    while Assigned(nNode) do
+    begin
+      if nNode.Level = nLevel then
+      begin
+        if nExpand then
+             nNode.Expand(False)
+        else nNode.Collapse(False);
+      end;
+
+      nNode := nNode.GetNext;
+    end;
+  end;
+begin
+  if Sender = MenuEA then //expand all
+  begin
+    TreeUnits.FullExpand;
+  end else
+
+  if Sender = MenuCA then //collapse all
+  begin
+    TreeUnits.FullCollapse;
+  end else
+
+  if Sender = MenuES then //expand same
+  begin
+    if Assigned(TreeUnits.Selected) then
+      ExpandTree(TreeUnits.Selected.Level, True);
+    //xxxxx
+  end else
+
+  if Sender = MenuCS then //collapse same
+  begin
+    if Assigned(TreeUnits.Selected) then
+      ExpandTree(TreeUnits.Selected.Level, False);
+    //xxxxx
+  end else
+
+  if Sender = MenuEL then //expand low
+  begin
+    if Assigned(TreeUnits.Selected) then
+      TreeUnits.Selected.Expand(True);
+    //xxxxx
+  end else
+
+  if Sender = MenuCL then //collapse low
+  begin
+    if Assigned(TreeUnits.Selected) then
+      TreeUnits.Selected.Collapse(True);
+    //xxxxx
+  end
+end;
+
+//Desc: 查询下级
+procedure TfFrameOrganization.MenuQueryClick(Sender: TObject);
+var nStr: string;
+    nBind: PBindData;
+begin
+  nBind := TGridHelper.GetBindData(DBGridMain);
+  if Assigned(nBind) then
+       FWhere := nBind.FilterString()
+  else FWhere := '';
+
+  if not (Assigned(TreeUnits.Selected) and
+          Assigned(TreeUnits.Selected.Data)) then
+  begin
+    InitFormData(FWhere);
+    Exit;
+  end;
+
+  nStr := 'with CTE as (' +
+          '  select O_ID from $TB where O_ID=''$ID''' +
+          '  union all' +
+          '  select a.O_ID from $TB a' +
+          '  inner join CTE b on b.O_ID = a.O_Parent' +
+          ') ' +
+          'Select t.*,a.O_Name as O_PName From $TB t ' +
+          '  Left Join $TB a On t.O_Parent=a.O_ID ' +
+          'Where t.O_ID In (Select O_ID From CTE)';
+  //xxxxx
+
+  if FWhere <> '' then
+    nStr := nStr + Format(' And (%s)', [FWhere]);
+  //xxxxx
+
+  with TStringHelper do
+  nStr := MacroValue(nStr, [MI('$TB', sTable_Organization),
+    MI('$ID', POrganizationItem(TreeUnits.Selected.Data).FID),
+    MI('$Addr', sTable_OrgAddress), MI('$Con', sTable_OrgContact)]);
+  InitFormData(FWhere, nil, nStr);
 end;
 
 initialization

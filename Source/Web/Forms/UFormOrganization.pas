@@ -167,7 +167,22 @@ begin
   if (nData.Command <> cCmd_DeleteData) or (not nData.IsValid(ptPtr)) then Exit;
   nNode := nData.Ptr[0];
 
-  UniMainModule.ShowMsg(nNode.FName);
+  nStr := 'with CTE as (' +
+          '  select O_ID from $TB where O_ID=''$ID''' +
+          '  union all' +
+          '  select a.O_ID from $TB a' +
+          '  inner join CTE b on b.O_ID = a.O_Parent' +
+          ') select * into #id from CTE ' +
+          'delete from $TB where O_ID in (select * From #id) ' +
+          'delete from $Addr where A_Owner in (select * From #id) ' +
+          'delete from $Con where C_Owner in (select * From #id)';
+  //xxxxx
+
+  with TStringHelper do
+  nStr := MacroValue(nStr, [MI('$TB', sTable_Organization), MI('$ID', nNode.FID),
+    MI('$Addr', sTable_OrgAddress), MI('$Con', sTable_OrgContact)]);
+  gMG.FDBManager.DBExecute(nStr);
+  Result := True;
 end;
 
 //Date: 2021-10-08
