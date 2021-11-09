@@ -53,8 +53,8 @@ type
     FAddress: TOrgAddressItems;
     FContact: TOrgContactItems;
     //扩展数据
-    procedure AddTypes(nTypes: TApplicationHelper.TOrganizationStructures;
-      const nParent: TApplicationHelper.TOrganizationStructure);
+    procedure AddTypes(nTypes: TOrganizationStructures;
+      const nParent: TOrganizationStructure);
     //添加组织类型
     procedure LoadUnitData(const nUnit: string);
     procedure LoadExtendData(const nOwner: string);
@@ -188,9 +188,8 @@ end;
 //Date: 2021-10-08
 //Parm: 待添加类型;父类型
 //Desc: 向列表添加组织类型
-procedure TfFormOrganization.AddTypes(
-  nTypes: TApplicationHelper.TOrganizationStructures;
-  const nParent: TApplicationHelper.TOrganizationStructure);
+procedure TfFormOrganization.AddTypes(nTypes: TOrganizationStructures;
+  const nParent: TOrganizationStructure);
 begin
   with EditType do
   try
@@ -200,15 +199,17 @@ begin
     if nTypes = [] then
     begin
       case nParent of
-       osGroup   : nTypes := [osArea];      //集团下级: 区域
-       osArea    : nTypes := [osFactory];   //区域下级: 工厂
-       osFactory : nTypes := [];            //工厂下级: 无
+       osGroup   : nTypes := [osArea, osPost];            //集团下级: 区域,岗位
+       osArea    : nTypes := [osArea, osFactory, osPost]; //区域下级: 工厂,岗位
+       osFactory : nTypes := [osPost];                    //工厂下级: 岗位
+       osPost    : nTypes := [osPost];                    //岗位下级: 岗位
       end;
     end;
 
-    if osGroup in nTypes then Items.Add(sOrganizationNames[osGroup]);
-    if osArea in nTypes then Items.Add(sOrganizationNames[osArea]);
+    if osPost in nTypes then Items.Add(sOrganizationNames[osPost]);
     if osFactory in nTypes then Items.Add(sOrganizationNames[osFactory]);
+    if osArea in nTypes then Items.Add(sOrganizationNames[osArea]);
+    if osGroup in nTypes then Items.Add(sOrganizationNames[osGroup]);
 
     if Items.Count > 0 then
       ItemIndex := 0; //first default

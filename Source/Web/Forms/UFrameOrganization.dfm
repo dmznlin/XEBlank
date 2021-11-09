@@ -3,6 +3,7 @@ inherited fFrameOrganization: TfFrameOrganization
     inherited DBGridMain: TUniDBGrid
       Left = 159
       Width = 411
+      OnDblClick = DBGridMainDblClick
     end
     inherited ToolBarMain: TUniToolBar
       inherited BtnAdd: TUniToolButton

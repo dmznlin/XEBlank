@@ -9,9 +9,14 @@ interface
 uses
   SysUtils, Classes, ULibFun;
 
+type
+  TOrganizationStructure = (osGroup, osArea, osFactory, osPost);
+  TOrganizationStructures = set of TOrganizationStructure;
+  //组织架构: 集团,区域,工厂,岗位
+
 const
-  sOrganizationNames: array[TApplicationHelper.TOrganizationStructure] of
-    string = ('集团', '区域', '工厂');
+  sOrganizationNames: array[TOrganizationStructure] of string = ('集团', '区域',
+    '工厂', '岗位');
   //组织结构名称
 
 type
@@ -20,7 +25,7 @@ type
     FID     : string;                                    //记录标识
     FName   : string;                                    //组织名称
     FParent : string;                                    //上级标识
-    FType   : TApplicationHelper.TOrganizationStructure; //组织类型
+    FType   : TOrganizationStructure;                    //组织类型
   end;
   TOrganizationItems = TArray<TOrganizationItem>;
 
@@ -55,7 +60,7 @@ type
   TGlobalBusiness = class
   public
     class function Name2Organization(const nName: string):
-      TApplicationHelper.TOrganizationStructure; static;
+      TOrganizationStructure; static;
     {*名称转组织结构类型*}
   end;
 
@@ -65,8 +70,8 @@ implementation
 //Parm: 组织结构名称
 //Desc: 返回nName对应的组织结构类型
 class function TGlobalBusiness.Name2Organization(
-  const nName: string): TApplicationHelper.TOrganizationStructure;
-var nIdx: TApplicationHelper.TOrganizationStructure;
+  const nName: string): TOrganizationStructure;
+var nIdx: TOrganizationStructure;
 begin
   for nIdx := Low(sOrganizationNames) to High(sOrganizationNames) do
    if sOrganizationNames[nIdx] = nName then

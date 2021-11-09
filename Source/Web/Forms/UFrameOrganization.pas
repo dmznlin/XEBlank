@@ -36,6 +36,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure MenuEAClick(Sender: TObject);
     procedure MenuQueryClick(Sender: TObject);
+    procedure DBGridMainDblClick(Sender: TObject);
   private
     { Private declarations }
     FItems: TOrganizationItems;
@@ -228,7 +229,17 @@ begin
           ImageIndex := 23;
           Data := @FItems[nIdx];
         end;
-    //new area
+    //new factory
+
+    for nIdx := Low(FItems) to High(FItems) do
+     with FItems[nIdx] do
+      if FType = osPost then
+       with TreeUnits.Items.AddChild(FindNode(FParent), FName) do
+        begin
+          ImageIndex := 16;
+          Data := @FItems[nIdx];
+        end;
+    //new post
 
     nRoot := Items.GetFirstNode;
     while Assigned(nRoot) do
@@ -273,6 +284,19 @@ procedure TfFrameOrganization.TreeUnitsNodeExpand(Sender: TObject;
 begin
   inherited;
   //enable expand event
+end;
+
+//Desc: 双击定位
+procedure TfFrameOrganization.DBGridMainDblClick(Sender: TObject);
+var nNode: TUniTreeNode;
+begin
+  if DBGridMain.SelectedRows.Count > 0 then
+  begin
+    nNode := FindNode(MTable1.FieldByName('O_ID').AsString);
+    if Assigned(nNode) then
+      nNode.Selected := True;
+    //xxxx
+  end;
 end;
 
 //Desc: 加载组织结构数据
