@@ -76,7 +76,7 @@ begin
       nItem.OnClick := OnSkinMenuClick;
       nItem.RadioItem := True;
 
-      if FSM.SkinManager.SkinName = nList[nIdx] then
+      if FSM.SkinActive = nList[nIdx] then
         nItem.Checked := True;
       //default skin
     end;
@@ -88,7 +88,7 @@ end;
 //Desc: ÇÐ»»Ö÷Ìâ
 procedure TfFormLogin.OnSkinMenuClick(Sender: TObject);
 begin
-  FSM.SwitchSkin(TMenuItem(Sender).Caption, False);
+  FSM.SwitchSkin(TMenuItem(Sender).Caption);
 end;
 
 end.

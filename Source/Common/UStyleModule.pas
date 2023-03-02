@@ -7,12 +7,10 @@ unit UStyleModule;
 interface
 
 uses
-  System.SysUtils, System.Classes, dxSkinsCore,
-  dxSkinOffice2007Blue, dxSkinOffice2007Silver, dxSkinCaramel,
-  dxSkinSpringTime, dxSkinSummer2008, dxSkinValentine, dxSkinXmas2008Blue,
-  System.ImageList, Vcl.ImgList, Vcl.Controls, cxImageList, cxGraphics,
-  cxLookAndFeels, dxSkinsForm, cxClasses, cxEdit, cxLookAndFeelPainters,
-  dxAlertWindow, dxSkinsDefaultPainters, dxLayoutLookAndFeels, cxContainer;
+  System.SysUtils, System.Classes, dxSkinsCore, dxCore, dxSkinsDefaultPainters,
+  cxLookAndFeelPainters, cxGraphics, dxLayoutLookAndFeels, dxAlertWindow,
+  System.ImageList, Vcl.ImgList, Vcl.Controls, cxImageList, cxLookAndFeels,
+  dxSkinsForm, cxClasses, cxEdit;
 
 type
   TVerifyUIData = reference to procedure (const nCtrl: TControl;
@@ -28,10 +26,13 @@ type
     dxLayout1: TdxLayoutLookAndFeelList;
     dxLayoutWeb1: TdxLayoutWebLookAndFeel;
     procedure DataModuleCreate(Sender: TObject);
+    procedure DataModuleDestroy(Sender: TObject);
   private
     { Private declarations }
-    FDefaultSkin: string;
-    {*默认主题*}
+    FSkins: TStrings;
+    FSkinDir: string;
+    FSkinActive: string;
+    {*活动主题*}
     FAdminKey: string;
     {*管理员密钥*}
   public
@@ -39,7 +40,7 @@ type
     procedure LoadSkinNames(const nList: TStrings);
     {*主题列表*}
     procedure SwitchSkinRandom(const nOverDefault: Boolean = False);
-    procedure SwitchSkin(const nSkin: string; const nVerify: Boolean);
+    procedure SwitchSkin(const nSkin: string);
     {*切换主题*}
     procedure ShowMsg(const nMsg: string; nTitle: string = '');
     {*消息框*}
@@ -54,6 +55,8 @@ type
       const nVerify: TVerifyUIData; const nShowMsg: Boolean = True;
       const nVerifySub: Boolean = True): Boolean;
     {*验证数据*}
+    property Skins: TStrings read FSkins;
+    property SkinActive: string read FSkinActive;
     property AdminKey: string read FAdminKey write FAdminKey;
     {*属性相关*}
   end;
@@ -72,56 +75,119 @@ uses
   UFormInputbox, UFormMessagebox;
 
 procedure TFSM.DataModuleCreate(Sender: TObject);
-var nIni: TIniFile;
+var nStr: string;
+    nIni: TIniFile;
 begin
   FAdminKey := '';
   //key for admin
+  FSkins := TStringList.Create;
+  FSkinDir := TApplicationHelper.gPath + 'Skins' + PathDelim;
 
   nIni := TIniFile.Create(TApplicationHelper.gFormConfig);
   try
-    FDefaultSkin := nIni.ReadString('Config', 'Theme', '');
-    if FDefaultSkin <> '' then
-      SwitchSkin(FDefaultSkin, True);
-    //xxxxx
+    nStr := nIni.ReadString('Config', 'SkinDir', '');
+    if nStr <> '' then
+    begin
+      nStr := TApplicationHelper.ReplaceGlobalPath(nStr);
+      FSkinDir := TApplicationHelper.RegularPath(nStr);
+    end;
+
+    nStr := nIni.ReadString('Config', 'Theme', '');
+    if nStr <> '' then
+    begin
+      LoadSkinNames(nil);
+      SwitchSkin(nStr);
+    end;
   finally
     nIni.Free;
   end;
+end;
+
+procedure TFSM.DataModuleDestroy(Sender: TObject);
+begin
+  FreeAndNil(FSkins);
 end;
 
 //Date: 2019-02-27
 //Parm: 列表
 //Desc: 当前可用的皮肤列表
 procedure TFSM.LoadSkinNames(const nList: TStrings);
-var nIdx: Integer;
+var nStr: string;
+    nIdx: Integer;
+    nSList: TStrings;
+    nRet: Integer;
+    nSR: TSearchRec;
 begin
-  nList.Clear;
-  for nIdx := 0 to cxLookAndFeelPaintersManager.Count - 1 do
-   with cxLookAndFeelPaintersManager[nIdx] do
-    if (LookAndFeelStyle = lfsSkin) and (not IsInternalPainter) then
-     nList.Add(LookAndFeelName);
-  //xxxxx
+  if (not Assigned(nList)) or (FSkins.Count < 1) then //load skin files
+  begin
+    FSkins.Clear;
+    nSList := TStringList.Create;
+
+    nRet := FindFirst(FSkinDir + '*.skinres', faAnyFile, nSR);
+    while nRet = 0 do
+    try
+      nSList.Clear;
+      nStr := FSkinDir + nSR.Name;
+      dxSkinsUserSkinPopulateSkinNames(nStr, nSList);
+
+      for nIdx := 0 to nSList.Count-1 do
+        FSkins.AddPair(nSList[nIdx], nStr);
+      nRet := FindNext(nSR);
+    except
+      on nErr: Exception do
+      begin
+        gMG.FLogManager.AddLog('FSM.LoadSkinNames: ' + nErr.Message);
+        Break;
+      end;
+    end;
+
+    nSList.Free;
+    FindClose(nSR); //find close
+
+    for nIdx := 0 to cxLookAndFeelPaintersManager.Count - 1 do
+     with cxLookAndFeelPaintersManager[nIdx] do
+      if (LookAndFeelStyle = lfsSkin) and (not IsInternalPainter) then
+       FSkins.AddPair(LookAndFeelName, '');
+    //xxxxx
+  end;
+
+  if Assigned(nList) then
+  begin
+    nList.Clear;
+    for nIdx := 0 to FSkins.Count-1 do
+      nList.Add(FSkins.Names[nIdx]);
+    //xxxxx
+  end;
 end;
 
 //Date: 2019-02-27
-//Parm: 主题名称;验证主题是否有效
+//Parm: 主题名称
 //Desc: 切换主题为nSkin
-procedure TFSM.SwitchSkin(const nSkin: string; const nVerify: Boolean);
-var nList: TStrings;
+procedure TFSM.SwitchSkin(const nSkin: string);
+var nStr: string;
+    nIdx: Integer;
 begin
-  nList := nil;
-  try
-    if nVerify then
+  for nIdx := FSkins.Count-1 downto 0 do
+  if CompareText(nSkin, FSkins.Names[nIdx]) = 0 then
+  begin
+    if FSkinActive = FSkins.Names[nIdx] then
+      Break;
+    //skin enabled
+
+    nStr := FSkins.ValueFromIndex[nIdx];
+    if FileExists(nStr) then
     begin
-      nList := gMG.FObjectPool.Lock(TStrings) as TStrings;
-      LoadSkinNames(nList);
-      if nList.IndexOf(nSkin) < 0 then Exit;
+      SkinManager.SkinName := 'UserSkin';
+      dxSkinsUserSkinLoadFromFile(nStr, nSkin);
+    end else
+    begin
+      if SkinManager.SkinName <> nSkin then
+        SkinManager.SkinName := nSkin;
+      //xxxxx
     end;
 
-    if SkinManager.SkinName <> nSkin then
-      SkinManager.SkinName := nSkin;
-    //xxxxx
-  finally
-    gMG.FObjectPool.Release(nList);
+    FSkinActive := FSkins.Names[nIdx];
+    Break;
   end;
 end;
 
@@ -132,7 +198,7 @@ procedure TFSM.SwitchSkinRandom(const nOverDefault: Boolean);
 var nIdx: Integer;
     nList: TStrings;
 begin
-  if (FDefaultSkin <> '') and (not nOverDefault) then Exit;
+  if (FSkinActive <> '') and (not nOverDefault) then Exit;
   //use default skin
 
   nList := nil;
@@ -142,7 +208,7 @@ begin
     nIdx := Random(nList.Count);
 
     if nIdx < nList.Count then
-      FSM.SwitchSkin(nList[nIdx], False);
+      FSM.SwitchSkin(nList[nIdx]);
     //xxxxx
   finally
     gMG.FObjectPool.Release(nList);

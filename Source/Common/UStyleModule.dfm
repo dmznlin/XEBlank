@@ -25,7 +25,6 @@ object FSM: TFSM
     Kind = lfOffice11
     NativeStyle = False
     ScrollbarMode = sbmHybrid
-    SkinName = 'Summer2008'
     Left = 29
     Top = 128
   end
