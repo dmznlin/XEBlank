@@ -1,6 +1,7 @@
 object FSM: TFSM
   OldCreateOrder = False
   OnCreate = DataModuleCreate
+  OnDestroy = DataModuleDestroy
   Height = 257
   Width = 438
   object EditStyle1: TcxDefaultEditStyleController
